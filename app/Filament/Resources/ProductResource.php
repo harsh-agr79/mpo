@@ -73,10 +73,6 @@ class ProductResource extends Resource
                     ->numeric()
                     ->inputMode('decimal')
                     ->label('Offer'),
-                TextInput::make('order_num')
-                    ->numeric()
-                    ->inputMode('integer')
-                    ->label('Order'),
                 FileUpload::make('image')
                     ->required()
                     ->directory('products')
@@ -100,6 +96,8 @@ class ProductResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->reorderable('order_num')
+            ->defaultSort('order_num')
             ->columns([
                 ImageColumn::make('image')
                     ->label('Image')

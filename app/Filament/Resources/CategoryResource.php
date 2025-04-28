@@ -29,16 +29,14 @@ class CategoryResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required()
                     ->label('Category Name'),
-                TextInput::make('order_num')
-                    ->numeric()
-                    ->inputMode('integer')
-                    ->label('Order')
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->reorderable('order_num')
+            ->defaultSort('order_num')
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('subCategories.name')
