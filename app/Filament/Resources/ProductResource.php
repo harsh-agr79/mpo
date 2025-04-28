@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProductResource\Pages;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\SubCategory;
 use Filament\Forms;
@@ -11,6 +12,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
@@ -20,6 +22,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\DB;
 
 class ProductResource extends Resource
 {
@@ -36,27 +39,36 @@ class ProductResource extends Resource
                     ->live()
                     ->relationship('category', 'name')
                     ->required()
+                    ->searchable()
+                    ->options(Category::all()->pluck('name', 'id'))
                     ->label('Category'),
                 Select::make('sub_category_id')
-                    ->relationship('subCategory', 'name')
+                    // ->relationship('subCategories', 'name')
                     ->required()
-                    ->label('SubCategory')
+                    ->label('SubCategories')
+                    ->multiple()
+                    ->reactive()
                     ->options(function (Get $get) {
-                        $categoryId = $get('category_id');
-
-                        if ($categoryId) {
-                            return SubCategory::where('category_id', $categoryId)->pluck('name', 'id')->toArray();
+                        $categoryId = $get('category_id'); // Get the selected category ID
+                        if (!$categoryId) {
+                            return []; // If no category is selected, return an empty array
                         }
+
+                        // Fetch subcategories dynamically based on the selected category
+                        return DB::table('sub_categories')
+                            ->where('category_id', $categoryId)
+                            ->pluck('name', 'id');
                     }),
                 TextInput::make('price')->required()
                     ->label('Price')
                     ->numeric()
                     ->inputMode('decimal'),
-                TextInput::make('stock')->required()
-                    ->label('Stock')
-                    ->numeric()
-                    ->inputMode('integer'),
-                TextInput::make('prod_unique_id')->unique()->required()->label('Unique ID/Slug'),
+                Toggle::make('stock')
+                    ->label('Out of Stock'),
+                Toggle::make('hidden')
+                    ->label('Hide'),
+                TextInput::make('prod_unique_id')->unique(ignoreRecord: true)->required()->label('Unique ID/Slug')
+                ,
                 TextInput::make('offer')
                     ->numeric()
                     ->inputMode('decimal')
@@ -98,9 +110,9 @@ class ProductResource extends Resource
                 TextColumn::make('category.name')
                     ->label('Category')
                     ->badge(),
-                TextColumn::make('subCategory.name')
-                    ->label('SubCategory')
-                    ->badge(),
+                // TextColumn::make('subCategory.name')
+                //     ->label('SubCategory')
+                //     ->badge(),
                 TextColumn::make('price')->label('Price'),
                 TextColumn::make('stock')->label('Stock'),
                 TextColumn::make('prod_unique_id')->label('Slug'),

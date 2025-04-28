@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BatchResource\Pages;
 use App\Filament\Resources\BatchResource\RelationManagers;
 use App\Models\Batch;
+use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -28,7 +29,9 @@ class BatchResource extends Resource
             ->schema([
                 Select::make('product_id')
                     ->relationship(name: 'product', titleAttribute: 'name')
+                    ->searchable()
                     ->required()
+                    ->options(Product::all()->pluck('name', 'id'))
                     ->label('Product'),
                 TextInput::make('batch_no')
                     ->required(),

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SubCategoryResource\Pages;
 use App\Filament\Resources\SubCategoryResource\RelationManagers;
+use App\Models\Category;
 use App\Models\SubCategory;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
@@ -30,6 +31,8 @@ class SubCategoryResource extends Resource
             ->schema([
                 Select::make('category_id')
                     ->relationship(name: 'category', titleAttribute: 'name')
+                    ->searchable()
+                    ->options(Category::all()->pluck('name', 'id'))
                     ->required(),
                 TextInput::make('name')
                     ->unique(ignoreRecord: true, modifyRuleUsing: function (Get $get, Unique $rule) {

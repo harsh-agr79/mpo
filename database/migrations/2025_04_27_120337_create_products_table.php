@@ -14,9 +14,10 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->foreignId('sub_category_id')->references('id')->on('sub_categories')->onDelete('cascade');
+            $table->json('sub_category_id')->nullable();
             $table->decimal('price');
-            $table->integer('stock');
+            $table->boolean('stock');
+            $table->boolean('hidden');
             $table->string('prod_unique_id')->unique();
             $table->string('offer')->nullable();
             $table->integer('order_num')->nullable();

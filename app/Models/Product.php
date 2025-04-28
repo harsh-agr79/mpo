@@ -18,6 +18,7 @@ class Product extends Model
         'stock',
         'prod_unique_id',
         'offer',
+        'hidden',
         'order_num',
         'image',
         'image_2',
@@ -26,6 +27,7 @@ class Product extends Model
 
     protected $casts = [
         'order_num' => 'integer',
+        'sub_category_id' => 'array'
     ];
 
     protected static function booted()
