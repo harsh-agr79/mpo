@@ -24,7 +24,6 @@ class User extends Authenticatable
         'password',
         'userid',
         'contact',
-        'role_id',
         'type',
         'disabled',
         'shop_name',
@@ -39,7 +38,9 @@ class User extends Authenticatable
         'secondary_contact',
         'dob',
         'tax_type',
-        'tax_no'
+        'tax_no',
+        'open_balance_type',
+        'current_balance_type'
     ];
 
     /**

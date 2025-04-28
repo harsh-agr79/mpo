@@ -27,8 +27,8 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
-
-    protected static ?string $navigationGroup = "User Settings";
+    protected static ?string $navigationLabel = 'Customers';
+    // protected static ?string $navigationGroup = "User Settings";
 
     public static function form(Form $form): Form
     {
@@ -41,12 +41,21 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(20)
                     ->unique(ignoreRecord: true),
-                Select::make('role_id')
-                    ->searchable()
-                    ->relationship('role', 'name')
-                    ->options(Role::all()->pluck('name', 'id'))
-                    ->required(),
-                Toggle::make('disabled')->label('Disabled'),
+                TextInput::make('password')
+                    ->password()
+                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
+                    ->required(fn(string $context): bool => $context === 'create')
+                    ->label('Password'),
+                Select::make('type')
+                    ->label('Type')
+                    ->options([
+                        'dealer' => 'Dealer',
+                        'wholesaler' => 'Wholesaler',
+                        'retailer' => 'Retailer',
+                        'ecommerce' => 'Ecommerce',
+                    ])
+                    ->required()
+                    ->native(false),
 
                 TextInput::make('shop_name')->required()->maxLength(255),
                 TextInput::make('address')->required()->maxLength(255),
@@ -77,11 +86,20 @@ class UserResource extends Resource
                             ->where('province_id', $state)
                             ->pluck('name', 'id');
                     }),
-                TextInput::make('ref_id')->numeric(),
-                TextInput::make('open_balance')->numeric()->default(0),
-                TextInput::make('balance')->numeric()->default(0),
-                FileUpload::make('profile_image')->directory('profile_images')->image()->acceptedFileTypes(['image/jpg', 'image/svg', 'image/jpeg', 'image/png', 'image/webp'])->maxSize(2048),
+              
                 TextInput::make('secondary_contact')->maxLength(20),
+                TextInput::make('open_balance')->numeric()->default(0),
+                Select::make('open_balance_type')
+                    ->label('Opening Balance Type')
+                    ->options([
+                        'debit' => 'Debit',
+                        'credit' => 'Credit',
+                    ])
+                    ->required()
+                    ->native(false), // (optional) for better UI
+                TextInput::make('balance')->readonly()->numeric()->default(0),
+                TextInput::make('current_balance_type')->readonly(),
+                TextInput::make('ref_id')->numeric(),
                 DatePicker::make('dob'),
                 Select::make('tax_type')
                     ->options([
@@ -91,11 +109,10 @@ class UserResource extends Resource
                     ->required(),
                 TextInput::make('tax_no')->maxLength(50),
 
-                TextInput::make('password')
-                    ->password()
-                    ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
-                    ->required(fn(string $context): bool => $context === 'create')
-                    ->label('Password'),
+                
+                FileUpload::make('profile_image')->directory('profile_images')->image()->acceptedFileTypes(['image/jpg', 'image/svg', 'image/jpeg', 'image/png', 'image/webp'])->maxSize(2048),
+                Toggle::make('disabled')->label('Disabled'),
+
             ]);
     }
 
