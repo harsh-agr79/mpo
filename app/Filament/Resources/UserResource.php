@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\Role;
 use App\Models\User;
+use DB;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -49,8 +51,32 @@ class UserResource extends Resource
                 TextInput::make('shop_name')->required()->maxLength(255),
                 TextInput::make('address')->required()->maxLength(255),
                 TextInput::make('area')->maxLength(255),
-                TextInput::make('state')->maxLength(255),
-                TextInput::make('district')->maxLength(255),
+                Select::make('state')
+                    // ->relationship('subCategories', 'name')
+                    ->required()
+                    ->label('State/Province')
+                    ->reactive()
+                    ->searchable()
+                    ->options(function () {
+                        return DB::table('provinces')
+                            ->pluck('name', 'id');
+                    }),
+                Select::make('district')
+                    // ->relationship('subCategories', 'name')
+                    ->required()
+                    ->label('District')
+                    ->searchable()
+                    ->reactive()
+                    ->options(function (Get $get) {
+                        $state = $get('state'); // Get the selected category ID
+                        if (!$state) {
+                            return []; // If no category is selected, return an empty array
+                        }
+
+                        return DB::table('districts')
+                            ->where('province_id', $state)
+                            ->pluck('name', 'id');
+                    }),
                 TextInput::make('ref_id')->numeric(),
                 TextInput::make('open_balance')->numeric()->default(0),
                 TextInput::make('balance')->numeric()->default(0),
