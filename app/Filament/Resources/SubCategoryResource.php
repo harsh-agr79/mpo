@@ -22,14 +22,15 @@ class SubCategoryResource extends Resource
 {
     protected static ?string $model = SubCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-hashtag';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Select::make('category_id')
-                    ->relationship(name: 'category', titleAttribute: 'name'),
+                    ->relationship(name: 'category', titleAttribute: 'name')
+                    ->required(),
                 TextInput::make('name')
                     ->unique(ignoreRecord: true, modifyRuleUsing: function (Get $get, Unique $rule) {
                         return $rule->where('category_id', $get('category_id'));

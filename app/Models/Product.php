@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -12,24 +13,36 @@ class Product extends Model
     protected $fillable = [
         'name',
         'category_id',
-        'subcategory_id',
+        'sub_category_id',
         'price',
         'stock',
         'prod_unique_id',
         'offer',
+        'order_num',
         'image',
         'image_2',
         'details'
     ];
+
+    protected $casts = [
+        'order_num' => 'integer',
+    ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope( 'order', function (Builder $builder) {
+            $builder->orderBy('order_num', 'asc');
+        });
+    }
 
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    public function subCategories()
+    public function subCategory()
     {
-        return $this->belongsToMany(SubCategory::class);
+        return $this->belongsTo(SubCategory::class);
     }
 
     public function batches()
