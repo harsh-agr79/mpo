@@ -6,9 +6,12 @@ use App\Filament\Resources\BatchResource\Pages;
 use App\Filament\Resources\BatchResource\RelationManagers;
 use App\Models\Batch;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -23,7 +26,12 @@ class BatchResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Select::make('product_id')
+                    ->relationship(name: 'product', titleAttribute: 'name')
+                    ->required()
+                    ->label('Product'),
+                TextInput::make('batch_no')
+                    ->required(),
             ]);
     }
 
@@ -31,13 +39,17 @@ class BatchResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('batch_no'),
+                TextColumn::make('product.name')
+                    ->label('Product')
+                    ->badge()
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
