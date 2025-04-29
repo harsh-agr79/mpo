@@ -17,6 +17,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -86,7 +87,7 @@ class UserResource extends Resource
                             ->where('province_id', $state)
                             ->pluck('name', 'id');
                     }),
-              
+
                 TextInput::make('secondary_contact')->maxLength(20),
                 TextInput::make('open_balance')->numeric()->default(0),
                 Select::make('open_balance_type')
@@ -109,7 +110,7 @@ class UserResource extends Resource
                     ->required(),
                 TextInput::make('tax_no')->maxLength(50),
 
-                
+
                 FileUpload::make('profile_image')->directory('profile_images')->image()->acceptedFileTypes(['image/jpg', 'image/svg', 'image/jpeg', 'image/png', 'image/webp'])->maxSize(2048),
                 Toggle::make('disabled')->label('Disabled'),
 
@@ -120,13 +121,26 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                ImageColumn::make('profile_image')
+                    ->label('Avatar')
+                    ->square()
+                    ->width(100)
+                    ->height(100),
                 TextColumn::make('name')->searchable(),
                 TextColumn::make('email')->searchable(),
+                TextColumn::make('dob')->label('Date of Birth')->date('Y-m-d'),
                 TextColumn::make('contact')->label('Contact')->searchable(),
-                TextColumn::make('role.name')->label('Role')->badge(),
+                TextColumn::make('type')->label('User Type')->badge(),
                 TextColumn::make('shop_name')->label('Shop Name'),
+                TextColumn::make('area'),
+                TextColumn::make('address'),
+                // TextColumn::make('state.name')->label('Province'),
+                // TextColumn::make('district.name'),
                 TextColumn::make('open_balance')->label('Open Balance')->money('npr'),
                 TextColumn::make('balance')->label('Balance')->money('npr'),
+                TextColumn::make('open_balance_type')->label('Open Balance Type'),
+                TextColumn::make('tax_no')->label('Tax No.'),
+                TextColumn::make('tax_type')->label('Tax Type'),
                 TextColumn::make('disabled')
                     ->label('Disabled')
                     ->formatStateUsing(fn(bool $state) => $state ? 'true' : 'false')

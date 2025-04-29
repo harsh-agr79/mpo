@@ -25,7 +25,7 @@ class SubCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-hashtag';
 
-    protected static ?string $navigationGroup = "Products";
+    protected static ?string $navigationGroup = "Inventory";
 
     public static function form(Form $form): Form
     {
@@ -48,7 +48,7 @@ class SubCategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable(),
                 TextColumn::make('category.name')
                     ->badge(),
             ])

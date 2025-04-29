@@ -21,7 +21,7 @@ class CategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
-    protected static ?string $navigationGroup = "Products";
+    protected static ?string $navigationGroup = "Inventory";
 
     public static function form(Form $form): Form
     {
@@ -40,7 +40,7 @@ class CategoryResource extends Resource
             ->reorderable('order_num')
             ->defaultSort('order_num')
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable(),
                 TextColumn::make('subCategories.name')
                     ->badge(),
             ])

@@ -30,7 +30,7 @@ class ProductResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
-    protected static ?string $navigationGroup = "Products";
+    protected static ?string $navigationGroup = "Inventory";
 
     public static function form(Form $form): Form
     {
@@ -106,16 +106,16 @@ class ProductResource extends Resource
                     ->square()
                     ->width(100)
                     ->height(100),
-                TextColumn::make('name'),
+                TextColumn::make('name')->searchable(),
                 TextColumn::make('category.name')
                     ->label('Category')
                     ->badge(),
                 // TextColumn::make('subCategory.name')
                 //     ->label('SubCategory')
                 //     ->badge(),
-                TextColumn::make('price')->label('Price'),
+                TextColumn::make('price')->label('Price')->money('npr'),
                 TextColumn::make('stock')->label('Stock'),
-                TextColumn::make('prod_unique_id')->label('Slug'),
+                TextColumn::make('prod_unique_id')->label('Slug')->searchable(),
                 TextColumn::make('offer')->label('Offer'),
                 ImageColumn::make('image_2')->label('Additional Image')->square()
                     ->width(100)

@@ -23,7 +23,7 @@ class BatchResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = "Products";
+    protected static ?string $navigationGroup = "Inventory";
 
     public static function form(Form $form): Form
     {
@@ -44,8 +44,9 @@ class BatchResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('batch_no'),
+                TextColumn::make('batch_no')->searchable(),
                 TextColumn::make('product.name')
+                    ->searchable()
                     ->label('Product')
                     ->badge()
             ])
