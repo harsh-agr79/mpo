@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\TargetsRelationManager;
 use App\Models\Role;
 use App\Models\User;
 use DB;
@@ -35,7 +36,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('userid')->required()->maxLength(length: 255),
+                TextInput::make('userid')->required()->maxLength(length: 255)->unique(ignoreRecord: true),
                 TextInput::make('name')->required()->maxLength(length: 255),
                 TextInput::make('email')->email()->required()->maxLength(255),
                 TextInput::make('contact')
@@ -164,7 +165,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TargetsRelationManager::class,
         ];
     }
 
