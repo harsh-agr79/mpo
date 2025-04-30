@@ -32,7 +32,7 @@ class Product extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope( 'order', function (Builder $builder) {
+        static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('order_num', 'asc');
         });
     }
@@ -50,5 +50,10 @@ class Product extends Model
     public function batches()
     {
         return $this->hasMany(Batch::class);
+    }
+
+    public function parts()
+    {
+        return $this->hasMany(Part::class);
     }
 }

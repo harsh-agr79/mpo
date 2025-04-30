@@ -45,7 +45,6 @@ class ProductResource extends Resource
                     ->options(Category::all()->pluck('name', 'id'))
                     ->label('Category'),
                 Select::make('sub_category_id')
-                    // ->relationship('subCategories', 'name')
                     ->required()
                     ->label('SubCategories')
                     ->multiple()
@@ -60,7 +59,7 @@ class ProductResource extends Resource
                         return DB::table('sub_categories')
                             ->where('category_id', $categoryId)
                             ->pluck('name', 'id');
-                    }),
+                    }), 
                 TextInput::make('price')->required()
                     ->label('Price')
                     ->numeric()
