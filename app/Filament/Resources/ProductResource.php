@@ -59,7 +59,7 @@ class ProductResource extends Resource
                         return DB::table('sub_categories')
                             ->where('category_id', $categoryId)
                             ->pluck('name', 'id');
-                    }), 
+                    }),
                 TextInput::make('price')->required()
                     ->label('Price')
                     ->numeric()
@@ -121,15 +121,20 @@ class ProductResource extends Resource
                     ->height(100),
             ])
             ->filters([
-                //
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+
                 ]),
             ]);
     }
