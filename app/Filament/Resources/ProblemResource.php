@@ -14,6 +14,8 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\BadgeColumn;
+use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -45,7 +47,16 @@ class ProblemResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('problem')
+                TextColumn::make('problem'),
+                TagsColumn::make('category_id')
+                    ->label('Categories')
+                    ->getStateUsing(function ($record) {
+                        $ids = is_string($record->category_id)
+                            ? json_decode($record->category_id, true)
+                            : $record->category_id;
+
+                        return Category::whereIn('id', $ids ?? [])->pluck('name')->toArray();
+                    })
             ])
             ->filters([
                 //
