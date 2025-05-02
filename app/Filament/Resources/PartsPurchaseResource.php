@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PartsPurchaseResource\Pages;
 use App\Filament\Resources\PartsPurchaseResource\RelationManagers;
+use App\Models\Part;
 use App\Models\PartsPurchase;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -29,11 +30,6 @@ class PartsPurchaseResource extends Resource
     {
         return $form
             ->schema([
-                // TextInput::make('invoice_id')
-                //     ->default(fn() => getNepaliInvoiceId())
-                //     ->disabled()
-                //     ->dehydrated(),
-
                 DatePicker::make('date')
                     ->default(now())
                     ->required(),
@@ -43,12 +39,25 @@ class PartsPurchaseResource extends Resource
                     ->schema([
                         Select::make('part_id')
                             ->relationship('part', 'name')
+                            ->searchable()
+                            ->options(Part::all()->pluck('name', 'id'))
                             ->required(),
-                        TextInput::make('voucher'),
+                        Select::make('voucher')
+                            ->searchable()
+                            ->options([
+                                'purchase' => 'Purchase',
+                                'sales' => 'Sales',
+                                'loss' => 'Loss',
+                                'found' => 'Found',
+                                'refurbish' => 'Refurbish',
+                                'office_dmg_use' => 'Office Damage Use'
+                            ])
+                            ->required(),
                         TextInput::make('quantity')
                             ->numeric()
                             ->required(),
                     ])
+                    ->columnSpanFull()
                     ->minItems(1)
                     ->createItemButtonLabel('Add Item'),
             ]);

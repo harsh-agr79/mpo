@@ -2,11 +2,13 @@
 
 use App\Models\PartsPurchase;
 
-class NepaliCalender {
+class NepaliCalender
+{
 
     private static $instance;
 
-    public static function getInstance() {
+    public static function getInstance()
+    {
         if (is_null(self::$instance)) {
             self::$instance = new self();
         }
@@ -117,7 +119,8 @@ class NepaliCalender {
      * @param int $day
      * @return string
      */
-    private function _get_nepali_day_of_week($day) {
+    private function _get_nepali_day_of_week($day)
+    {
         switch ($day) {
             case 1:
                 $day = "&#2310;&#2311;&#2340;&#2348;&#2366;&#2352;";
@@ -150,7 +153,8 @@ class NepaliCalender {
         return $day;
     }
 
-    private function _get_day_of_week($day) {
+    private function _get_day_of_week($day)
+    {
         switch ($day) {
             case 1:
                 $day = "Sunday";
@@ -189,7 +193,8 @@ class NepaliCalender {
      * @param int $m
      * @return string
      */
-    private function _get_english_month($m) {
+    private function _get_english_month($m)
+    {
         $eMonth = FALSE;
         switch ($m) {
             case 1:
@@ -237,7 +242,8 @@ class NepaliCalender {
      * @param int $m
      * @return string
      */
-    private function _get_nepali_month($m) {
+    private function _get_nepali_month($m)
+    {
         $n_month = FALSE;
 
         switch ($m) {
@@ -292,7 +298,8 @@ class NepaliCalender {
         return $n_month;
     }
 
-    public function _get_nepali_month_in_nepali($m) {
+    public function _get_nepali_month_in_nepali($m)
+    {
         $n_month = FALSE;
 
         switch ($m) {
@@ -355,7 +362,8 @@ class NepaliCalender {
      * @param int $dd
      * @return bool
      */
-    private function _is_in_range_eng($yy, $mm, $dd): string {
+    private function _is_in_range_eng($yy, $mm, $dd): string
+    {
         if ($yy < 1944 || $yy > 2033) {
             return 'Supported only between 1944-2022';
         }
@@ -379,7 +387,8 @@ class NepaliCalender {
      * @param int $dd
      * @return bool
      */
-    private function _is_in_range_nep($yy, $mm, $dd): string {
+    private function _is_in_range_nep($yy, $mm, $dd): string
+    {
         if ($yy < 2000 || $yy > 2089) {
             return 'Supported only between 2000-2089';
         }
@@ -401,7 +410,8 @@ class NepaliCalender {
      * @param int $year
      * @return bool
      */
-    public function is_leap_year($year) {
+    public function is_leap_year($year)
+    {
         $a = $year;
         if ($a % 100 == 0) {
             if ($a % 400 == 0) {
@@ -426,12 +436,13 @@ class NepaliCalender {
      * @param int $dd
      * @return array
      */
-    public function eng_to_nep($date) {
+    public function eng_to_nep($date)
+    {
         $date = strtotime($date);
-        $yy = date('Y',$date);
-        $mm = date('m',$date);
-        $dd = date('d',$date);
-        
+        $yy = date('Y', $date);
+        $mm = date('m', $date);
+        $dd = date('d', $date);
+
         // Check for date range
         $chk = $this->_is_in_range_eng($yy, $mm, $dd);
 
@@ -539,81 +550,79 @@ class NepaliCalender {
         }
     }
 
-    public function count_numof_days($smon, $syear, $emon, $eyear, $td, $tm, $ty){
+    public function count_numof_days($smon, $syear, $emon, $eyear, $td, $tm, $ty)
+    {
         $a = 0;
-        if($tm<=$emon && $ty == $eyear){
-            for ($i=$syear; $i <=$eyear ; $i++) {
-                if($i==$syear && $i == $eyear){
-                    for ($j=$smon; $j <= $tm-1; $j++) { 
+        if ($tm <= $emon && $ty == $eyear) {
+            for ($i = $syear; $i <= $eyear; $i++) {
+                if ($i == $syear && $i == $eyear) {
+                    for ($j = $smon; $j <= $tm - 1; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
-                }
-                elseif($i==$syear && $i!=$eyear){
-                    for ($j=$smon; $j <= 12; $j++) { 
+                } elseif ($i == $syear && $i != $eyear) {
+                    for ($j = $smon; $j <= 12; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
-                }
-                elseif($i!=$syear && $i==$eyear){
-                    for ($j=1; $j <= $tm-1; $j++) { 
+                } elseif ($i != $syear && $i == $eyear) {
+                    for ($j = 1; $j <= $tm - 1; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
-                }
-                elseif ($i>$syear&&$i<$eyear) {
-                    for ($j=1; $j <= 12; $j++) { 
+                } elseif ($i > $syear && $i < $eyear) {
+                    for ($j = 1; $j <= 12; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
                 }
             }
             $a = $a + $td;
-        }
-        else{
-            for ($i=$syear; $i <=$eyear ; $i++) {
-                if($i==$syear && $i == $eyear){
-                    for ($j=$smon; $j <= $emon; $j++) { 
+        } else {
+            for ($i = $syear; $i <= $eyear; $i++) {
+                if ($i == $syear && $i == $eyear) {
+                    for ($j = $smon; $j <= $emon; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
-                }
-                elseif($i==$syear && $i!=$eyear){
-                    for ($j=$smon; $j <= 12; $j++) { 
+                } elseif ($i == $syear && $i != $eyear) {
+                    for ($j = $smon; $j <= 12; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
-                }
-                elseif($i!=$syear && $i==$eyear){
-                    for ($j=1; $j <= $emon; $j++) { 
+                } elseif ($i != $syear && $i == $eyear) {
+                    for ($j = 1; $j <= $emon; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
-                }
-                elseif ($i>$syear&&$i<$eyear) {
-                    for ($j=1; $j <= 12; $j++) { 
+                } elseif ($i > $syear && $i < $eyear) {
+                    for ($j = 1; $j <= 12; $j++) {
                         $a = $a + $this->_bs[$i][$j];
                     }
                 }
             }
         }
-        
+
         $this->days['days'] = $a;
 
         return $this->days;
     }
-    public function getlastdateofmonth($mon, $year){
+    public function getlastdateofmonth($mon, $year)
+    {
         $lastdate = $this->_bs[$year][$mon];
         $this->date['date'] = $lastdate;
         return $this->date;
     }
-    function getNepaliLetterOfDate($string){
+    function getNepaliLetterOfDate($string)
+    {
         $letterArray = str_split($string);
-        $arrayDay = array('0'=>'&#2406;',
-                       '1'=>'&#2407;',
-                       '2'=>'&#2408;',
-                       '3'=>'&#2409;',
-                       '4'=>'&#2410;',
-                       '5'=>'&#2411;',
-                       '6'=>'&#2412;',
-                       '7'=>'&#2413;',
-                       '8'=>'&#2414;',
-                       '9'=>'&#2415;');
-        $strNepaliDate="";
-        foreach($letterArray as $letter){
+        $arrayDay = array(
+            '0' => '&#2406;',
+            '1' => '&#2407;',
+            '2' => '&#2408;',
+            '3' => '&#2409;',
+            '4' => '&#2410;',
+            '5' => '&#2411;',
+            '6' => '&#2412;',
+            '7' => '&#2413;',
+            '8' => '&#2414;',
+            '9' => '&#2415;'
+        );
+        $strNepaliDate = "";
+        foreach ($letterArray as $letter) {
             $strNepaliDate .= $arrayDay[$letter];
         }
         return $strNepaliDate;
@@ -627,7 +636,8 @@ class NepaliCalender {
      * @param int $dd
      * @return array
      */
-    public function nep_to_eng($yy, $mm, $dd) {
+    public function nep_to_eng($yy, $mm, $dd)
+    {
         $def_eyy = 1943;
         $def_emm = 4;
         $def_edd = 14 - 1; // initial english date.
@@ -739,71 +749,69 @@ class NepaliCalender {
             return $this->_eng_date;
         }
     }
-	
-	
-	/* added for Calendar by Ritesh*/
-	/* _get_nepali_month_in_nepali() function made public instead of private*/
-	
-	public function daysinmonth($year){
+
+
+    /* added for Calendar by Ritesh*/
+    /* _get_nepali_month_in_nepali() function made public instead of private*/
+
+    public function daysinmonth($year)
+    {
 
         /* returns the number of days of the month of the respective year and month */
 
-        if($year =='2070'){
-        $days_in_month = array(0, 31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30);
-        }else if($year=='2071'){
-        $days_in_month = array(0, 31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30);
-        }else if($year=='2072'){
-        $days_in_month = array(0, 31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30);
-        }else if($year=='2073'){
-        $days_in_month = array(0, 31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31);
-        }else if($year=='2074'){
-        $days_in_month = array(0, 31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30);
-        }else if($year=='2075'){
-        $days_in_month = array(0, 31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30);
-        }
-        else if($year=='2076'){
-        $days_in_month = array(0, 31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30);
-        }else
-        {
+        if ($year == '2070') {
+            $days_in_month = array(0, 31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30);
+        } else if ($year == '2071') {
+            $days_in_month = array(0, 31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30);
+        } else if ($year == '2072') {
+            $days_in_month = array(0, 31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30);
+        } else if ($year == '2073') {
+            $days_in_month = array(0, 31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 31);
+        } else if ($year == '2074') {
+            $days_in_month = array(0, 31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30);
+        } else if ($year == '2075') {
+            $days_in_month = array(0, 31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30);
+        } else if ($year == '2076') {
+            $days_in_month = array(0, 31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30);
+        } else {
             $days_in_month = array(0, 31, 32, 31, 32, 31, 30, 30, 30, 29, 29, 30, 30);
             //
         }
-		return $days_in_month;
+        return $days_in_month;
     }
-	public function startdate($year){
+    public function startdate($year)
+    {
 
-        /* returns the start DAY of the month of the respective year and month */        
-        if($year =='2070'){
-        $firstday = array(0,0,3,6,2,6,2,5,6,1,3,4,6);
-        }else if($year=='2071'){
-        $firstday = array(0,1,4,0,4,0,3,6,1,2,4,5,0);
-        }else if($year=='2072'){
-        $firstday = array(0,2,5,2,5,2,5,0,2,3,5,6,1);
-        }else if($year=='2073'){
-        $firstday = array(0,3,6,3,6,3,6,1,3,5,6,0,2);
-        }else if($year=='2074'){
-        $firstday = array(0,5,1,4,0,4,0,3,5,6,1,2,4);
-        }else if($year=='2075'){
-        $firstday = array(0,6,2,5,2,5,1,4,6,0,2,3,5);
-        }   
-        else if($year=='2076'){
-        $firstday = array(0,0,3,0,3,0,3,5,0,2,3,4,6);
+        /* returns the start DAY of the month of the respective year and month */
+        if ($year == '2070') {
+            $firstday = array(0, 0, 3, 6, 2, 6, 2, 5, 6, 1, 3, 4, 6);
+        } else if ($year == '2071') {
+            $firstday = array(0, 1, 4, 0, 4, 0, 3, 6, 1, 2, 4, 5, 0);
+        } else if ($year == '2072') {
+            $firstday = array(0, 2, 5, 2, 5, 2, 5, 0, 2, 3, 5, 6, 1);
+        } else if ($year == '2073') {
+            $firstday = array(0, 3, 6, 3, 6, 3, 6, 1, 3, 5, 6, 0, 2);
+        } else if ($year == '2074') {
+            $firstday = array(0, 5, 1, 4, 0, 4, 0, 3, 5, 6, 1, 2, 4);
+        } else if ($year == '2075') {
+            $firstday = array(0, 6, 2, 5, 2, 5, 1, 4, 6, 0, 2, 3, 5);
+        } else if ($year == '2076') {
+            $firstday = array(0, 0, 3, 0, 3, 0, 3, 5, 0, 2, 3, 4, 6);
+        } else if ($year == '2077') {
+            $firstday = array(0, 1, 4, 1, 4, 1, 4, 6, 1, 3, 4, 6, 0);
+        } else if ($year == '2078') {
+            $firstday = array(0, 3, 6, 2, 5, 2, 5, 1, 3, 4, 6, 0, 2);
+        } else {
+            $firstday = array(0, 0, 3, 0, 3, 0, 3, 5, 0, 2, 3, 4, 6);
+            //temp
         }
-        else if($year=='2077'){
-        $firstday = array(0,1,4,1,4,1,4,6,1,3,4,6,0);
-        }else if($year=='2078'){
-        $firstday = array(0,3,6,2,5,2,5,1,3,4,6,0,2);
-        }
-        else{
-           $firstday = array(0,0,3,0,3,0,3,5,0,2,3,4,6);
-           //temp
-        }
-       
 
-    return $firstday;
+
+        return $firstday;
     }
-	
-	 public function get_relative_english_months($month){
+
+    public function get_relative_english_months($month)
+    {
 
         switch ($month) {
             case 1:
@@ -857,7 +865,8 @@ class NepaliCalender {
         return $n_month;
 
     }
-	public function _get_short_nepali_day_of_week($day) {
+    public function _get_short_nepali_day_of_week($day)
+    {
         switch ($day) {
             case 1:
                 $day = "&#2310;&#2311;&#2340;";
@@ -889,19 +898,20 @@ class NepaliCalender {
         }
         return $day;
     }
-	
-	public function readable_date($date){
+
+    public function readable_date($date)
+    {
         $new_date = explode('-', $date);
         $year = $new_date[0];
         $month = $new_date[1];
         $day = $new_date[2];
 
         $nep_month = $this->_get_nepali_month_in_nepali($month);
-        
+
         $nep_day = $this->getNepaliLetterOfDate($day);
         $nep_year = $this->getNepaliLetterOfDate($year);
-    
-        $final_date = $nep_month." ".$nep_day;
+
+        $final_date = $nep_month . " " . $nep_day;
 
         return $final_date;
 
@@ -910,31 +920,35 @@ class NepaliCalender {
 
 }
 
-function getNepaliDate($date){
+function getNepaliDate($date)
+{
     $ndate = NepaliCalender::getInstance()->eng_to_nep($date);
-    $ndate = $ndate['date'].'-'.$ndate['month'].'-'.$ndate['year'];
+    $ndate = $ndate['date'] . '-' . $ndate['month'] . '-' . $ndate['year'];
     return $ndate;
-  }
-  function getNepaliDateId($date){
+}
+function getNepaliDateId($date)
+{
     $ndate = NepaliCalender::getInstance()->eng_to_nep($date);
-    $ndate = $ndate['date'].$ndate['month'].$ndate['year'];
+    $ndate = $ndate['date'] . $ndate['month'] . $ndate['year'];
     return $ndate;
-  }
-  function getLastDate($mon,$year){
+}
+function getLastDate($mon, $year)
+{
     $ndate = NepaliCalender::getInstance()->getlastdateofmonth($mon, $year);
     return $ndate['date'];
-  }
-function getNepaliDays($smon, $syear, $emon, $eyear, $td, $tm, $ty){
+}
+function getNepaliDays($smon, $syear, $emon, $eyear, $td, $tm, $ty)
+{
     $ndate = NepaliCalender::getInstance()->count_numof_days($smon, $syear, $emon, $eyear, $td, $tm, $ty);
     $ndate = $ndate['days'];
     return $ndate;
-  }
-  function getNepaliDay($date)
-  {
-      $ndate = NepaliCalender::getInstance()->eng_to_nep($date);
-      $ndate = $ndate['date'];
-      return $ndate;
-  }
+}
+function getNepaliDay($date)
+{
+    $ndate = NepaliCalender::getInstance()->eng_to_nep($date);
+    $ndate = $ndate['date'];
+    return $ndate;
+}
 
 function getNepaliMonth($date)
 {
@@ -949,22 +963,22 @@ function getNepaliYear($date)
     return $ndate;
 }
 
-  function getEnglishDate($year,$month,$day){
+function getEnglishDate($year, $month, $day)
+{
     // $year = date('Y',strtotime($date));
     // $month = date('m',strtotime($date));
     // $day = date('d',strtotime($date));
     // $edate = NepaliCalender::getInstance()->nep_to_eng($year,$month,$day);
-    $edate = NepaliCalender::getInstance()->nep_to_eng($year,$month,$day);
-    if($edate['month'] > 9){
-        $date = $edate['year'].'-'.$edate['month'].'-'.$edate['date'];
-    }
-    else{
-        $date = $edate['year'].'-0'.$edate['month'].'-'.$edate['date'];
+    $edate = NepaliCalender::getInstance()->nep_to_eng($year, $month, $day);
+    if ($edate['month'] > 9) {
+        $date = $edate['year'] . '-' . $edate['month'] . '-' . $edate['date'];
+    } else {
+        $date = $edate['year'] . '-0' . $edate['month'] . '-' . $edate['date'];
     }
     return $date;
-  }
+}
 
-function getNepaliInvoiceId(): string
+function getNepaliInvoiceId($purchaseTag = false): string
 {
     $date = now()->format('dmY');
 
@@ -986,5 +1000,8 @@ function getNepaliInvoiceId(): string
         $invoice_id = $date . str_pad($countToday, 2, '0', STR_PAD_LEFT);
     }
 
-    return $invoice_id;
+    if (!$purchaseTag)
+        return $invoice_id;
+    else
+        return 'purchase_' . $invoice_id;
 }
