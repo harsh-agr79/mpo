@@ -6,12 +6,15 @@ use App\Filament\Resources\PartsPurchaseResource\Pages;
 use App\Filament\Resources\PartsPurchaseResource\RelationManagers;
 use App\Models\Part;
 use App\Models\PartsPurchase;
+use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -31,35 +34,27 @@ class PartsPurchaseResource extends Resource
         return $form
             ->schema([
                 DatePicker::make('date')
-                    ->default(now())
-                    ->required(),
-
-                Repeater::make('items')
-                    ->relationship()
-                    ->schema([
-                        Select::make('part_id')
-                            ->relationship('part', 'name')
-                            ->searchable()
-                            ->options(Part::all()->pluck('name', 'id'))
-                            ->required(),
-                        Select::make('voucher')
-                            ->searchable()
-                            ->options([
-                                'purchase' => 'Purchase',
-                                'sales' => 'Sales',
-                                'loss' => 'Loss',
-                                'found' => 'Found',
-                                'refurbish' => 'Refurbish',
-                                'office_dmg_use' => 'Office Damage Use'
-                            ])
-                            ->required(),
-                        TextInput::make('quantity')
-                            ->numeric()
-                            ->required(),
-                    ])
-                    ->columnSpanFull()
-                    ->minItems(1)
-                    ->createItemButtonLabel('Add Item'),
+                    ->default(today())
+                    ->reactive()
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        $set('invoice_id', getNepaliInvoiceId($state));
+                    }),
+                TextInput::make('invoice_id')
+                    ->default(fn(Get $get) => getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d')))
+                    ->disabled()
+                    ->dehydrated(),
+                Repeater::make('items')->relationship()->schema([
+                    Select::make('part_id')->relationship('part', 'name')->searchable()->options(Part::all()->pluck('name', 'id'))->required(),
+                    Select::make('voucher')->searchable()->options([
+                        'purchase' => 'Purchase',
+                        'sales' => 'Sales',
+                        'loss' => 'Loss',
+                        'found' => 'Found',
+                        'refurbish' => 'Refurbish',
+                        'office_dmg_use' => 'Office Damage Use'
+                    ])->required(),
+                    TextInput::make('quantity')->numeric()->required(),
+                ])->columnSpanFull()->minItems(1)->createItemButtonLabel('Add Item'),
             ]);
     }
 

@@ -20,14 +20,6 @@ class PartsPurchase extends Model
     protected $withCount = ['items'];
 
 
-    protected static function booted()
-    {
-        static::creating(function ($model) {
-            $model->invoice_id = getNepaliInvoiceId(); // from your helper
-        });
-    }
-
-
     public function items()
     {
         return $this->hasMany(PartsPurchaseItem::class, 'invoice_id', 'invoice_id');

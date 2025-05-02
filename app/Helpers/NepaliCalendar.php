@@ -362,7 +362,7 @@ class NepaliCalender
      * @param int $dd
      * @return bool
      */
-    private function _is_in_range_eng($yy, $mm, $dd): string
+    private function _is_in_range_eng($yy, $mm, $dd)
     {
         if ($yy < 1944 || $yy > 2033) {
             return 'Supported only between 1944-2022';
@@ -387,7 +387,7 @@ class NepaliCalender
      * @param int $dd
      * @return bool
      */
-    private function _is_in_range_nep($yy, $mm, $dd): string
+    private function _is_in_range_nep($yy, $mm, $dd)
     {
         if ($yy < 2000 || $yy > 2089) {
             return 'Supported only between 2000-2089';
@@ -978,30 +978,30 @@ function getEnglishDate($year, $month, $day)
     return $date;
 }
 
-function getNepaliInvoiceId($purchaseTag = false): string
-{
-    $date = now()->format('dmY');
 
-    // Find the highest sequence number already used for this date (if any)
-    $existingInvoice = PartsPurchase::whereDate('date', now())
-        ->where('invoice_id', 'like', $date . '%')  // Match all invoice_ids that start with the current date
-        ->orderByDesc('invoice_id')  // Sort in descending order to get the most recent one
+function getNepaliInvoiceId($customDate = null, $purchaseTag = false): string
+{
+    $dateObj = $customDate ? \Carbon\Carbon::parse($customDate) : now();
+
+    // Use English date (ddmmyyyy) for ID generation
+    // $englishDateId = $dateObj->format('dmY');
+
+    $nepaliDateId = getNepaliDateId($dateObj);
+
+    // Find the latest matching invoice
+    $existingInvoice = PartsPurchase::whereDate('date', $dateObj)
+        ->where('invoice_id', 'like', $nepaliDateId . '%')
+        ->orderByDesc('invoice_id')
         ->first();
 
-    // If no existing invoice for today, start with sequence number 1
-    $countToday = $existingInvoice ? (int) substr($existingInvoice->invoice_id, -2) + 1 : 1;
+    $countToday = $existingInvoice ? ((int) substr($existingInvoice->invoice_id, -2)) + 1 : 1;
 
-    // Check if the generated invoice_id already exists
-    $invoice_id = $date . str_pad($countToday, 2, '0', STR_PAD_LEFT);
+    $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
 
-    // Ensure the generated invoice_id is unique by incrementing the count if it already exists
     while (PartsPurchase::where('invoice_id', $invoice_id)->exists()) {
         $countToday++;
-        $invoice_id = $date . str_pad($countToday, 2, '0', STR_PAD_LEFT);
+        $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
     }
 
-    if (!$purchaseTag)
-        return $invoice_id;
-    else
-        return 'purchase_' . $invoice_id;
+    return $purchaseTag ? 'purchase_' . $invoice_id : $invoice_id;
 }
