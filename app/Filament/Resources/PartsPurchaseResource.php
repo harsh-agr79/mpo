@@ -54,7 +54,7 @@ class PartsPurchaseResource extends Resource
                         'office_dmg_use' => 'Office Damage Use'
                     ])->required(),
                     TextInput::make('quantity')->numeric()->required(),
-                ])->columnSpanFull()->minItems(1)->createItemButtonLabel('Add Item'),
+                ])->columnSpanFull()->columns(3)->minItems(1)->createItemButtonLabel('Add Item'),
             ]);
     }
 

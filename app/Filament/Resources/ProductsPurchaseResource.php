@@ -46,6 +46,7 @@ class ProductsPurchaseResource extends Resource
                 Repeater::make('items')
                     ->relationship()
                     ->reactive()
+                    ->columns(2)
                     ->schema([
                         Select::make('prod_unique_id')
                             ->label('Product')
@@ -54,7 +55,6 @@ class ProductsPurchaseResource extends Resource
                             ->reactive()
                             ->searchable()
                             ->options(Product::all()->pluck('name', 'prod_unique_id'))
-                            ->columnSpanFull()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $product = Product::where('prod_unique_id', $state)->first();
                                 if ($product) {
@@ -77,7 +77,6 @@ class ProductsPurchaseResource extends Resource
                             ->default(1)
                             ->reactive()
                             ->minValue(1)
-                            ->columnSpanFull()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $price = (float) ($get('price') ?? 0);
                                 $quantity = (float) ($state ?? 1);
@@ -92,7 +91,6 @@ class ProductsPurchaseResource extends Resource
                         TextInput::make('price')
                             ->numeric()
                             ->disabled()
-                            ->columnSpanFull()
                             ->dehydrated()
                             ->afterStateHydrated(function (callable $set, $get) {
                                 if ($get('prod_unique_id')) {
@@ -114,7 +112,6 @@ class ProductsPurchaseResource extends Resource
                             ->numeric()
                             ->disabled()
                             ->dehydrated()
-                            ->columnSpanFull()
                     ])
                     ->afterStateUpdated(function (Set $set, $state, $get) {
                         // Recalculate total_price immediately when any item's state changes
