@@ -62,11 +62,10 @@ class PartsPurchaseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_id')->sortable()->searchable(),
+                TextColumn::make('invoice_id')->sortable()->searchable()->label('Invoice ID'),
                 TextColumn::make('date')->date(),
-                TextColumn::make('items_count')
-                    ->counts('items') // uses the `items()` relationship in PartsPurchase
-                    ->label('Total Items'),
+                TextColumn::make('items_sum_quantity')
+                    ->label('Total Quantity'),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -80,6 +79,8 @@ class PartsPurchaseResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

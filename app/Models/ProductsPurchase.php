@@ -2,31 +2,36 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PartsPurchase extends Model
+class ProductsPurchase extends Model
 {
-    use HasFactory;
     use SoftDeletes;
 
-    protected $primaryKey = 'invoice_id';
+    protected $primaryKey = 'purchase_id';
 
     public $incrementing = false;
 
-    protected $fillable = ['invoice_id', 'date'];
+    protected $fillable = [
+        'purchase_id',
+        'date',
+        'total_price'
+    ];
+
     protected $keyType = 'string';
     protected $withCount = ['items'];
 
-
     public function items()
     {
-        return $this->hasMany(PartsPurchaseItem::class, 'invoice_id', 'invoice_id');
+        return $this->hasMany(ProductsPurchaseItem::class, 'purchase_id', 'purchase_id');
     }
 
     public function getItemsSumQuantityAttribute()
     {
         return $this->items->sum('quantity');
     }
+
+
+
 }

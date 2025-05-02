@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\PartsPurchase;
+use App\Models\ProductsPurchase;
 
 class NepaliCalender
 {
@@ -982,26 +983,44 @@ function getEnglishDate($year, $month, $day)
 function getNepaliInvoiceId($customDate = null, $purchaseTag = false): string
 {
     $dateObj = $customDate ? \Carbon\Carbon::parse($customDate) : now();
-
-    // Use English date (ddmmyyyy) for ID generation
-    // $englishDateId = $dateObj->format('dmY');
-
     $nepaliDateId = getNepaliDateId($dateObj);
 
-    // Find the latest matching invoice
-    $existingInvoice = PartsPurchase::whereDate('date', $dateObj)
-        ->where('invoice_id', 'like', $nepaliDateId . '%')
-        ->orderByDesc('invoice_id')
-        ->first();
+    if (!$purchaseTag) {
+        $existingInvoice = PartsPurchase::whereDate('date', $dateObj)
+            ->where('invoice_id', 'like', $nepaliDateId . '%')
+            ->orderByDesc('invoice_id')
+            ->first();
 
-    $countToday = $existingInvoice ? ((int) substr($existingInvoice->invoice_id, -2)) + 1 : 1;
+        $countToday = $existingInvoice
+            ? ((int) substr($existingInvoice->invoice_id, strlen($nepaliDateId))) + 1
+            : 1;
 
-    $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
-
-    while (PartsPurchase::where('invoice_id', $invoice_id)->exists()) {
-        $countToday++;
         $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
-    }
 
-    return $purchaseTag ? 'purchase_' . $invoice_id : $invoice_id;
+        while (PartsPurchase::where('invoice_id', $invoice_id)->exists()) {
+            $countToday++;
+            $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
+        }
+
+        return $invoice_id;
+    } else {
+        $existingInvoice = ProductsPurchase::whereDate('date', $dateObj)
+            ->where('purchase_id', 'like', 'purchase_' . $nepaliDateId . '%')
+            ->orderByDesc('purchase_id')
+            ->first();
+
+        $baseId = str_replace('purchase_', '', $existingInvoice->purchase_id ?? '');
+        $countToday = $baseId && strlen($baseId) > strlen($nepaliDateId)
+            ? ((int) substr($baseId, strlen($nepaliDateId))) + 1
+            : 1;
+
+        $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
+
+        while (ProductsPurchase::where('purchase_id', 'purchase_' . $invoice_id)->exists()) {
+            $countToday++;
+            $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
+        }
+
+        return 'purchase_' . $invoice_id;
+    }
 }
