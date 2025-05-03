@@ -5,33 +5,29 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProductsPurchase extends Model
+class ProductsPurchaseAdjustment extends Model
 {
     use SoftDeletes;
 
-    protected $primaryKey = 'purchase_id';
+    protected $primaryKey = 'purchase_adj_id';
 
     public $incrementing = false;
-
     protected $fillable = [
-        'purchase_id',
+        'purchase_adj_id',
         'date',
         'total_price'
     ];
-
+ 
     protected $keyType = 'string';
     protected $withCount = ['items'];
- 
+
     public function items()
     {
-        return $this->hasMany(ProductsPurchaseItem::class, 'purchase_id', 'purchase_id');
+        return $this->hasMany(ProductsPurchaseAdjustmentItem::class, 'purchase_adj_id', 'purchase_adj_id');
     }
 
     public function getItemsSumQuantityAttribute()
     {
         return $this->items->sum('quantity');
     }
-
-
-
 }

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ProductsPurchaseResource\Pages;
-use App\Filament\Resources\ProductsPurchaseResource\RelationManagers;
+use App\Filament\Resources\ProductsPurchaseAdjustmentResource\Pages;
+use App\Filament\Resources\ProductsPurchaseAdjustmentResource\RelationManagers;
 use App\Models\Product;
-use App\Models\ProductsPurchase;
+use App\Models\ProductsPurchaseAdjustment;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
@@ -21,11 +21,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ProductsPurchaseResource extends Resource
+class ProductsPurchaseAdjustmentResource extends Resource
 {
-    protected static ?string $model = ProductsPurchase::class;
+    protected static ?string $model = ProductsPurchaseAdjustment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationGroup = 'Inventory';
 
     public static function form(Form $form): Form
@@ -36,12 +36,12 @@ class ProductsPurchaseResource extends Resource
                     ->default(today())
                     ->reactive()
                     ->afterStateUpdated(function (Set $set, $state) {
-                        $set('purchase_id', getNepaliInvoiceId($state, true));
+                        $set('purchase_adj_id', getAdjustmentInvoiceId($state));
                     }),
-                TextInput::make('purchase_id')
-                    ->default(fn(Get $get) => getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d'), true))
+                TextInput::make('purchase_adj_id')
+                    ->default(fn(Get $get) => getAdjustmentInvoiceId($get('date') ?? today()->format('Y-m-d')))
                     ->disabled()
-                    ->dehydrated(), 
+                    ->dehydrated(),
 
                 Repeater::make('items')
                     ->relationship()
@@ -111,7 +111,15 @@ class ProductsPurchaseResource extends Resource
                         TextInput::make('total')
                             ->numeric()
                             ->disabled()
-                            ->dehydrated()
+                            ->dehydrated(),
+
+                        Select::make('type')
+                            ->searchable()
+                            ->options([
+                                'increase' => 'Increase',
+                                'decrease' => 'Decrease'
+                            ])
+                            ->required()
                     ])
                     ->afterStateUpdated(function (Set $set, $state, $get) {
                         // Recalculate total_price immediately when any item's state changes
@@ -145,7 +153,7 @@ class ProductsPurchaseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('purchase_id')->sortable()->searchable()->label('Purchase ID'),
+                TextColumn::make('purchase_adj_id')->sortable()->searchable()->label('Purchase Adjustment ID'),
                 TextColumn::make('date')->date(),
                 TextColumn::make('items_sum_quantity')
                     ->label('Total Quantity'),
@@ -179,10 +187,18 @@ class ProductsPurchaseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProductsPurchases::route('/'),
-            'create' => Pages\CreateProductsPurchase::route('/create'),
-            'edit' => Pages\EditProductsPurchase::route('/{record}/edit'),
+            'index' => Pages\ListProductsPurchaseAdjustments::route('/'),
+            'create' => Pages\CreateProductsPurchaseAdjustment::route('/create'),
+            'edit' => Pages\EditProductsPurchaseAdjustment::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 
     protected static function mutateFormDataBeforeCreate(array $data): array
@@ -200,7 +216,6 @@ class ProductsPurchaseResource extends Resource
 
         return $data;
     }
-
 
 
 }

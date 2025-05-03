@@ -5,24 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ProductsPurchaseItem extends Model
+class ProductsPurchaseAdjustmentItem extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
-        'purchase_id',
+        'purchase_adj_id',
         'prod_unique_id',
+        'type',
         'quantity'
-    ];
- 
+    ]; 
+
     public function purchase()
     {
-        return $this->belongsTo(ProductsPurchase::class, 'purchase_id', 'purchase_id');
+        return $this->belongsTo(ProductsPurchaseAdjustment::class, 'purchase_adj_id', 'purchase_adj_id');
     }
 
     public function product()
     {
         return $this->belongsTo(Product::class, 'prod_unique_id', 'prod_unique_id');
     }
-
 }
+ 

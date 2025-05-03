@@ -2,6 +2,7 @@
 
 use App\Models\PartsPurchase;
 use App\Models\ProductsPurchase;
+use App\Models\ProductsPurchaseAdjustment;
 
 class NepaliCalender
 {
@@ -1023,4 +1024,28 @@ function getNepaliInvoiceId($customDate = null, $purchaseTag = false): string
 
         return 'purchase_' . $invoice_id;
     }
+}
+
+function getAdjustmentInvoiceId($customDate = null) {
+    $dateObj = $customDate ? \Carbon\Carbon::parse($customDate) : now();
+    $nepaliDateId = getNepaliDateId($dateObj);
+
+    $existingInvoice = ProductsPurchaseAdjustment::whereDate('date', $dateObj)
+        ->where('purchase_adj_id', 'like', 'adj_' . $nepaliDateId . '%')
+        ->orderByDesc('purchase_adj_id')
+        ->first();
+
+    $baseId = str_replace('adj_', '', $existingInvoice->purchase_id ?? '');
+    $countToday = $baseId && strlen($baseId) > strlen($nepaliDateId)
+        ? ((int) substr($baseId, strlen($nepaliDateId))) + 1
+        : 1;
+
+    $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
+
+    while (ProductsPurchaseAdjustment::where('purchase_adj_id', 'adj_' . $invoice_id)->exists()) {
+        $countToday++;
+        $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
+    }
+
+    return 'adj_' . $invoice_id;
 }
