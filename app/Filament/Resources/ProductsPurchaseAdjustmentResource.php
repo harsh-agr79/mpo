@@ -26,7 +26,7 @@ class ProductsPurchaseAdjustmentResource extends Resource
     protected static ?string $model = ProductsPurchaseAdjustment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
-    protected static ?string $navigationGroup = 'Inventory';
+    protected static ?string $navigationGroup = 'Transactions';
 
     public static function form(Form $form): Form
     {
