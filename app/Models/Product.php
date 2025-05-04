@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Product extends Model
+class Product extends BaseModel
 {
     use SoftDeletes;
 
@@ -30,7 +30,7 @@ class Product extends Model
         'sub_category_id' => 'array'
     ];
 
-    protected static function booted()
+    public static function booted()
     {
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('order_num', 'asc');

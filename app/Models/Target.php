@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Target extends Model
+class Target extends BaseModel
 {
     public $timestamps = false;
     protected $fillable = [

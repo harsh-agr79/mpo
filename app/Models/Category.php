@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Category extends BaseModel
 {
     protected $fillable = [
         'name',
@@ -16,8 +16,10 @@ class Category extends Model
         'order_num' => 'integer',
     ];
 
-    protected static function booted()
+    public static function booted()
     {
+        parent::booted();
+        
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('order_num', 'asc');
         });

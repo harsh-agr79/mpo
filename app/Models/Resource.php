@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class Resource extends Model
+class Resource extends BaseModel
 {
     public $timestamps = false;
 

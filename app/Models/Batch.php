@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Batch extends Model
+class Batch extends BaseModel
 {
     public $timestamps = false;
     
