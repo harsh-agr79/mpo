@@ -924,8 +924,9 @@ class NepaliCalender
 
 function getNepaliDate($date)
 {
+    // str_pad($countToday, 2, '0', STR_PAD_LEFT)
     $ndate = NepaliCalender::getInstance()->eng_to_nep($date);
-    $ndate = $ndate['date'] . '-' . $ndate['month'] . '-' . $ndate['year'];
+    $ndate = $ndate['year'] . '-' . str_pad($ndate['month'], 2, '0', STR_PAD_LEFT) . '-' . str_pad($ndate['date'], 2, '0', STR_PAD_LEFT);
     return $ndate;
 }
 function getNepaliDateId($date)
@@ -1026,7 +1027,8 @@ function getNepaliInvoiceId($customDate = null, $purchaseTag = false): string
     }
 }
 
-function getAdjustmentInvoiceId($customDate = null) {
+function getAdjustmentInvoiceId($customDate = null)
+{
     $dateObj = $customDate ? \Carbon\Carbon::parse($customDate) : now();
     $nepaliDateId = getNepaliDateId($dateObj);
 

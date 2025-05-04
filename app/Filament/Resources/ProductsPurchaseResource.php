@@ -41,7 +41,7 @@ class ProductsPurchaseResource extends Resource
                 TextInput::make('purchase_id')
                     ->default(fn(Get $get) => getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d'), true))
                     ->disabled()
-                    ->dehydrated(), 
+                    ->dehydrated(),
 
                 Repeater::make('items')
                     ->relationship()
@@ -146,7 +146,9 @@ class ProductsPurchaseResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('purchase_id')->sortable()->searchable()->label('Purchase ID'),
-                TextColumn::make('date')->date(),
+                TextColumn::make('date')->label('Date (A.D.)')->date('Y-m-d'),
+                TextColumn::make('nepali_date')->label('Date (B.S.)')
+                    ->getStateUsing(fn($record) => getNepaliDate($record->date)),
                 TextColumn::make('items_sum_quantity')
                     ->label('Total Quantity'),
                 TextColumn::make('total_price')->label('Total Price')

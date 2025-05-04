@@ -57,8 +57,11 @@ class PaymentResource extends Resource
                 TextColumn::make('user.name')
                     ->searchable(),
                 TextColumn::make('payment_date')
-                    ->label('Payment Date')
+                    ->label('Payment DateTime')
                     ->dateTime('Y-m-d H:i:s'),
+                TextColumn::make('payment_nepali_date')
+                    ->label('Payment Date (B.S.)')
+                    ->getStateUsing(fn($record) => getNepaliDate($record->payment_date)),
                 TextColumn::make('amount')
                     ->money('npr'),
                 TextColumn::make('voucher')->searchable(),

@@ -56,8 +56,11 @@ class ExpenseResource extends Resource
                 TextColumn::make('user.name')
                     ->searchable(),
                 TextColumn::make('expense_date')
-                    ->label('Expense Date')
+                    ->label('Expense DateTime')
                     ->dateTime('Y-m-d H:i:s'),
+                TextColumn::make('expense_date_nepali')
+                    ->label('Expense Date (B.S.)')
+                    ->getStateUsing(fn ($record) => getNepaliDate($record->expense_date)),
                 TextColumn::make('amount')
                     ->money('npr'),
                 TextColumn::make('particular')

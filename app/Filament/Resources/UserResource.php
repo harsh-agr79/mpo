@@ -129,7 +129,10 @@ class UserResource extends Resource
                     ->height(100),
                 TextColumn::make('name')->searchable(),
                 TextColumn::make('email')->searchable(),
-                TextColumn::make('dob')->label('Date of Birth')->date('Y-m-d'),
+                TextColumn::make('dob')->label('Date of Birth (A.D.)')->date('Y-m-d'),
+                TextColumn::make('dob_nepali')
+                    ->label('Date of Birth (B.S.)')
+                    ->getStateUsing(fn($record) => getNepaliDate($record->dob)),
                 TextColumn::make('contact')->label('Contact')->searchable(),
                 TextColumn::make('type')->label('User Type')->badge(),
                 TextColumn::make('shop_name')->label('Shop Name'),
