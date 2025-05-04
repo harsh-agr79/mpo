@@ -43,7 +43,7 @@ class PartResource extends Resource
                     ->label('Parts Name'),
                 TextInput::make('open_balance')
                     ->numeric()
-                    ->inputMode('decimal')
+                    ->inputMode('integer')
                     ->nullable(),
                 FileUpload::make('image')
                     ->directory('parts')
@@ -66,7 +66,6 @@ class PartResource extends Resource
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('open_balance')
-                    ->money('npr')
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
