@@ -26,7 +26,7 @@ class ProductsPurchaseResource extends Resource
     protected static ?string $model = ProductsPurchase::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static ?string $navigationGroup = 'Transactions';
+    protected static ?string $navigationGroup = 'Purchase';
 
     public static function form(Form $form): Form
     {
@@ -54,21 +54,20 @@ class ProductsPurchaseResource extends Resource
                             ->required()
                             ->reactive()
                             ->searchable()
-                            ->options(Product::all()->pluck('name', 'prod_unique_id'))
+                            ->options(Product::all()->pluck('name', 'prod_unique_id')),
+                        TextInput::make('price')
+                            ->numeric()
+                            ->dehydrated()
+                            ->reactive()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                $product = Product::where('prod_unique_id', $state)->first();
-                                if ($product) {
-                                    $set('price', $product->price);
+                                $price = (float) ($state ?? 0);
+                                $quantity = (float) ($get('quantity') ?? 0);
+                                $set('total', $price * $quantity);
 
-                                    // Immediately update total
-                                    $quantity = (float) $get('quantity');
-                                    $set('total', $quantity * $product->price);
-
-                                    // ✅ Recalculate total_price
-                                    $items = $get('../../items'); // navigate up the repeater context
-                                    $grandTotal = collect($items)->sum('total');
-                                    $set('../../total_price', $grandTotal);
-                                }
+                                // ✅ Recalculate total_price
+                                $items = $get('../../items'); // navigate up the repeater context
+                                $grandTotal = collect($items)->sum('total');
+                                $set('../../total_price', $grandTotal);
                             }),
 
                         TextInput::make('quantity')
@@ -78,8 +77,8 @@ class ProductsPurchaseResource extends Resource
                             ->reactive()
                             ->minValue(1)
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                $price = (float) ($get('price') ?? 0);
                                 $quantity = (float) ($state ?? 1);
+                                $price = (float) ($get('price') ?? 0);
                                 $set('total', $price * $quantity);
 
                                 // ✅ Recalculate total_price
@@ -88,25 +87,6 @@ class ProductsPurchaseResource extends Resource
                                 $set('../../total_price', $grandTotal);
                             }),
 
-                        TextInput::make('price')
-                            ->numeric()
-                            ->disabled()
-                            ->dehydrated()
-                            ->afterStateHydrated(function (callable $set, $get) {
-                                if ($get('prod_unique_id')) {
-                                    $product = Product::where('prod_unique_id', $get('prod_unique_id'))->first();
-                                    if ($product) {
-                                        // Set the price
-                                        $set('price', $product->price);
-
-                                        // Recalculate total if quantity is already set
-                                        $quantity = (float) ($get('quantity') ?? 1);
-                                        $set('total', $quantity * $product->price);
-
-
-                                    }
-                                }
-                            }),
 
                         TextInput::make('total')
                             ->numeric()

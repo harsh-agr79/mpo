@@ -999,7 +999,7 @@ function getNepaliInvoiceId($customDate = null, $purchaseTag = false): string
 
         $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
 
-        while (PartsPurchase::where('invoice_id', $invoice_id)->exists()) {
+        while (PartsPurchase::withTrashed()->where('invoice_id', $invoice_id)->exists()) {
             $countToday++;
             $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
         }
@@ -1018,10 +1018,15 @@ function getNepaliInvoiceId($customDate = null, $purchaseTag = false): string
 
         $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
 
-        while (ProductsPurchase::where('purchase_id', 'purchase_' . $invoice_id)->exists()) {
+        while (
+            ProductsPurchase::withTrashed()
+                ->where('purchase_id', 'purchase_' . $invoice_id)
+                ->exists()
+        ) {
             $countToday++;
             $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
         }
+
 
         return 'purchase_' . $invoice_id;
     }
@@ -1044,7 +1049,7 @@ function getAdjustmentInvoiceId($customDate = null)
 
     $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
 
-    while (ProductsPurchaseAdjustment::where('purchase_adj_id', 'adj_' . $invoice_id)->exists()) {
+    while (ProductsPurchaseAdjustment::withTrashed()->where('purchase_adj_id', 'adj_' . $invoice_id)->exists()) {
         $countToday++;
         $invoice_id = $nepaliDateId . str_pad($countToday, 2, '0', STR_PAD_LEFT);
     }
