@@ -62,15 +62,18 @@ class PartsPurchaseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('invoice_id')->sortable()->searchable()->label('Invoice ID'),
                 TextColumn::make('date')
                     ->label('Date (A.D.)')
-                    ->date('Y-m-d'),
+                    ->date('Y-m-d')
+                    ->sortable(),
                 TextColumn::make('nepali_date')
                     ->label('Date (B.S.)')
-                    ->getStateUsing(fn($record) => getNepaliDate($record->date)),
+                    ->getStateUsing(fn($record) => getNepaliDate($record->date))
+                    ->sortable(),
+                TextColumn::make('invoice_id')->sortable()->searchable()->label('Invoice ID'),
                 TextColumn::make('items_sum_quantity')
-                    ->label('Total Quantity'),
+                    ->label('Total Quantity')
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

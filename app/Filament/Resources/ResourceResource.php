@@ -61,8 +61,8 @@ class ResourceResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label('Name')->searchable(),
-                TextColumn::make('type')->label('Type'),
+                TextColumn::make('name')->label('Name')->searchable()->sortable(),
+                TextColumn::make('type')->label('Type')->searchable()->sortable(),
             ])
             ->filters([
                 //

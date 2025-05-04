@@ -40,9 +40,10 @@ class CategoryResource extends Resource
             ->reorderable('order_num')
             ->defaultSort('order_num')
             ->columns([
-                TextColumn::make('name')->searchable(),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('subCategories.name')
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
             ])
             ->filters([
                 //

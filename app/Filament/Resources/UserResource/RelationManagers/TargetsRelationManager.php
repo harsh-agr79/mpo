@@ -33,10 +33,10 @@ class TargetsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                TextColumn::make('gross_target')->money('NPR'),
-                TextColumn::make('net_target')->money('NPR'),
-                TextColumn::make('start_date')->date(),
-                TextColumn::make('end_date')->date(),
+                TextColumn::make('start_date')->date('Y-m-d')->sortable(),
+                TextColumn::make('end_date')->date('Y-m-d')->sortable(),
+                TextColumn::make('gross_target')->money('NPR')->sortable(),
+                TextColumn::make('net_target')->money('NPR')->sortable(),
             ])
             ->filters([
                 //

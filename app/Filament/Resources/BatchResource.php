@@ -44,11 +44,12 @@ class BatchResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('batch_no')->searchable(),
+                TextColumn::make('batch_no')->searchable()->sortable(),
                 TextColumn::make('product.name')
                     ->searchable()
                     ->label('Product')
                     ->badge()
+                    ->sortable()
             ])
             ->filters([
                 //

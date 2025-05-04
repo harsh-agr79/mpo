@@ -105,20 +105,18 @@ class ProductResource extends Resource
                     ->square()
                     ->width(100)
                     ->height(100),
-                TextColumn::make('name')->searchable(),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('category.name')
                     ->label('Category')
-                    ->badge(),
+                    ->badge()
+                    ->sortable(),
                 // TextColumn::make('subCategory.name')
                 //     ->label('SubCategory')
                 //     ->badge(),
-                TextColumn::make('price')->label('Price')->money('npr'),
-                TextColumn::make('stock')->label('Stock'),
-                TextColumn::make('prod_unique_id')->label('Slug')->searchable(),
-                TextColumn::make('offer')->label('Offer'),
-                ImageColumn::make('image_2')->label('Additional Image')->square()
-                    ->width(100)
-                    ->height(100),
+                TextColumn::make('price')->label('Price')->money('npr')->sortable(),
+                TextColumn::make('stock')->label('Stock')->sortable(),
+                TextColumn::make('prod_unique_id')->label('Slug')->searchable()->sortable(),
+                TextColumn::make('offer')->label('Offer')->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

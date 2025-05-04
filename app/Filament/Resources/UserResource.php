@@ -127,26 +127,28 @@ class UserResource extends Resource
                     ->square()
                     ->width(100)
                     ->height(100),
-                TextColumn::make('name')->searchable(),
-                TextColumn::make('email')->searchable(),
-                TextColumn::make('dob')->label('Date of Birth (A.D.)')->date('Y-m-d'),
+                TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('email')->searchable()->sortable(),
+                TextColumn::make('dob')->label('Date of Birth (A.D.)')->date('Y-m-d')->sortable(),
                 TextColumn::make('dob_nepali')
                     ->label('Date of Birth (B.S.)')
+                    ->sortable()
                     ->getStateUsing(fn($record) => getNepaliDate($record->dob)),
-                TextColumn::make('contact')->label('Contact')->searchable(),
-                TextColumn::make('type')->label('User Type')->badge(),
-                TextColumn::make('shop_name')->label('Shop Name'),
-                TextColumn::make('area'),
-                TextColumn::make('address'),
+                TextColumn::make('contact')->label('Contact')->searchable()->sortable(),
+                TextColumn::make('type')->label('User Type')->badge()->sortable(),
+                TextColumn::make('shop_name')->label('Shop Name')->sortable(),
+                TextColumn::make('area')->sortable(),
+                TextColumn::make('address')->sortable(),
                 // TextColumn::make('state.name')->label('Province'),
                 // TextColumn::make('district.name'),
-                TextColumn::make('open_balance')->label('Open Balance')->money('npr'),
-                TextColumn::make('balance')->label('Balance')->money('npr'),
-                TextColumn::make('open_balance_type')->label('Open Balance Type'),
-                TextColumn::make('tax_no')->label('Tax No.'),
-                TextColumn::make('tax_type')->label('Tax Type'),
+                TextColumn::make('open_balance')->label('Open Balance')->money('npr')->sortable(),
+                TextColumn::make('balance')->label('Balance')->money('npr')->sortable(),
+                TextColumn::make('open_balance_type')->label('Open Balance Type')->sortable(),
+                TextColumn::make('tax_no')->label('Tax No.')->sortable(),
+                TextColumn::make('tax_type')->label('Tax Type')->sortable(),
                 TextColumn::make('disabled')
                     ->label('Disabled')
+                    ->sortable()
                     ->formatStateUsing(fn(bool $state) => $state ? 'true' : 'false')
                     ->badge(),
 

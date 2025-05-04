@@ -54,18 +54,22 @@ class PaymentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('user.name')
-                    ->searchable(),
                 TextColumn::make('payment_date')
                     ->label('Payment DateTime')
-                    ->dateTime('Y-m-d H:i:s'),
+                    ->dateTime('Y-m-d H:i:s')
+                    ->sortable(),
                 TextColumn::make('payment_nepali_date')
                     ->label('Payment Date (B.S.)')
-                    ->getStateUsing(fn($record) => getNepaliDate($record->payment_date)),
+                    ->getStateUsing(fn($record) => getNepaliDate($record->payment_date))
+                    ->sortable(),
+                TextColumn::make('user.name')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('amount')
-                    ->money('npr'),
-                TextColumn::make('voucher')->searchable(),
-                TextColumn::make('remarks')
+                    ->money('npr')
+                    ->sortable(),
+                TextColumn::make('voucher')->searchable()->sortable(),
+                TextColumn::make('remarks')->sortable()
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

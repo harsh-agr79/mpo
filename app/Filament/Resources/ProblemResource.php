@@ -47,9 +47,10 @@ class ProblemResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('problem'),
+                TextColumn::make('problem')->sortable()->searchable(),
                 TagsColumn::make('category_id')
                     ->label('Categories')
+                    ->sortable()
                     ->getStateUsing(function ($record) {
                         $ids = is_string($record->category_id)
                             ? json_decode($record->category_id, true)

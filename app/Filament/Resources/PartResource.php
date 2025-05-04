@@ -62,10 +62,13 @@ class PartResource extends Resource
                     ->label('Image')
                     ->square()
                     ->width(100)
-                    ->height(100),
+                    ->height(100)
+                    ->sortable(),
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('open_balance')
+                    ->sortable()
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

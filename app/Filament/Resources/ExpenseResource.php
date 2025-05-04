@@ -53,17 +53,22 @@ class ExpenseResource extends Resource
         {
             return $table
             ->columns([
-                TextColumn::make('user.name')
-                    ->searchable(),
                 TextColumn::make('expense_date')
                     ->label('Expense DateTime')
-                    ->dateTime('Y-m-d H:i:s'),
+                    ->dateTime('Y-m-d H:i:s')
+                    ->sortable(),
                 TextColumn::make('expense_date_nepali')
                     ->label('Expense Date (B.S.)')
+                    ->sortable()
                     ->getStateUsing(fn ($record) => getNepaliDate($record->expense_date)),
+                TextColumn::make('user.name')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('amount')
-                    ->money('npr'),
+                    ->money('npr')
+                    ->sortable(),
                 TextColumn::make('particular')
+                    ->sortable()
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

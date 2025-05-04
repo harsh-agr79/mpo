@@ -133,13 +133,13 @@ class ProductsPurchaseAdjustmentResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('purchase_adj_id')->sortable()->searchable()->label('Purchase Adjustment ID'),
-                TextColumn::make('date')->label('Date (A.D.)')->date('Y-m-d'),
-                TextColumn::make('nepali_date')->label('Date (B.S.)')
+                TextColumn::make('date')->sortable()->label('Date (A.D.)')->date('Y-m-d'),
+                TextColumn::make('nepali_date')->sortable()->label('Date (B.S.)')
                     ->getStateUsing(fn($record) => getNepaliDate($record->date)),
+                TextColumn::make('purchase_adj_id')->sortable()->searchable()->label('Purchase Adjustment ID'),
                 TextColumn::make('items_sum_quantity')
-                    ->label('Total Quantity'),
-                TextColumn::make('total_price')->label('Total Price')
+                    ->label('Total Quantity')->sortable(),
+                TextColumn::make('total_price')->label('Total Price')->sortable()
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

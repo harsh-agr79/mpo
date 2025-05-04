@@ -48,9 +48,9 @@ class SubCategoryResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->searchable(),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('category.name')
-                    ->badge(),
+                    ->badge()->sortable(),
             ])
             ->filters([
                 //
