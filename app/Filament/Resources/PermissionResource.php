@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PermissionResource extends Resource
@@ -27,8 +28,9 @@ class PermissionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                ->required()
-                ->unique(),
+                    ->required()
+                    ->unique()
+                    ->disabled(fn(string $context) => $context === 'edit'),
             ]);
     }
 
@@ -37,8 +39,8 @@ class PermissionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                ->sortable()
-                ->searchable(),
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 //
@@ -47,9 +49,9 @@ class PermissionResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     
+                // ]),
             ]);
     }
 
@@ -58,6 +60,11 @@ class PermissionResource extends Resource
         return [
             // ActivityLogsRelationManager::class,
         ];
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false; // completely disables deletion
     }
 
     public static function getPages(): array
