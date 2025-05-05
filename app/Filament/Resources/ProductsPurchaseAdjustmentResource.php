@@ -58,8 +58,8 @@ class ProductsPurchaseAdjustmentResource extends Resource
 
                         TextInput::make('price')
                             ->numeric()
-                            ->dehydrated()
                             ->reactive()
+                            ->dehydrated()
                             ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                 $price = (float) ($state ?? 0);
                                 $quantity = (float) ($get('quantity') ?? 0);
@@ -69,7 +69,8 @@ class ProductsPurchaseAdjustmentResource extends Resource
                                 $items = $get('../../items'); // navigate up the repeater context
                                 $grandTotal = collect($items)->sum('total');
                                 $set('../../total_price', $grandTotal);
-                            }),
+                            })
+                        ,
                         TextInput::make('quantity')
                             ->numeric()
                             ->required()
@@ -91,7 +92,13 @@ class ProductsPurchaseAdjustmentResource extends Resource
                         TextInput::make('total')
                             ->numeric()
                             ->disabled()
-                            ->dehydrated(),
+                            ->dehydrated()
+                            ->afterStateHydrated(function ($state, callable $set, callable $get) {
+                                $price = (float) ($get('price') ?? 0);
+                                $quantity = (float) ($get('quantity') ?? 0);
+
+                                $set('total', $price * $quantity);
+                            }),
 
                         Select::make('type')
                             ->searchable()

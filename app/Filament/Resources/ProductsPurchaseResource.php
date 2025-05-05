@@ -92,6 +92,12 @@ class ProductsPurchaseResource extends Resource
                             ->numeric()
                             ->disabled()
                             ->dehydrated()
+                            ->afterStateHydrated(function ($state, callable $set, callable $get) {
+                                $price = (float) ($get('price') ?? 0);
+                                $quantity = (float) ($get('quantity') ?? 0);
+
+                                $set('total', $price * $quantity);
+                            })
                     ])
                     ->afterStateUpdated(function (Set $set, $state, $get) {
                         // Recalculate total_price immediately when any item's state changes

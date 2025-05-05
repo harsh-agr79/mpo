@@ -47,6 +47,8 @@ class UserResource extends Resource
                     ->password()
                     ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
                     ->required(fn(string $context): bool => $context === 'create')
+                    ->dehydrated(fn($state) => filled($state))
+                    ->nullable()
                     ->label('Password'),
                 Select::make('type')
                     ->label('Type')

@@ -12,7 +12,8 @@ class ProductsPurchaseItem extends BaseModel
     protected $fillable = [
         'purchase_id',
         'prod_unique_id',
-        'quantity'
+        'quantity',
+        'price'
     ];
  
     public function purchase()

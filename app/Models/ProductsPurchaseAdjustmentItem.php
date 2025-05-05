@@ -13,7 +13,8 @@ class ProductsPurchaseAdjustmentItem extends BaseModel
         'purchase_adj_id',
         'prod_unique_id',
         'type',
-        'quantity'
+        'quantity',
+        'price'
     ]; 
 
     public function purchase()
