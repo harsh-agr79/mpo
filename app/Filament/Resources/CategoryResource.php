@@ -8,8 +8,11 @@ use App\Models\Category;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,6 +52,19 @@ class CategoryResource extends Resource
                 //
             ])
             ->actions([
+                ViewAction::make()
+                    ->modalHeading(fn($record) => 'Category: ' . ucfirst($record->id))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+
+                                TextEntry::make('name')->label('CATEGORY'),
+                                TextEntry::make('subCategories.name')->label('SUB CATEGORIES')->visible(fn($record) => filled($record->subCategories)),
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
