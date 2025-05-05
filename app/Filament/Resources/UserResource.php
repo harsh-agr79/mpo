@@ -188,14 +188,15 @@ class UserResource extends Resource
 
                                 TextEntry::make('district')->label('DISTRICT'),
                                 TextEntry::make('marketer_id')->label('MARKETER ID')->visible(fn($record) => filled($record->marketer_id)),
-                                TextEntry::make('open_balance')->label('OPEN BALANCE')->visible(fn($record) => filled($record->open_balance)),
-                                TextEntry::make('balance')->label('BALANCE')->visible(fn($record) => filled($record->balance)),
+                                TextEntry::make('open_balance')->label('OPEN BALANCE')->money('npr')->visible(fn($record) => filled($record->open_balance)),
+                                TextEntry::make('balance')->label('BALANCE')->money('npr')->visible(fn($record) => filled($record->balance)),
                                 TextEntry::make('open_balance_type')->label('OPEN BALANCE TYPE')->visible(fn($record) => filled($record->open_balance_type)),
                                 TextEntry::make('current_balance_type')->label('CURRENT BALANCE TYPE')->visible(fn($record) => filled($record->current_balance_type)),
                                 TextEntry::make('tax_type')->label('TAX TYPE')->visible(fn($record) => filled($record->tax_type)),
                                 TextEntry::make('tax_no')->label('TAX NO')->visible(fn($record) => filled($record->tax_no)),
                                 TextEntry::make('created_at')->label('CREATED_AT'),
                                 TextEntry::make('updated_at')->label('UPDATED_AT'),
+                                TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
                             ])
                             ->columns(2),
                     ]),
