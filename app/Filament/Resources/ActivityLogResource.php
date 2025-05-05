@@ -73,7 +73,7 @@ class ActivityLogResource extends Resource
                     ->searchable()
                     ->options(
                         fn() => ActivityLog::query()->distinct()->pluck('table_name', 'table_name')->toArray()
-                    ),
+                    ), 
                 SelectFilter::make('operation')->label('Action')
                     ->searchable()
                     ->options([
