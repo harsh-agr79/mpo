@@ -176,7 +176,7 @@ class ProductsPurchaseAdjustmentResource extends Resource
                                         TextEntry::make('type')->label('Type'),
                                         TextEntry::make('price')->label('Price')->money('npr'),
                                     ])
-                                    ->columns(2),
+                                    ->columns(4),
                                 TextEntry::make('created_at')->label('CREATED_AT'),
                                 TextEntry::make('updated_at')->label('UPDATED_AT'),
                                 TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),

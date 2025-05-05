@@ -101,7 +101,7 @@ class PartsPurchaseResource extends Resource
                                         TextEntry::make('quantity')->label('Quantity'),
                                         TextEntry::make('voucher')->label('Voucher'),
                                     ])
-                                    ->columns(2),
+                                    ->columns(3),
                                 TextEntry::make('created_at')->label('CREATED_AT'),
                                 TextEntry::make('updated_at')->label('UPDATED_AT'),
                                 TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
