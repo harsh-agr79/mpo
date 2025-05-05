@@ -32,6 +32,8 @@ class Product extends BaseModel
 
     public static function booted()
     {
+        parent::booted();
+        
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('order_num', 'asc');
         });

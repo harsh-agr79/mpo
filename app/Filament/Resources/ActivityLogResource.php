@@ -103,12 +103,33 @@ class ActivityLogResource extends Resource
                             ->columns(2),
                         KeyValueEntry::make('old_data')
                             ->label('Old Data')
-                            ->state(fn($record) => is_array($record->old_data) ? $record->old_data : json_decode($record->old_data, true) ?? [])
+                            ->state(function ($record) {
+                                $data = is_array($record->old_data)
+                                    ? $record->old_data
+                                    : json_decode($record->old_data, true) ?? [];
+
+                                // Recursively stringify any non-string values
+                                return collect($data)->map(function ($value) {
+                                    return is_array($value)
+                                        ? json_encode($value, JSON_UNESCAPED_UNICODE)
+                                        : (string) $value;
+                                })->toArray();
+                            })
                             ->hidden(fn($record) => empty($record->old_data)),
 
                         KeyValueEntry::make('new_data')
                             ->label('New Data')
-                            ->state(fn($record) => is_array($record->new_data) ? $record->new_data : json_decode($record->new_data, true) ?? [])
+                            ->state(function ($record) {
+                                $data = is_array($record->new_data)
+                                    ? $record->new_data
+                                    : json_decode($record->new_data, true) ?? [];
+
+                                return collect($data)->map(function ($value) {
+                                    return is_array($value)
+                                        ? json_encode($value, JSON_UNESCAPED_UNICODE)
+                                        : (string) $value;
+                                })->toArray();
+                            })
                             ->hidden(fn($record) => empty($record->new_data)),
                     ]),
             ])
