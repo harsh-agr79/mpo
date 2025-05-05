@@ -38,10 +38,12 @@ class ActivityLogResource extends Resource
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('created_at')
-                    ->label('Time')
-                    ->since()
+                    ->label('DateTime (A.D.)')
                     ->sortable(),
-
+                TextColumn::make('created_at_nep')
+                    ->label('Date (B.S.)')
+                    ->getStateUsing(fn($record) => getNepaliDate($record->created_at))
+                    ->sortable(),
                 TextColumn::make('user.name')
                     ->label('User')
                     ->searchable()
