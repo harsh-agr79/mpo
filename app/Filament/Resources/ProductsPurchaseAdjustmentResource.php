@@ -14,8 +14,12 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -152,6 +156,37 @@ class ProductsPurchaseAdjustmentResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                ViewAction::make()
+                    ->modalHeading(fn($record) => 'Product Adjustment: ' . ucfirst($record->purchase_adj_id))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+
+                                TextEntry::make('purchase_adj_id')->label('ADJUSTMENT ID'),
+                                TextEntry::make('date')->label('DATE'),
+                                TextEntry::make('total_price')->label('TOTAL PRICE')->money('npr'),
+                                RepeatableEntry::make('items')
+                                    ->label('Purchase Items')
+                                    ->columnSpanFull()
+                                    ->schema([
+                                        TextEntry::make('product.name')->label('Product Name'),
+                                        TextEntry::make('quantity')->label('Quantity'),
+                                        TextEntry::make('type')->label('Type'),
+                                        TextEntry::make('price')->label('Price')->money('npr'),
+                                        TextEntry::make('created_at')->label('CREATED_AT'),
+                                        TextEntry::make('updated_at')->label('UPDATED_AT'),
+                                        TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
+                                    ])
+                                    ->columns(2),
+                                TextEntry::make('created_at')->label('CREATED_AT'),
+                                TextEntry::make('updated_at')->label('UPDATED_AT'),
+                                TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
+
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
