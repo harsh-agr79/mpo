@@ -35,6 +35,7 @@ class ActivityLogsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('operation')
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('created_at')
                     ->label('DateTime (A.D.)')
