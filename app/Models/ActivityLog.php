@@ -24,6 +24,7 @@ class ActivityLog extends Model
         'new_data' => 'array',
     ];
 
+
     /**
      * Optional: Relationship to User who performed the action
      */

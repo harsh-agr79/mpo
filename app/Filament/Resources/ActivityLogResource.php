@@ -5,10 +5,15 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ActivityLogResource\Pages;
 use App\Filament\Resources\ActivityLogResource\RelationManagers;
 use App\Models\ActivityLog;
+use App\Models\Admin;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\KeyValueEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -64,18 +69,48 @@ class ActivityLogResource extends Resource
                     }),
             ])
             ->filters([
-                SelectFilter::make('table_name')->label('Table')->options(
-                    fn() => ActivityLog::query()->distinct()->pluck('table_name', 'table_name')->toArray()
-                ),
-                SelectFilter::make('operation')->label('Action')->options([
-                    'created' => 'Created',
-                    'updated' => 'Updated',
-                    'deleted' => 'Deleted',
-                ]),
-                SelectFilter::make('user_id')->label('User')->relationship('user', 'name'),
+                SelectFilter::make('table_name')->label('Table')
+                    ->searchable()
+                    ->options(
+                        fn() => ActivityLog::query()->distinct()->pluck('table_name', 'table_name')->toArray()
+                    ),
+                SelectFilter::make('operation')->label('Action')
+                    ->searchable()
+                    ->options([
+                        'created' => 'Created',
+                        'updated' => 'Updated',
+                        'deleted' => 'Deleted',
+                    ]),
+                SelectFilter::make('user_id')->label('User')
+                    ->searchable()
+                    ->options(Admin::all()->pluck('name', 'id'))
+                ,
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                ViewAction::make()
+                    ->modalHeading(fn($record) => 'Activity: ' . ucfirst($record->operation))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+
+                                TextEntry::make('operation')->label('OPERATION'),
+                                TextEntry::make('table_name')->label('TABLE'),
+                                TextEntry::make('user.name')->label('USER')->default('System'),
+                                TextEntry::make('created_at')->label('TIME')->dateTime(),
+                            ])
+                            ->columns(2),
+                        KeyValueEntry::make('old_data')
+                            ->label('Old Data')
+                            ->state(fn($record) => is_array($record->old_data) ? $record->old_data : json_decode($record->old_data, true) ?? [])
+                            ->hidden(fn($record) => empty($record->old_data)),
+
+                        KeyValueEntry::make('new_data')
+                            ->label('New Data')
+                            ->state(fn($record) => is_array($record->new_data) ? $record->new_data : json_decode($record->new_data, true) ?? [])
+                            ->hidden(fn($record) => empty($record->new_data)),
+                    ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -100,7 +135,7 @@ class ActivityLogResource extends Resource
     {
         return [
             'index' => Pages\ListActivityLogs::route('/'),
-            'view' => Pages\ViewActivityLog::route('/{record}'),
+            // 'view' => Pages\ViewActivityLog::route('/{record}'),
         ];
     }
 }
