@@ -82,9 +82,19 @@ class ResourceResource extends Resource
 
                                 TextEntry::make('name')->label('NAME'),
                                 TextEntry::make('type')->label('FILE TYPE'),
-                                // ViewEntry::make('path')
-                                //     ->label('File')
-                                //     ->view(),
+                                // Display image if the file is an image
+                                ImageEntry::make('path')
+                                    ->label('File Preview')
+                                    ->visible(fn($record) => in_array(strtolower($record->type), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                    ->state(fn($record) => Storage::disk('public')->url($record->path)),
+
+                                // Show download link for non-image files
+                                TextEntry::make('download_link')
+                                    ->label('Download File')
+                                    ->state(fn($record) => Storage::disk('public')->url($record->path))
+                                    ->visible(fn($record) => !in_array(strtolower($record->type), ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                    ->formatStateUsing(fn($state) => "<a href='{$state}' target='_blank' class='text-primary underline'>Download</a>")
+                                    ->html(),
                             ])
                             ->columns(2),
                     ]),
