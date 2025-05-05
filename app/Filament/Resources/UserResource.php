@@ -16,6 +16,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
@@ -23,6 +26,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class UserResource extends Resource
 {
@@ -159,6 +163,42 @@ class UserResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn($record) => 'User: ' . ucfirst($record->userid))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+                                TextEntry::make('name')->label('NAME'),
+                                TextEntry::make('email')->label('EMAIL'),
+                                TextEntry::make('dob')->label('DATE OF BIRTH'),
+                                ImageEntry::make('profile_image')
+                                    ->label('PROFILE IMAGE')
+                                    ->state(fn($record) => Storage::disk('public')->url($record->profile_image))->visible(fn($record) => filled($record->profile_image)),
+                                TextEntry::make('contact')->label('CONTACT'),
+                                TextEntry::make('secondary_contact')->label('SECONDARY CONTACT')->visible(fn($record) => filled($record->secondary_contact)),
+                                TextEntry::make(name: 'email_verified_at')->label('EMAIL VERIFIED AT')->visible(fn($record) => filled($record->email_verified_at)),
+                                TextEntry::make('type')->label('TYPE'),
+                                TextEntry::make(name: 'disabled')->label('DISABLED')->state(fn($record) => $record->disabled == 0 ? 'false' : 'true'),
+                                TextEntry::make('shop_name')->label('SHOP NAME'),
+                                TextEntry::make('address')->label('ADDRESS'),
+                                TextEntry::make('area')->label('AREA'),
+                                TextEntry::make('state')->label('PROVINCE'),
+
+                                TextEntry::make('district')->label('DISTRICT'),
+                                TextEntry::make('marketer_id')->label('MARKETER ID')->visible(fn($record) => filled($record->marketer_id)),
+                                TextEntry::make('open_balance')->label('OPEN BALANCE')->visible(fn($record) => filled($record->open_balance)),
+                                TextEntry::make('balance')->label('BALANCE')->visible(fn($record) => filled($record->balance)),
+                                TextEntry::make('open_balance_type')->label('OPEN BALANCE TYPE')->visible(fn($record) => filled($record->open_balance_type)),
+                                TextEntry::make('current_balance_type')->label('CURRENT BALANCE TYPE')->visible(fn($record) => filled($record->current_balance_type)),
+                                TextEntry::make('tax_type')->label('TAX TYPE')->visible(fn($record) => filled($record->tax_type)),
+                                TextEntry::make('tax_no')->label('TAX NO')->visible(fn($record) => filled($record->tax_no)),
+                                TextEntry::make('created_at')->label('CREATED_AT'),
+                                TextEntry::make('updated_at')->label('UPDATED_AT'),
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
