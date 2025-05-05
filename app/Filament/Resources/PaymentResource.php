@@ -11,8 +11,11 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,6 +78,25 @@ class PaymentResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                ViewAction::make()
+                    ->modalHeading(fn($record) => 'Payment: ' . ucfirst($record->id))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+
+                                TextEntry::make('user.name')->label('USER'),
+                                TextEntry::make('payment_date')->label('PAYMENT DATE'),
+                                TextEntry::make('amount')->label('AMOUNT')->money('npr'),
+                                TextEntry::make('voucher')->label('VOUCHER'),
+                                TextEntry::make('remarks')->label('REMARKS'),
+                                TextEntry::make('created_at')->label('CREATED_AT'),
+                                TextEntry::make('updated_at')->label('UPDATED_AT'),
+                                TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
