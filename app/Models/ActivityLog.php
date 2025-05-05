@@ -16,7 +16,7 @@ class ActivityLog extends Model
         'operation',
         'old_data',
         'new_data',
-        'user_id',
+        'admin_id',
     ];
 
     protected $casts = [
@@ -30,7 +30,7 @@ class ActivityLog extends Model
      */
     public function user()
     {
-        return $this->belongsTo(Admin::class);
+        return $this->belongsTo(Admin::class, 'admin_id');
     }
 
     /**

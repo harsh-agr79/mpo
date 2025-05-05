@@ -36,7 +36,7 @@ class BaseModel extends Model
          'operation' => $operation,
          'old_data' => $oldData ? json_encode($oldData) : null,
          'new_data' => $newData ? json_encode($newData) : null,
-         'user_id' => Auth::id(),
+         'admin_id' => Auth::id(),
       ]);
    }
 }

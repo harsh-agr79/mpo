@@ -9,6 +9,10 @@ use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -68,6 +72,22 @@ class ResourceResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->modalHeading(fn($record) => 'Resource: ' . ucfirst($record->id))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+
+                                TextEntry::make('name')->label('NAME'),
+                                TextEntry::make('type')->label('FILE TYPE'),
+                                // ViewEntry::make('path')
+                                //     ->label('File')
+                                //     ->view(),
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
