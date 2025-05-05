@@ -12,8 +12,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -63,6 +66,21 @@ class ProblemResource extends Resource
                 //
             ])
             ->actions([
+                ViewAction::make()
+                    ->modalHeading(fn($record) => 'Problem: ' . ucfirst($record->id))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+
+                                TextEntry::make('problem')->label('PROBLEM'),
+                                TextEntry::make('category_id')->label('CATEGORIES')->state(function ($record) {
+                                    return Category::whereIn('id', $record->category_id)->pluck('name')->join(', ');
+                                }),
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
