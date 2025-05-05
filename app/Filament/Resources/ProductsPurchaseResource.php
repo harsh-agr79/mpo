@@ -167,9 +167,6 @@ class ProductsPurchaseResource extends Resource
                                         TextEntry::make('product.name')->label('Product Name'),
                                         TextEntry::make('quantity')->label('Quantity'),
                                         TextEntry::make('price')->label('Price')->money('npr'),
-                                        TextEntry::make('created_at')->label('CREATED_AT'),
-                                        TextEntry::make('updated_at')->label('UPDATED_AT'),
-                                        TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
                                     ])
                                     ->columns(2),
                                 TextEntry::make('created_at')->label('CREATED_AT'),
