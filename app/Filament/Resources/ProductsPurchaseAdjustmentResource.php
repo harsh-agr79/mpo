@@ -168,7 +168,7 @@ class ProductsPurchaseAdjustmentResource extends Resource
                                 TextEntry::make('date')->label('DATE'),
                                 TextEntry::make('total_price')->label('TOTAL PRICE')->money('npr'),
                                 RepeatableEntry::make('items')
-                                    ->label('Purchase Items')
+                                    ->label('Adjusted Items')
                                     ->columnSpanFull()
                                     ->schema([
                                         TextEntry::make('product.name')->label('Product Name'),
