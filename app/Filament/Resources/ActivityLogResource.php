@@ -81,7 +81,7 @@ class ActivityLogResource extends Resource
                         'updated' => 'Updated',
                         'deleted' => 'Deleted',
                     ]),
-                SelectFilter::make('user_id')->label('User')
+                SelectFilter::make('admin_id')->label('User')
                     ->searchable()
                     ->options(Admin::all()->pluck('name', 'id'))
                 ,
