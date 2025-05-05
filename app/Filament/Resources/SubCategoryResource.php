@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ActivityLogRelationManagerResource\RelationManagers\ActivityLogsRelationManager;
 use App\Filament\Resources\SubCategoryResource\Pages;
 use App\Filament\Resources\SubCategoryResource\RelationManagers;
 use App\Models\Category;
@@ -92,7 +93,7 @@ class SubCategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ActivityLogsRelationManager::class,
         ];
     }
 

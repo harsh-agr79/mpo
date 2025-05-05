@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\ActivityLogRelationManagerResource\RelationManagers;
 
-use App\Filament\Resources\ActivityLogResource\Pages;
-use App\Filament\Resources\ActivityLogResource\RelationManagers;
-use App\Models\ActivityLog;
 use App\Models\Admin;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
@@ -20,27 +17,24 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ActivityLogResource extends Resource
+class ActivityLogsRelationManager extends RelationManager
 {
-    protected static ?string $model = ActivityLog::class;
+    protected static string $relationship = 'activityLogs';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
-    protected static ?string $navigationGroup = 'System Logs';
-    protected static ?int $navigationSort = 99;
-    protected static ?string $recordTitleAttribute = 'operation';
-
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('operation')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
-            ->defaultSort('created_at', 'desc')
+            ->recordTitleAttribute('operation')
             ->columns([
                 TextColumn::make('created_at')
                     ->label('DateTime (A.D.)')
@@ -51,11 +45,6 @@ class ActivityLogResource extends Resource
                     ->sortable(),
                 TextColumn::make('user.name')
                     ->label('User')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('table_name')
-                    ->label('Table')
                     ->searchable()
                     ->sortable(),
 
@@ -70,11 +59,6 @@ class ActivityLogResource extends Resource
                     }),
             ])
             ->filters([
-                SelectFilter::make('table_name')->label('Table')
-                    ->searchable()
-                    ->options(
-                        fn() => ActivityLog::query()->distinct()->pluck('table_name', 'table_name')->toArray()
-                    ), 
                 SelectFilter::make('operation')->label('Action')
                     ->searchable()
                     ->options([
@@ -139,25 +123,5 @@ class ActivityLogResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListActivityLogs::route('/'),
-            // 'view' => Pages\ViewActivityLog::route('/{record}'),
-        ];
     }
 }

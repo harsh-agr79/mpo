@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ActivityLogRelationManagerResource\RelationManagers\ActivityLogsRelationManager;
 use App\Filament\Resources\ProductsPurchaseResource\Pages;
 use App\Filament\Resources\ProductsPurchaseResource\RelationManagers;
 use App\Models\Product;
@@ -193,7 +194,7 @@ class ProductsPurchaseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ActivityLogsRelationManager::class,
         ];
     }
 

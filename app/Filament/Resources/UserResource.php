@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ActivityLogRelationManagerResource\RelationManagers\ActivityLogsRelationManager;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\TargetsRelationManager;
@@ -196,7 +197,7 @@ class UserResource extends Resource
                                 TextEntry::make('tax_no')->label('TAX NO')->visible(fn($record) => filled($record->tax_no)),
                                 TextEntry::make('created_at')->label('CREATED_AT'),
                                 TextEntry::make('updated_at')->label('UPDATED_AT'),
-                                TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
+                                TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn ($record) => filled($record->deleted_at)),
                             ])
                             ->columns(2),
                     ]),
@@ -219,6 +220,7 @@ class UserResource extends Resource
     {
         return [
             TargetsRelationManager::class,
+            ActivityLogsRelationManager::class,
         ];
     }
 

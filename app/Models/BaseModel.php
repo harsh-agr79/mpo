@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasActivityLogs;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ActivityLog;
 
 class BaseModel extends Model
 {
+   use HasActivityLogs;
    public static function booted()
    {
       static::created(function ($model) {
