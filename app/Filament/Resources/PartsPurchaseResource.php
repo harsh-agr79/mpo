@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ActivityLogRelationManagerResource\RelationManagers\ActivityLogsRelationManager;
 use App\Filament\Resources\PartsPurchaseResource\Pages;
 use App\Filament\Resources\PartsPurchaseResource\RelationManagers;
 use App\Models\Part;
@@ -26,6 +25,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use PartsPurchaseLogsRelationManager;
 
 class PartsPurchaseResource extends Resource
 {
@@ -134,7 +134,7 @@ class PartsPurchaseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ActivityLogsRelationManager::class,
+            PartsPurchaseLogsRelationManager::class,
         ];
     }
 

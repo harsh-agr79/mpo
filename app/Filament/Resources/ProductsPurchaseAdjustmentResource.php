@@ -25,6 +25,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use ProductsPurchaseAdjustmentLogsRelationManager;
 
 class ProductsPurchaseAdjustmentResource extends Resource
 {
@@ -209,7 +210,7 @@ class ProductsPurchaseAdjustmentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            ActivityLogsRelationManager::class,
+            ProductsPurchaseAdjustmentLogsRelationManager::class,
         ];
     }
 

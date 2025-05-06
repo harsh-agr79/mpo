@@ -48,7 +48,6 @@ class ActivityLogsRelationManager extends RelationManager
                     ->label('User')
                     ->searchable()
                     ->sortable(),
-
                 TextColumn::make('operation')
                     ->label('Action')
                     ->badge()

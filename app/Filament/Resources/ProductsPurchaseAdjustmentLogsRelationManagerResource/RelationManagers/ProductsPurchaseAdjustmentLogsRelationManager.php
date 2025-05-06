@@ -1,46 +1,53 @@
 <?php
-
-namespace App\Filament\Resources;
-
-use App\Filament\Resources\ActivityLogResource\Pages;
-use App\Filament\Resources\ActivityLogResource\RelationManagers;
-use App\Models\ActivityLog;
 use App\Models\Admin;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Filament\Resources\RelationManagers\RelationManager;
+use App\Models\ActivityLog;
+use App\Models\PartsPurchaseItem;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class ActivityLogResource extends Resource
+class ProductsPurchaseAdjustmentLogsRelationManager extends RelationManager
 {
-    protected static ?string $model = ActivityLog::class;
+    protected static string $relationship = 'activityLogs';
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document';
-    protected static ?string $navigationGroup = 'System Logs';
-    protected static ?int $navigationSort = 99;
-    protected static ?string $recordTitleAttribute = 'operation';
-
-    public static function form(Form $form): Form
+    private function getActivityLogQuery(): Builder
     {
-        return $form
-            ->schema([
-                //
-            ]);
+        $purchase = $this->getOwnerRecord();
+
+        return ActivityLog::query()
+            ->where(function ($query) use ($purchase) {
+                $query->where(function ($q) use ($purchase) {
+                    $q->where('table_name', 'products_purchase_adjustments')
+                        ->where('primary_key_value', $purchase->purchase_adj_id);
+                })->orWhere(function ($q) use ($purchase) {
+                    $q->where('table_name', 'products_purchase_adjustment_items')
+                        ->whereIn('primary_key_value', function ($sub) use ($purchase) {
+                            $sub->select('id')
+                                ->from('products_purchase_adjustment_items')
+                                ->where('purchase_adj_id', $purchase->purchase_adj_id);
+                        });
+                });
+            });
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
+        $purchase = $this->getOwnerRecord(); // the current PartsPurchase record
+
         return $table
+            ->recordTitleAttribute('operation')
             ->defaultSort('created_at', 'desc')
+            ->query(
+                $this->getActivityLogQuery()
+            )
             ->columns([
                 TextColumn::make('created_at')
                     ->label('DateTime (A.D.)')
@@ -53,16 +60,10 @@ class ActivityLogResource extends Resource
                     ->label('User')
                     ->searchable()
                     ->sortable(),
-
                 TextColumn::make('table_name')
                     ->label('Table')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('primary_key_value')
-                    ->label('Item ID')
-                    ->searchable()
-                    ->sortable(),
-
                 TextColumn::make('operation')
                     ->label('Action')
                     ->badge()
@@ -74,11 +75,6 @@ class ActivityLogResource extends Resource
                     }),
             ])
             ->filters([
-                SelectFilter::make('table_name')->label('Table')
-                    ->searchable()
-                    ->options(
-                        fn() => ActivityLog::query()->distinct()->pluck('table_name', 'table_name')->toArray()
-                    ), 
                 SelectFilter::make('operation')->label('Action')
                     ->searchable()
                     ->options([
@@ -139,29 +135,9 @@ class ActivityLogResource extends Resource
                     ]),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListActivityLogs::route('/'),
-            // 'view' => Pages\ViewActivityLog::route('/{record}'),
-        ];
     }
 }
