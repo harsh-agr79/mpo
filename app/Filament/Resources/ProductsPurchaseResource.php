@@ -49,7 +49,7 @@ class ProductsPurchaseResource extends Resource
                     ->default(
                         fn(Get $get, $context) =>
                         $context === 'create'
-                        ? getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d'))
+                        ? getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d'), true)
                         : null
                     )
                     ->disabled()
