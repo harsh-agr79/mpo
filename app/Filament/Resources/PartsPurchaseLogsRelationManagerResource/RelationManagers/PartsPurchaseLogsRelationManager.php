@@ -40,7 +40,7 @@ class PartsPurchaseLogsRelationManager extends RelationManager
 
     public function table(Table $table): Table
     {
-        $purchase = $this->getOwnerRecord(); // the current PartsPurchase record
+        $purchase = $this->getOwnerRecord();
 
         return $table
             ->recordTitleAttribute('operation')
