@@ -40,11 +40,18 @@ class ProductsPurchaseResource extends Resource
                 DatePicker::make('date')
                     ->default(today())
                     ->reactive()
-                    ->afterStateUpdated(function (Set $set, $state) {
-                        $set('purchase_id', getNepaliInvoiceId($state, true));
+                    ->afterStateUpdated(function (Set $set, $state, $context) {
+                        if ($context == 'create') {
+                            $set('purchase_id', getNepaliInvoiceId($state, true));
+                        }
                     }),
                 TextInput::make('purchase_id')
-                    ->default(fn(Get $get) => getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d'), true))
+                    ->default(
+                        fn(Get $get, $context) =>
+                        $context === 'create'
+                        ? getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d'))
+                        : null
+                    )
                     ->disabled()
                     ->dehydrated(),
 

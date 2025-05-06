@@ -41,11 +41,18 @@ class PartsPurchaseResource extends Resource
                 DatePicker::make('date')
                     ->default(today())
                     ->reactive()
-                    ->afterStateUpdated(function (Set $set, $state) {
-                        $set('invoice_id', getNepaliInvoiceId($state));
+                    ->afterStateUpdated(function (Set $set, $state, $context) {
+                        if ($context === 'create') {
+                            $set('invoice_id', getNepaliInvoiceId($state));
+                        }
                     }),
                 TextInput::make('invoice_id')
-                    ->default(fn(Get $get) => getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d')))
+                    ->default(
+                        fn(Get $get, $context) =>
+                        $context === 'create'
+                        ? getNepaliInvoiceId($get('date') ?? today()->format('Y-m-d'))
+                        : null
+                    )
                     ->disabled()
                     ->dehydrated(),
                 Repeater::make('items')->relationship()->schema([

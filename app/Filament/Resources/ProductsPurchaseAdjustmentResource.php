@@ -40,11 +40,18 @@ class ProductsPurchaseAdjustmentResource extends Resource
                 DatePicker::make('date')
                     ->default(today())
                     ->reactive()
-                    ->afterStateUpdated(function (Set $set, $state) {
-                        $set('purchase_adj_id', getAdjustmentInvoiceId($state));
+                    ->afterStateUpdated(function (Set $set, $state, $context) {
+                        if ($context == 'create') {
+                            $set('purchase_adj_id', getAdjustmentInvoiceId($state));
+                        }
                     }),
                 TextInput::make('purchase_adj_id')
-                    ->default(fn(Get $get) => getAdjustmentInvoiceId($get('date') ?? today()->format('Y-m-d')))
+                    ->default(
+                        fn(Get $get, $context) =>
+                        $context === 'create'
+                        ? getAdjustmentInvoiceId($get('date') ?? today()->format('Y-m-d'))
+                        : null
+                    )
                     ->disabled()
                     ->dehydrated(),
 
