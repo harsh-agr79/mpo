@@ -7,7 +7,7 @@ use App\Models\ProductsPurchase;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class ProductPurchasePolicy
+class ProductsPurchasePolicy
 {
     /**
      * Determine whether the user can view any models.
