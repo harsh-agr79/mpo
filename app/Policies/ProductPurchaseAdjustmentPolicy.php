@@ -69,7 +69,7 @@ class ProductPurchaseAdjustmentPolicy
      */
     public function restore(Admin $admin, ProductsPurchaseAdjustment $productsPurchaseAdjustment): bool
     {
-        if ($admin->hasPermissionTo('Delete Product Purchase Adjustment')) {
+        if ($admin->hasPermissionTo('Restore Product Purchase Adjustment')) {
             return true;
         }
         return false;
@@ -80,7 +80,7 @@ class ProductPurchaseAdjustmentPolicy
      */
     public function forceDelete(Admin $admin, ProductsPurchaseAdjustment $productsPurchaseAdjustment): bool
     {
-        if ($admin->hasPermissionTo('Delete Product Purchase Adjustment')) {
+        if ($admin->hasPermissionTo('Force Delete Product Purchase Adjustment')) {
             return true;
         }
         return false;

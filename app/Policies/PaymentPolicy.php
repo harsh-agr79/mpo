@@ -69,7 +69,7 @@ class PaymentPolicy
      */
     public function restore(Admin $admin, Payment $payment): bool
     {
-        if ($admin->hasPermissionTo('Delete Payments')) {
+        if ($admin->hasPermissionTo('Restore Payments')) {
             return true;
         }
         return false;
@@ -80,7 +80,7 @@ class PaymentPolicy
      */
     public function forceDelete(Admin $admin, Payment $payment): bool
     {
-        if ($admin->hasPermissionTo('Delete Payments')) {
+        if ($admin->hasPermissionTo('Force Delete Payments')) {
             return true;
         }
         return false;

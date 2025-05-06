@@ -68,7 +68,7 @@ class CategoryPolicy
      */
     public function restore(Admin $admin, Category $category): bool
     {
-        if ($admin->hasPermissionTo('Delete Categories')) {
+        if ($admin->hasPermissionTo('Restore Categories')) {
             return true;
         }
         return false;
@@ -79,7 +79,7 @@ class CategoryPolicy
      */
     public function forceDelete(Admin $admin, Category $category): bool
     {
-        if ($admin->hasPermissionTo('Delete Categories')) {
+        if ($admin->hasPermissionTo('Force Delete Categories')) {
             return true;
         }
         return false;

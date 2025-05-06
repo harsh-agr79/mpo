@@ -69,7 +69,7 @@ class ExpensePolicy
      */
     public function restore(Admin $admin, Expense $expense): bool
     {
-        if ($admin->hasPermissionTo('Delete Expenses')) {
+        if ($admin->hasPermissionTo('Restore Expenses')) {
             return true;
         }
         return false;
@@ -80,7 +80,7 @@ class ExpensePolicy
      */
     public function forceDelete(Admin $admin, Expense $expense): bool
     {
-        if ($admin->hasPermissionTo('Delete Expenses')) {
+        if ($admin->hasPermissionTo('Force Delete Expenses')) {
             return true;
         }
         return false;

@@ -68,7 +68,7 @@ class PartPolicy
      */
     public function restore(Admin $admin, Part $part): bool
     {
-        if ($admin->hasPermissionTo('Delete Part')) {
+        if ($admin->hasPermissionTo('Restore Part')) {
             return true;
         }
         return false;
@@ -79,7 +79,7 @@ class PartPolicy
      */
     public function forceDelete(Admin $admin, Part $part): bool
     {
-        if ($admin->hasPermissionTo('Delete Part')) {
+        if ($admin->hasPermissionTo('Force Delete Part')) {
             return true;
         }
         return false;

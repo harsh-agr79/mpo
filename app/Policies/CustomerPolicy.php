@@ -68,7 +68,7 @@ class CustomerPolicy
      */
     public function restore(Admin $admin, User $model): bool
     {
-        if ($admin->hasPermissionTo('Delete Customer')) {
+        if ($admin->hasPermissionTo('Restore Customer')) {
             return true;
         }
         return false;
@@ -79,7 +79,7 @@ class CustomerPolicy
      */
     public function forceDelete(Admin $admin, User $model): bool
     {
-        if ($admin->hasPermissionTo('Delete Customer')) {
+        if ($admin->hasPermissionTo('Force Delete Customer')) {
             return true;
         }
         return false;

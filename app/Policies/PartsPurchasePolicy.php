@@ -69,7 +69,7 @@ class PartsPurchasePolicy
      */
     public function restore(Admin $admin, PartsPurchase $partsPurchase): bool
     {
-        if ($admin->hasPermissionTo('Delete Parts Purchase')) {
+        if ($admin->hasPermissionTo('Restore Parts Purchase')) {
             return true;
         }
         return false;
@@ -80,7 +80,7 @@ class PartsPurchasePolicy
      */
     public function forceDelete(Admin $admin, PartsPurchase $partsPurchase): bool
     {
-        if ($admin->hasPermissionTo('Delete Parts Purchase')) {
+        if ($admin->hasPermissionTo('Force Delete Parts Purchase')) {
             return true;
         }
         return false;

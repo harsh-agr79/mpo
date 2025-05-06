@@ -68,7 +68,7 @@ class ProductPolicy
      */
     public function restore(Admin $admin, Product $product): bool
     {
-        if ($admin->hasPermissionTo('Delete Products')) {
+        if ($admin->hasPermissionTo('Restore Products')) {
             return true;
         }
         return false;
@@ -79,7 +79,7 @@ class ProductPolicy
      */
     public function forceDelete(Admin $admin, Product $product): bool
     {
-        if ($admin->hasPermissionTo('Delete Products')) {
+        if ($admin->hasPermissionTo('Force Delete Products')) {
             return true;
         }
         return false;

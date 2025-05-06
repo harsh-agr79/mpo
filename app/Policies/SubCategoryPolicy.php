@@ -68,7 +68,7 @@ class SubCategoryPolicy
      */
     public function restore(Admin $admin, SubCategory $subCategory): bool
     {
-        if ($admin->hasPermissionTo('Delete Sub Categories')) {
+        if ($admin->hasPermissionTo('Restore Sub Categories')) {
             return true;
         }
         return false;
@@ -79,7 +79,7 @@ class SubCategoryPolicy
      */
     public function forceDelete(Admin $admin, SubCategory $subCategory): bool
     {
-        if ($admin->hasPermissionTo('Delete Sub Categories')) {
+        if ($admin->hasPermissionTo('Force Delete Sub Categories')) {
             return true;
         }
         return false;
