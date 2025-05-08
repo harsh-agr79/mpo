@@ -47,7 +47,8 @@ class CategoryResource extends Resource
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('subCategories.name')
                     ->badge()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

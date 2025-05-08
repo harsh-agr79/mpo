@@ -48,7 +48,8 @@ class ActivityLogResource extends Resource
                 TextColumn::make('created_at_nep')
                     ->label('Date (B.S.)')
                     ->getStateUsing(fn($record) => getNepaliDate($record->created_at))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('user.name')
                     ->label('User')
                     ->searchable()
@@ -57,11 +58,13 @@ class ActivityLogResource extends Resource
                 TextColumn::make('table_name')
                     ->label('Table')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('primary_key_value')
                     ->label('Item ID')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
 
                 TextColumn::make('operation')
                     ->label('Action')
@@ -71,7 +74,8 @@ class ActivityLogResource extends Resource
                         'updated' => 'warning',
                         'deleted' => 'danger',
                         default => 'gray',
-                    }),
+                    })
+                    ->toggleable(),
             ])
             ->filters([
                 SelectFilter::make('table_name')->label('Table')

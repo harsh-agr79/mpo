@@ -23,6 +23,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,6 +51,7 @@ class UserResource extends Resource
                     ->required()
                     ->maxLength(20)
                     ->unique(ignoreRecord: true),
+
                 TextInput::make('password')
                     ->password()
                     ->dehydrateStateUsing(fn($state) => filled($state) ? bcrypt($state) : null)
@@ -133,28 +137,31 @@ class UserResource extends Resource
                     ->label('Avatar')
                     ->square()
                     ->width(100)
-                    ->height(100),
+                    ->height(100)
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('email')->searchable()->sortable(),
                 TextColumn::make('dob')->label('Date of Birth (A.D.)')->date('Y-m-d')->sortable(),
                 TextColumn::make('dob_nepali')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Date of Birth (B.S.)')
                     ->sortable()
                     ->getStateUsing(fn($record) => getNepaliDate($record->dob)),
                 TextColumn::make('contact')->label('Contact')->searchable()->sortable(),
                 TextColumn::make('type')->label('User Type')->badge()->sortable(),
-                TextColumn::make('shop_name')->label('Shop Name')->sortable(),
-                TextColumn::make('area')->sortable(),
-                TextColumn::make('address')->sortable(),
+                TextColumn::make('shop_name')->label(label: 'Shop Name')->sortable()->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('area')->sortable()->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('address')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 // TextColumn::make('state.name')->label('Province'),
                 // TextColumn::make('district.name'),
-                TextColumn::make('open_balance')->label('Open Balance')->money('npr')->sortable(),
-                TextColumn::make('balance')->label('Balance')->money('npr')->sortable(),
-                TextColumn::make('open_balance_type')->label('Open Balance Type')->sortable(),
-                TextColumn::make('tax_no')->label('Tax No.')->sortable(),
-                TextColumn::make('tax_type')->label('Tax Type')->sortable(),
+                TextColumn::make('open_balance')->label('Open Balance')->money('npr')->sortable()->toggleable(),
+                TextColumn::make('balance')->label('Balance')->money('npr')->sortable()->toggleable(),
+                TextColumn::make('open_balance_type')->label('Open Balance Type')->sortable()->badge()->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tax_no')->label('Tax No.')->sortable()->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('tax_type')->label('Tax Type')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('disabled')
                     ->label('Disabled')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable()
                     ->formatStateUsing(fn(bool $state) => $state ? 'true' : 'false')
                     ->badge(),
@@ -197,11 +204,12 @@ class UserResource extends Resource
                                 TextEntry::make('tax_no')->label('TAX NO')->visible(fn($record) => filled($record->tax_no)),
                                 TextEntry::make('created_at')->label('CREATED_AT'),
                                 TextEntry::make('updated_at')->label('UPDATED_AT'),
-                                TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn ($record) => filled($record->deleted_at)),
+                                TextEntry::make('deleted_at')->label('DELETED_AT')->visible(fn($record) => filled($record->deleted_at)),
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Edit'),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),

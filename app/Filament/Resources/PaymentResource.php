@@ -65,15 +65,16 @@ class PaymentResource extends Resource
                 TextColumn::make('payment_nepali_date')
                     ->label('Payment Date (B.S.)')
                     ->getStateUsing(fn($record) => getNepaliDate($record->payment_date))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('user.name')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('amount')
                     ->money('npr')
                     ->sortable(),
-                TextColumn::make('voucher')->searchable()->sortable(),
-                TextColumn::make('remarks')->sortable()
+                TextColumn::make('voucher')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('remarks')->sortable()->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

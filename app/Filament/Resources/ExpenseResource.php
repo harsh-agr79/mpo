@@ -64,7 +64,8 @@ class ExpenseResource extends Resource
                 TextColumn::make('expense_date_nepali')
                     ->label('Expense Date (B.S.)')
                     ->sortable()
-                    ->getStateUsing(fn($record) => getNepaliDate($record->expense_date)),
+                    ->getStateUsing(fn($record) => getNepaliDate($record->expense_date))
+                    ->toggleable(),
                 TextColumn::make('user.name')
                     ->searchable()
                     ->sortable(),
@@ -73,6 +74,7 @@ class ExpenseResource extends Resource
                     ->sortable(),
                 TextColumn::make('particular')
                     ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true)
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

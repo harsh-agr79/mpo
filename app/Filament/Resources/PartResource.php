@@ -68,7 +68,8 @@ class PartResource extends Resource
                     ->square()
                     ->width(100)
                     ->height(100)
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

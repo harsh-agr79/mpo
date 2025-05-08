@@ -146,13 +146,15 @@ class ProductsPurchaseResource extends Resource
             ->columns([
                 TextColumn::make('date')->sortable()->label('Date (A.D.)')->date('Y-m-d'),
                 TextColumn::make('nepali_date')->label('Date (B.S.)')
-                    ->getStateUsing(fn($record) => getNepaliDate($record->date))->sortable(),
+                    ->getStateUsing(fn($record) => getNepaliDate($record->date))->sortable()->toggleable(),
                 TextColumn::make('purchase_id')->sortable()->searchable()->label('Purchase ID'),
                 TextColumn::make('items_sum_quantity')
                     ->label('Total Quantity')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('total_price')->label('Total Price')
                     ->sortable()
+                    ->toggleable()
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

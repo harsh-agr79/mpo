@@ -34,6 +34,8 @@ class ProductsPurchaseAdjustmentResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
     protected static ?string $navigationGroup = 'Purchase';
 
+    protected static ?string $navigationLabel = 'Products Adjustment';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -155,11 +157,12 @@ class ProductsPurchaseAdjustmentResource extends Resource
             ->columns([
                 TextColumn::make('date')->sortable()->label('Date (A.D.)')->date('Y-m-d'),
                 TextColumn::make('nepali_date')->sortable()->label('Date (B.S.)')
-                    ->getStateUsing(fn($record) => getNepaliDate($record->date)),
+                    ->getStateUsing(fn($record) => getNepaliDate($record->date))
+                    ->toggleable(),
                 TextColumn::make('purchase_adj_id')->sortable()->searchable()->label('Purchase Adjustment ID'),
                 TextColumn::make('items_sum_quantity')
-                    ->label('Total Quantity')->sortable(),
-                TextColumn::make('total_price')->label('Total Price')->sortable()
+                    ->label('Total Quantity')->sortable()->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('total_price')->label('Total Price')->sortable()->toggleable()
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

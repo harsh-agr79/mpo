@@ -81,11 +81,13 @@ class PartsPurchaseResource extends Resource
                 TextColumn::make('nepali_date')
                     ->label('Date (B.S.)')
                     ->getStateUsing(fn($record) => getNepaliDate($record->date))
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('invoice_id')->sortable()->searchable()->label('Invoice ID'),
                 TextColumn::make('items_sum_quantity')
                     ->label('Total Quantity')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
