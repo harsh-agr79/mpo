@@ -73,7 +73,7 @@ class ResourceResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+                Tables\Actions\ViewAction::make()->size('xl')
                     ->label('')
                     ->modalHeading(fn($record) => 'Resource: ' . ucfirst($record->id))
                     ->modalSubmitAction(false)
@@ -100,8 +100,8 @@ class ResourceResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make()->label(''),
-                Tables\Actions\DeleteAction::make()->label(''),
+                Tables\Actions\EditAction::make()->size('xl')->label(''),
+                Tables\Actions\DeleteAction::make()->size('xl')->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

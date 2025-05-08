@@ -79,7 +79,7 @@ class AdminResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\EditAction::make()->size('xl')->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

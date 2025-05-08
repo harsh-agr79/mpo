@@ -45,8 +45,8 @@ class TargetsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label(''),
-                Tables\Actions\DeleteAction::make()->label(''),
+                Tables\Actions\EditAction::make()->size('xl')->label(''),
+                Tables\Actions\DeleteAction::make()->size('xl')->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

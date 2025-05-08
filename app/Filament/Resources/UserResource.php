@@ -171,7 +171,7 @@ class UserResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
+                Tables\Actions\ViewAction::make()->size('xl')
                     ->label('')
                     ->modalHeading(fn($record) => 'User: ' . ucfirst($record->userid))
                     ->modalSubmitAction(false)
@@ -209,8 +209,8 @@ class UserResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make()->label(''),
-                Tables\Actions\DeleteAction::make()->label(''),
+                Tables\Actions\EditAction::make()->size('xl')->label(''),
+                Tables\Actions\DeleteAction::make()->size('xl')->label(''),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])

@@ -80,7 +80,7 @@ class ExpenseResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                ViewAction::make()
+                ViewAction::make()->size('xl')
                     ->label('')
                     ->modalHeading(fn($record) => 'Expense: ' . ucfirst($record->id))
                     ->modalSubmitAction(false)
@@ -99,8 +99,8 @@ class ExpenseResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make()->label(''),
-                Tables\Actions\DeleteAction::make()->label(''),
+                Tables\Actions\EditAction::make()->size('xl')->label(''),
+                Tables\Actions\DeleteAction::make()->size('xl')->label(''),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])

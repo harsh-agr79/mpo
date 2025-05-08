@@ -46,7 +46,7 @@ class RoleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\EditAction::make()->size('xl')->label('')->size('xl'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

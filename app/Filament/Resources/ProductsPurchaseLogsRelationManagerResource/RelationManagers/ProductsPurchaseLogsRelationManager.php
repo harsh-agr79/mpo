@@ -88,7 +88,7 @@ class ProductsPurchaseLogsRelationManager extends RelationManager
                 ,
             ])
             ->actions([
-                ViewAction::make()
+                ViewAction::make()->size('xl')
                     ->label('')
                     ->modalHeading(fn($record) => 'Activity: ' . ucfirst($record->operation))
                     ->modalSubmitAction(false)

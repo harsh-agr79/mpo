@@ -59,7 +59,7 @@ class BatchResource extends Resource
                 //
             ])
             ->actions([
-                ViewAction::make()
+                ViewAction::make()->size('xl')
                     ->label('')
                     ->modalHeading(fn($record) => 'Batch: ' . ucfirst($record->batch_no))
                     ->modalSubmitAction(false)
@@ -73,8 +73,8 @@ class BatchResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make()->label(''),
-                Tables\Actions\DeleteAction::make()->label(''),
+                Tables\Actions\EditAction::make()->size('xl')->label(''),
+                Tables\Actions\DeleteAction::make()->size('xl')->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

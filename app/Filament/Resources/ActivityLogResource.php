@@ -60,7 +60,6 @@ class ActivityLogResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->size('xs')
                 ,
                 TextColumn::make('primary_key_value')
                     ->label('Item ID')
@@ -98,7 +97,7 @@ class ActivityLogResource extends Resource
                 ,
             ])
             ->actions([
-                ViewAction::make()
+                ViewAction::make()->size('xl')
                     ->label('')
                     ->modalHeading(fn($record) => 'Activity: ' . ucfirst($record->operation))
                     ->modalSubmitAction(false)
