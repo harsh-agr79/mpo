@@ -29,10 +29,10 @@ class RoleResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')->unique(ignoreRecord: true),
                 Forms\Components\Select::make('permissions')
-                ->multiple()
-                ->relationship(titleAttribute: 'name')
-                ->searchable()
-                ->preload(),
+                    ->multiple()
+                    ->relationship(titleAttribute: 'name')
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 
@@ -46,7 +46,7 @@ class RoleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

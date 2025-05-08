@@ -89,6 +89,7 @@ class PartsPurchaseLogsRelationManager extends RelationManager
             ])
             ->actions([
                 ViewAction::make()
+                    ->label('')
                     ->modalHeading(fn($record) => 'Activity: ' . ucfirst($record->operation))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')

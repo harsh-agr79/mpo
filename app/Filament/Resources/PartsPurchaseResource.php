@@ -94,6 +94,7 @@ class PartsPurchaseResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
+                    ->label('')
                     ->modalHeading(fn($record) => 'Part Purchase: ' . ucfirst($record->invoice_id))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
@@ -119,8 +120,8 @@ class PartsPurchaseResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\DeleteAction::make()->label(''),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])

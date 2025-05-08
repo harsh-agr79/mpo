@@ -129,6 +129,7 @@ class ProductResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
+                    ->label('')
                     ->modalHeading(fn($record) => 'Product: ' . ucfirst($record->prod_unique_id))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
@@ -156,8 +157,8 @@ class ProductResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\DeleteAction::make()->label(''),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])

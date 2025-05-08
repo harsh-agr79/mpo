@@ -59,7 +59,9 @@ class ActivityLogResource extends Resource
                     ->label('Table')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->size('xs')
+                ,
                 TextColumn::make('primary_key_value')
                     ->label('Item ID')
                     ->searchable()
@@ -82,7 +84,7 @@ class ActivityLogResource extends Resource
                     ->searchable()
                     ->options(
                         fn() => ActivityLog::query()->distinct()->pluck('table_name', 'table_name')->toArray()
-                    ), 
+                    ),
                 SelectFilter::make('operation')->label('Action')
                     ->searchable()
                     ->options([
@@ -97,6 +99,7 @@ class ActivityLogResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
+                    ->label('')
                     ->modalHeading(fn($record) => 'Activity: ' . ucfirst($record->operation))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')

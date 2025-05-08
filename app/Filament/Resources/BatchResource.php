@@ -60,6 +60,7 @@ class BatchResource extends Resource
             ])
             ->actions([
                 ViewAction::make()
+                    ->label('')
                     ->modalHeading(fn($record) => 'Batch: ' . ucfirst($record->batch_no))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
@@ -72,8 +73,8 @@ class BatchResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\DeleteAction::make()->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -26,30 +26,30 @@ class AdminResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                ->required()
-                ->maxLength(255),
-            Forms\Components\TextInput::make('email')
-                ->email()
-                ->required()
-                ->maxLength(255),
-            Forms\Components\DateTimePicker::make('email_verified_at'),
-            Forms\Components\TextInput::make('password')
-                ->password()
-                ->revealable()
-                ->maxLength(255)
-                ->required(fn ($record) => $record === null) // Required when creating (no record)
-                ->dehydrated(fn ($state) => filled($state)) // Include field in data only if not empty
-                ->nullable(fn ($record) => $record != null),
-            Forms\Components\Select::make('roles')
-            ->multiple()
-            ->relationship(titleAttribute: 'name')
-            ->searchable()
-            ->preload(),
-            Forms\Components\Select::make('permissions')
-            ->multiple()
-            ->relationship(titleAttribute: 'name')
-            ->searchable()
-            ->preload(),
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\DateTimePicker::make('email_verified_at'),
+                Forms\Components\TextInput::make('password')
+                    ->password()
+                    ->revealable()
+                    ->maxLength(255)
+                    ->required(fn($record) => $record === null) // Required when creating (no record)
+                    ->dehydrated(fn($state) => filled($state)) // Include field in data only if not empty
+                    ->nullable(fn($record) => $record != null),
+                Forms\Components\Select::make('roles')
+                    ->multiple()
+                    ->relationship(titleAttribute: 'name')
+                    ->searchable()
+                    ->preload(),
+                Forms\Components\Select::make('permissions')
+                    ->multiple()
+                    ->relationship(titleAttribute: 'name')
+                    ->searchable()
+                    ->preload(),
             ]);
     }
 
@@ -79,7 +79,7 @@ class AdminResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label(''),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

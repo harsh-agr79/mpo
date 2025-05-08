@@ -172,6 +172,7 @@ class UserResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->label('')
                     ->modalHeading(fn($record) => 'User: ' . ucfirst($record->userid))
                     ->modalSubmitAction(false)
                     ->modalCancelActionLabel('Close')
@@ -208,9 +209,8 @@ class UserResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Tables\Actions\EditAction::make()
-                    ->label('Edit'),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->label(''),
+                Tables\Actions\DeleteAction::make()->label(''),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
