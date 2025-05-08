@@ -57,6 +57,7 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             // ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
+            ->plugin(\TomatoPHP\FilamentPWA\FilamentPWAPlugin::make())
             ->authMiddleware([
                 Authenticate::class,
             ])
