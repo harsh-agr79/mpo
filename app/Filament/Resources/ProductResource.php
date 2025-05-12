@@ -22,6 +22,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -116,11 +117,9 @@ class ProductResource extends Resource
                     ->label('Category')
                     ->badge()
                     ->sortable()->toggleable(),
-                // TextColumn::make('subCategory.name')
-                //     ->label('SubCategory')
-                //     ->badge(),
                 TextColumn::make('price')->label('Price')->money('npr')->sortable(),
-                TextColumn::make('stock')->label('Stock')->sortable()->toggleable(),
+                BooleanColumn::make('stock')->label('Stock')->sortable()->toggleable()->state(fn($record) => $record->stock ? false : true),
+                BooleanColumn::make('hidden')->label('Hidden')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('prod_unique_id')->label('Slug')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('offer')->label('Offer')->sortable()->toggleable(isToggledHiddenByDefault: true),
             ])
