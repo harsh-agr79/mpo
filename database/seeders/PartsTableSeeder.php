@@ -21,15 +21,22 @@ class PartsTableSeeder extends Seeder
             ->toArray();
 
         foreach ($oldParts as $oldPart) {
-            $productName = trim($oldPart->product);
-            $productId = $productMap[$productName] ?? null;
+            $prods = explode('|', $oldPart->product ?? '');
+            $prodIds = [];
+
+            foreach ($prods as $prodName) {
+                $trimmed = trim($prodName);
+                if (isset($productMap[$trimmed])) {
+                    $prodIds[] = (string) $productMap[$trimmed];
+                }
+            }
 
             DB::table('parts')->insert([
                 'id' => $oldPart->id,
                 'name' => $oldPart->name,
-                'product_id' => $productId ? json_encode([(string) $productId]) : json_encode([]), // store id as string in JSON
+                'product_id' => json_encode($prodIds),
                 'open_balance' => $oldPart->openBalance,
-                'image' => $oldPart->image ? 'parts/'.$oldPart->image : null,
+                'image' => $oldPart->image ? 'parts/' . $oldPart->image : null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
