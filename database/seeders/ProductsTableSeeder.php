@@ -27,7 +27,7 @@ class ProductsTableSeeder extends Seeder
             foreach ($subcats as $subcatName) {
                 $trimmed = trim($subcatName);
                 if (isset($subCategoryMap[$trimmed])) {
-                    $subcatIds[] = $subCategoryMap[$trimmed];
+                    $subcatIds[] = (string) $subCategoryMap[$trimmed];
                 }
             }
 
