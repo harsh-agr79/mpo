@@ -40,7 +40,8 @@ class BatchResource extends Resource
                     ->options(Product::all()->pluck('name', 'id'))
                     ->label('Product'),
                 TextInput::make('batch_no')
-                    ->required(),
+                    ->required()
+                    ->unique(),
             ]);
     }
 
