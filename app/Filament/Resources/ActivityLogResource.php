@@ -74,6 +74,8 @@ class ActivityLogResource extends Resource
                         'created' => 'success',
                         'updated' => 'warning',
                         'deleted' => 'danger',
+                        'restored' => 'info',
+                        'forceDeleted' => 'danger',
                         default => 'gray',
                     })
                     ->toggleable(),
@@ -90,6 +92,8 @@ class ActivityLogResource extends Resource
                         'created' => 'Created',
                         'updated' => 'Updated',
                         'deleted' => 'Deleted',
+                        'forceDeleted' => 'Force Deleted',
+                        'restored' => 'Restored'
                     ]),
                 SelectFilter::make('admin_id')->label('User')
                     ->searchable()

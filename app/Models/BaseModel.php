@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Traits\HasActivityLogs;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ActivityLog;
 
@@ -23,6 +24,16 @@ class BaseModel extends Model
       static::deleted(function ($model) {
          self::logActivity('deleted', $model, $model->getOriginal(), null);
       });
+
+      if (in_array(SoftDeletes::class, class_uses_recursive(static::class))) {
+         static::restored(function ($model) {
+            self::logActivity('restored', $model, null, $model->getAttributes());
+         });
+
+         static::forceDeleted(function ($model) {
+            self::logActivity('forceDeleted', $model, $model->getOriginal(), null);
+         });
+      }
    }
 
    protected static function logActivity(string $operation, Model $model, ?array $oldData, ?array $newData): void
