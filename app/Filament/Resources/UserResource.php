@@ -31,6 +31,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
+use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
 
 class UserResource extends Resource
 {
@@ -44,6 +45,12 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
+                  GazeBanner::make()
+                ->pollTimer(1)
+                ->lock()
+                ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
+                ->hideOnCreate()
+                ->columnSpanFull(),
                 TextInput::make('userid')->required()->maxLength(length: 255)->unique(ignoreRecord: true),
                 TextInput::make('name')->required()->maxLength(length: 255),
                 TextInput::make('email')->email()->required()->maxLength(255),

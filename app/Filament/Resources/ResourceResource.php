@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Str;
+use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
 
 class ResourceResource extends Resource
 {
@@ -36,6 +37,12 @@ class ResourceResource extends Resource
     {
         return $form
             ->schema([
+                  GazeBanner::make()
+                ->pollTimer(1)
+                ->lock()
+                ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
+                ->hideOnCreate()
+                ->columnSpanFull(),
                 TextInput::make('name')
                     ->required()
                     ->label('Resource Name'),

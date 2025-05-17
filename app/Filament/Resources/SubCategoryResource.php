@@ -22,6 +22,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Validation\Rules\Unique;
+use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
 
 class SubCategoryResource extends Resource
 {
@@ -35,6 +36,12 @@ class SubCategoryResource extends Resource
     {
         return $form
             ->schema([
+                  GazeBanner::make()
+                ->pollTimer(1)
+                ->lock()
+                ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
+                ->hideOnCreate()
+                ->columnSpanFull(),
                 Select::make('category_id')
                     ->relationship(name: 'category', titleAttribute: 'name')
                     ->searchable()

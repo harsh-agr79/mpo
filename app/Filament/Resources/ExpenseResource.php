@@ -21,6 +21,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
 
 class ExpenseResource extends Resource
 {
@@ -34,6 +35,12 @@ class ExpenseResource extends Resource
     {
         return $form
             ->schema([
+                  GazeBanner::make()
+                ->pollTimer(1)
+                ->lock()
+                ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
+                ->hideOnCreate()
+                ->columnSpanFull(),
                 Select::make('user_id')
                     ->relationship(name: 'user', titleAttribute: 'name')
                     ->label('Customer')
