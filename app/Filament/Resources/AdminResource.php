@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
 
 class AdminResource extends Resource
 {
@@ -25,6 +26,12 @@ class AdminResource extends Resource
     {
         return $form
             ->schema([
+                GazeBanner::make()
+                ->pollTimer(1)
+                ->lock()
+                ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
+                ->hideOnCreate()
+                ->columnSpanFull(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
