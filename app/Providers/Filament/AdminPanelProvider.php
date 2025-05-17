@@ -58,7 +58,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             // ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             ->plugins([
-                \TomatoPHP\FilamentPWA\FilamentPWAPlugin::make(),
+                // \TomatoPHP\FilamentPWA\FilamentPWAPlugin::make(),
                 \DiscoveryDesign\FilamentGaze\FilamentGazePlugin::make()
             ])
             ->authMiddleware([
