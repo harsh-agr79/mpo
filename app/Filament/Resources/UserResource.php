@@ -45,7 +45,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                  GazeBanner::make()
+                GazeBanner::make()
                 ->pollTimer(1)
                 ->lock()
                 ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
