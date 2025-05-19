@@ -26,6 +26,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use ProductsPurchaseLogsRelationManager;
+use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
 
 class ProductsPurchaseResource extends Resource
 {
@@ -38,6 +39,12 @@ class ProductsPurchaseResource extends Resource
     {
         return $form
             ->schema([
+                  GazeBanner::make()
+                ->pollTimer(1)
+                ->lock()
+                ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
+                ->hideOnCreate()
+                ->columnSpanFull(),
                 DatePicker::make('date')
                     ->default(today())
                     ->reactive()
