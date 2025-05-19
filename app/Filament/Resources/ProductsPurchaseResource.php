@@ -143,6 +143,7 @@ class ProductsPurchaseResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('10s')
             ->columns([
                 TextColumn::make('date')->sortable()->label('Date (A.D.)')->date('Y-m-d'),
                 TextColumn::make('nepali_date')->label('Date (B.S.)')

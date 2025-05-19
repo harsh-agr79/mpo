@@ -56,6 +56,7 @@ class ExpenseResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('10s')
             ->columns([
                 TextColumn::make('expense_date')
                     ->label('Expense DateTime')

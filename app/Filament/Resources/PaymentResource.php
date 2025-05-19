@@ -57,6 +57,7 @@ class PaymentResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('10s')
             ->columns([
                 TextColumn::make('payment_date')
                     ->label('Payment DateTime')

@@ -73,6 +73,7 @@ class PartsPurchaseResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->poll('10s')
             ->columns([
                 TextColumn::make('date')
                     ->label('Date (A.D.)')
