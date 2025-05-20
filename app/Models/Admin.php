@@ -46,5 +46,15 @@ class Admin extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function seenOrders()
+    {
+        return $this->hasMany(Order::class, 'seenby');
+    }
+
+    public function remarks()
+    {
+        return $this->hasMany(OrderRemark::class, 'remarks_by');
+    }
 }
 

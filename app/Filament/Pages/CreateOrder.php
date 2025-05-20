@@ -10,6 +10,10 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use App\Models\User;
 use Filament\Actions\Action;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Facades\DB;
+use Filament\Notifications\Notification;
 
 class CreateOrder extends Page {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -36,9 +40,16 @@ class CreateOrder extends Page {
                 ->modalContent(function () {
                     return view('filament.pages.partials.cart', [
                         'cartItems' => $this->getCartItems(),
-                        'total' => $this->getCartTotal(),
+                        'total' => $this->getCartTotal()
                     ]);
-                }),
+                })->extraModalFooterActions([
+                Action::make('Checkout')
+                ->label('Checkout')
+                ->color('success')
+                ->icon('heroicon-m-shopping-cart')
+                ->requiresConfirmation()
+                ->action(fn () => $this->checkout()),
+            ])
         ];
     }
 
@@ -101,24 +112,42 @@ class CreateOrder extends Page {
     }
 
     public function checkout()
-    {
-        $cart = collect($this->quantities)
-            ->filter(fn($qty) => $qty > 0)
-            ->map(function ($qty, $productId) {
-                $product = Product::find($productId);
-                return [
-                    'product_id' => $product->id,
-                    'name' => $product->name,
-                    'quantity' => $qty,
-                    'price' => $product->price,
-                    'subtotal' => $product->price * $qty,
-                ];
-            })->values()->toArray();
-
-        \Log::info('Order:', $cart);
-
-        $this->quantities = [];
-        session()->flash('message', 'Order placed!');
+    {   
+        $orderid = time().$this->selectedUser;
+        $order = Order::create([
+            'user_id' => $this->selectedUser,
+            'orderid' => $orderid,
+            'mainstatus' => 'pending',
+            'date' => $this->order_date,
+            'save' => false,
+            'total' => $this->getCartTotal(),
+            'net_total' => $this->getCartTotal(), // apply discounts if any
+            'nepmonth' => getNepaliMonth($this->order_date),
+            'nepyear' => getNepaliYear($this->order_date),
+        ]);
+        foreach ($this->getCartItems() as $item) {
+            OrderItem::create([
+                'orderid' => $order->orderid,
+                'product_id' => $item['id'],
+                'offer'=> \App\Models\Product::find($item['id'])->offer,
+                'price' => $item['price'],
+                'quantity' => $item['quantity'],
+                'approvedquantity' => 0,
+                'status' => 'pending'
+            ]);
+        }
+        $this->selectedUser = null;
+        $this->order_date = now()->toDateString();
+        foreach ($this->quantities as $key => $val) {
+            $this->quantities[$key] = '';
+        }
+        // $this->dispatch('close-modal');
+        Notification::make()
+            ->title('Order Created!')
+            ->success()
+            ->send();
+        return redirect('/admin/orders');
+        
     }
 
    public function getProductsProperty()

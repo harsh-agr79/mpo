@@ -1,4 +1,4 @@
-<div class="space-y-4">
+<div class="space-y-4" id="cart-modal">
     @foreach ($cartItems as $item)
         <div class="flex justify-between items-center border p-2 rounded">
             <div>
@@ -16,7 +16,6 @@
             </div>
         </div>
     @endforeach
-
     <div class="text-right text-lg font-semibold">
         Total: रु{{ number_format($total, 2) }}
     </div>
