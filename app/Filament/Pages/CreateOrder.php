@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Filament\Notifications\Notification;
 
 class CreateOrder extends Page {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-plus';
 
     protected static string $view = 'filament.pages.create-order';
 
