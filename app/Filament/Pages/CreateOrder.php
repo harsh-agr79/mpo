@@ -6,6 +6,7 @@ use Filament\Pages\Page;
 use App\Models\Product;
 use Filament\Forms\Form;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use App\Models\User;
@@ -14,6 +15,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\DB;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class CreateOrder extends Page {
     protected static ?string $navigationIcon = 'heroicon-o-plus';
@@ -81,7 +84,23 @@ class CreateOrder extends Page {
                 ->label( 'Select User' )
                 ->options( User::pluck( 'name', 'id' ) )
                 ->searchable()
-                ->required(),
+                ->required()
+                 ->createOptionForm([
+                    TextInput::make('userid')
+                        ->required(),
+                ])
+                ->createOptionUsing(function (array $data) {
+                    $user = User::create([
+                        'name' => $data['userid'], 
+                        'userid' => $data['userid'],
+                        'email' => $data['userid'].'@mypowerworld.com',
+                        'password' =>  Hash::make(Str::random(12)),
+                        'contact' => random_int(1000000000, 9999999999),
+                        'type' => 'retailer',    
+                    ]);
+
+                    return $user->id;
+                }),
                 DatePicker::make( 'order_date' )
                 ->label( 'Order Date' )
                 ->default( now() ) // ⬅️ sets today's date
