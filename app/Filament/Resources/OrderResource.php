@@ -14,11 +14,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Colors\Color;
+use Carbon\Carbon;
 use Filament\Forms\Components\ {
     TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle}
     ;
     use Filament\Tables\Columns\ {
-        ColorColumn, TextColumn, BooleanColumn, DateTimeColumn}
+        ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn}
         ;
         use Illuminate\Database\Eloquent\SoftDeletingScope;
         use Filament\Tables\Columns\Layout\Stack;
@@ -59,8 +60,6 @@ use Filament\Forms\Components\ {
                         $colorMap = [
                             'pending'   => 'oklch(74.6% 0.16 232.661)',
                             'approved'  => 'oklch(82.8% 0.189 84.429)',
-                            'packing'   => 'purple',
-                            'delivered' => 'green',
                             'rejected'  => 'red',
                         ];
 
@@ -69,6 +68,18 @@ use Filament\Forms\Components\ {
                             $color = 'oklch(55.3% 0.013 58.071)';
                             // Your 'not seen' color
                         } else {
+                            $color = $colorMap[ $state ] ?? 'gray';
+                        }
+
+                        if($record->clnstatus === 'packing' && $record->mainstatus === 'approved') {
+                            $color = 'purple';
+                        } elseif($record->clnstatus === 'delivered' && $record->mainstatus === 'approved') {
+                            $color = $colorMap[ $state ] ?? 'gray';
+                        }
+
+                        if($record->clnstatus === 'delivered' && $record->delivered_at !== null) {
+                            $color = 'green';
+                        } elseif($record->clnstatus === 'delivered' && $record->mainstatus === 'approved') {
                             $color = $colorMap[ $state ] ?? 'gray';
                         }
 
@@ -81,7 +92,38 @@ use Filament\Forms\Components\ {
                 TextColumn::make( 'user.name' ),
                 // ->description(fn ( $record ) => $record->orderid),
                 TextColumn::make( 'orderid' ),
-
+                ToggleColumn::make('clnstatus')
+                ->label('Pack')
+                ->disabled(fn ($record, $state) => $record->mainstatus === 'approved' && $record->clnstatus !== 'delivered'? false : true)
+                ->afterStateUpdated(function ($record, $state) {
+                    if($state === true) {
+                        $record->update([
+                            'clnstatus' => 'packing',
+                            'clntime' => time(),
+                        ]);
+                    } else {
+                        $record->update([
+                            'clnstatus' => null,
+                            'clntime' => null,
+                        ]);
+                    }
+                }),
+                ToggleColumn::make('delivered_at')
+                ->label('Delivered')
+                ->disabled(fn ($record, $state) => $record->mainstatus === 'approved' && ($record->clnstatus === 'packing' || $record->clnstatus === 'delivered') ? false : true)
+                ->afterStateUpdated(function ($record, $state) {
+                    if($state === true) {
+                        $record->update([
+                            'clnstatus' => 'delivered',
+                            'delivered_at' => now(),
+                        ]);
+                    } else {
+                        $record->update([
+                            'clnstatus' => 'packing',
+                            'delivered_at' => null,
+                        ]);
+                    }
+                }),
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
                 TextColumn::make( 'seenby' )
                 ->label( 'Seen By' )

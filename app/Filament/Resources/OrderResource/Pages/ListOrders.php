@@ -24,11 +24,11 @@ class ListOrders extends ListRecords
         return [
             null => Tab::make('All'),
             'Unseen' => Tab::make()->query(fn ($query) => $query->where('seenby', NULL)),
-            'pending' => Tab::make()->query(fn ($query) => $query->where('mainstatus', 'pending')),
+            'pending' => Tab::make()->query(fn ($query) => $query->where('mainstatus', 'pending')->whereNotNull('seenby')),
             'approved' => Tab::make()->query(fn ($query) => $query->where('mainstatus', 'approved')->where('clnstatus', NULL)->where('delivered_at', NULL)),
             'packing' => Tab::make()->query(fn ($query) => $query->where('mainstatus', 'approved')->where('clnstatus', 'packing')),
             'rejected' => Tab::make()->query(fn ($query) => $query->where('mainstatus', 'rejected')),
-            'delivered' => Tab::make()->query(fn ($query) => $query->where('mainstatus', 'delivered')->where('clnstatus', 'delivered')->whereNotNull('delivered_at')),
+            'delivered' => Tab::make()->query(fn ($query) => $query->where('mainstatus', 'approved')->where('clnstatus', 'delivered')->whereNotNull('delivered_at')),
         ];
     }
 }
