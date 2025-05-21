@@ -28,6 +28,8 @@ use Filament\Forms\Components\ {
             protected static ?string $model = Order::class;
 
             protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
+
+             protected static ?string $navigationGroup = 'Orders';
           
             public static function form( Form $form ): Form {
                 return $form
@@ -76,9 +78,9 @@ use Filament\Forms\Components\ {
                 ->html(),
                 TextColumn::make( 'date' ),
 
-                TextColumn::make( 'user.name' )
-                ->description(fn ( $record ) => $record->orderid),
-                // TextColumn::make( 'orderid' ),
+                TextColumn::make( 'user.name' ),
+                // ->description(fn ( $record ) => $record->orderid),
+                TextColumn::make( 'orderid' ),
 
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
                 TextColumn::make( 'seenby' )

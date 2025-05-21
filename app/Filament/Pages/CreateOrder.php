@@ -23,6 +23,9 @@ class CreateOrder extends Page {
 
     protected static string $view = 'filament.pages.create-order';
 
+    protected static ?string $navigationGroup = 'Orders';
+
+
     public $quantities = [];
     public $selectedUser = null;
     public $order_date;
