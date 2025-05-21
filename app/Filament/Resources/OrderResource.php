@@ -87,7 +87,11 @@ use Filament\Forms\Components\ {
                     }
                 )
                 ->html(),
-                TextColumn::make( 'date' ),
+                TextColumn::make('nepali_date')
+                    ->label('Date (B.S.)')
+                    ->getStateUsing(fn($record) => getNepaliDate($record->date))
+                    ->sortable(),
+                    // ->toggleable()
 
                 TextColumn::make( 'user.name' ),
                 // ->description(fn ( $record ) => $record->orderid),
