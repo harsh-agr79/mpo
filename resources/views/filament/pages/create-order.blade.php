@@ -3,6 +3,7 @@
         .outofstock {
             color: red;
         }
+
         .instock {
             color: green;
         }
@@ -33,8 +34,10 @@
                 <div class="product-card flex items-center gap-4 border rounded-lg p-4 bg-white shadow-sm w-full">
                     {{-- 📸 Smaller image (48 × 48 px on all screens) --}}
                     <div class="flex-shrink-0 w-12 overflow-hidden rounded border">
-                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
-                            style="height: 60px;" />
+                        <img src="{{ $product->image && file_exists(storage_path('app/public/' . $product->image))
+                            ? asset('storage/' . $product->image)
+                            : asset('images/dummy.png') }}"
+                            alt="{{ $product->name }}" style="height: 60px;" />
                     </div>
 
                     {{-- Details --}}
@@ -44,7 +47,9 @@
                             {{ $product->category->name ?? 'N/A' }}
                         </p>
 
-                        <div class="product-price"><span style="background: rgb(255, 174, 0); color: white; font-size: 12px; font-weight: 500; padding: 2px; border-radius: 4px; margin: 1px;">रु{{ $product->price }}<span></div>
+                        <div class="product-price"><span
+                                style="background: rgb(255, 174, 0); color: white; font-size: 12px; font-weight: 500; padding: 2px; border-radius: 4px; margin: 1px;">रु{{ $product->price }}<span>
+                        </div>
                     </div>
 
                     {{-- Quantity --}}
