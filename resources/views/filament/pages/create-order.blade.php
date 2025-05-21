@@ -1,4 +1,12 @@
 <x-filament::page>
+    <style>
+        .outofstock {
+            color: red;
+        }
+        .instock {
+            color: green;
+        }
+    </style>
     @if (session()->has('message'))
         <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">
             {{ session('message') }}
@@ -31,33 +39,27 @@
 
                     {{-- Details --}}
                     <div class="flex-1">
-                        <h3 class="text-base font-medium product-name">{{ $product->name }}</h3>
+                        <p class="product-name" style="font-size: 13px; font-weight: 500;">{{ $product->name }}</p>
                         <p class="text-xs text-gray-600 product-category">
                             {{ $product->category->name ?? 'N/A' }}
                         </p>
 
-                        <div class="text-xs product-price bg-amber-700">रु{{ $product->price }}</div>
+                        <div class="product-price"><span style="background: rgb(255, 174, 0); color: white; font-size: 12px; font-weight: 500; padding: 2px; border-radius: 4px; margin: 1px;">रु{{ $product->price }}<span></div>
                     </div>
 
                     {{-- Quantity --}}
-                    <div class="w-24">
+                    <div class="w-20">
                         <div class="text-xs">
-                            <span class="{{ $product->in_stock ? 'text-green-600' : 'text-red-600' }} product-stock">
-                                {{ $product->in_stock ? 'In Stock' : 'Out of Stock' }}
+                            <span class="{{ $product->stock ? 'outofstock' : 'instock' }} product-stock">
+                                {{ $product->stock ? 'Out of Stock' : 'In Stock' }}
                             </span>
                         </div>
                         <input type="number" wire:model.lazy="quantities.{{ $product->id }}" min="0"
                             placeholder="Qty"
-                            class="px-3 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50" />
+                            class="w-full px-3 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50" />
                     </div>
                 </div>
             @endforeach
-
-            <div class="mt-6">
-                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                    Checkout
-                </button>
-            </div>
         </form>
     </div>
 
