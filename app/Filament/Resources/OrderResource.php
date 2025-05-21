@@ -15,7 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Colors\Color;
 use Filament\Forms\Components\ {
-    TextInput, DateTimePicker, Textarea, Select, Toggle}
+    TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle}
     ;
     use Filament\Tables\Columns\ {
         ColorColumn, TextColumn, BooleanColumn, DateTimeColumn}
@@ -28,10 +28,24 @@ use Filament\Forms\Components\ {
             protected static ?string $model = Order::class;
 
             protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-
+          
             public static function form( Form $form ): Form {
                 return $form
-                ->schema( [] );
+                ->schema( [
+                     Select::make('user_id')
+                    ->relationship(name: 'user', titleAttribute: 'name')
+                    ->label('Customer')
+                    ->searchable()
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->required(),
+                    DatePicker::make( 'date' )
+                    ->label( 'Order Date' )
+                    ->default( now() ) // ⬅️ sets today's date
+                    ->required(),
+                    TextInput::make('discount')
+                    ->numeric()
+                    ->label('Discount'),
+                ] );
             }
 
             public static function table( Table $table ): Table {
@@ -62,8 +76,9 @@ use Filament\Forms\Components\ {
                 ->html(),
                 TextColumn::make( 'date' ),
 
-                TextColumn::make( 'user.name' ),
-                TextColumn::make( 'orderid' ),
+                TextColumn::make( 'user.name' )
+                ->description(fn ( $record ) => $record->orderid),
+                // TextColumn::make( 'orderid' ),
 
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
                 TextColumn::make( 'seenby' )
@@ -96,7 +111,8 @@ use Filament\Forms\Components\ {
 
     public static function getRelations(): array {
         return [
-            //
+            RelationManagers\ItemsRelationManager::class,
+            // RelationManagers\RemarksRelationManager::class,
         ];
     }
     public static function canCreate(): bool {

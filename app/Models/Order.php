@@ -39,6 +39,24 @@ class Order extends BaseModel
         'date' => 'datetime',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updating(function ($order) {
+            if ($order->total && $order->discount !== null) {
+                $order->net_total = $order->total - ($order->discount / 100) * $order->total;
+            }
+        });
+
+        // Optional: Handle create also
+        static::creating(function ($order) {
+            if ($order->total && $order->discount !== null) {
+                $order->net_total = $order->total - ($order->discount / 100) * $order->total;
+            }
+        });
+    }
+
     // Relationships
     public function user()
     {
@@ -58,5 +76,10 @@ class Order extends BaseModel
     public function remarks()
     {
         return $this->hasMany(OrderRemark::class, 'orderid', 'orderid');
+    }
+
+    public function getItemsTotalAttribute()
+    {
+        return $this->approvedquantity*$this->price;
     }
 }
