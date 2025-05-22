@@ -39,7 +39,7 @@ class PartResource extends Resource
         return $form
             ->schema([
                   GazeBanner::make()
-                ->pollTimer(1)
+                ->pollTimer(5)
                 ->lock()
                 ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
                 ->hideOnCreate()

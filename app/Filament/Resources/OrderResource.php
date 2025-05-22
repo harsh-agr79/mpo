@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Colors\Color;
 use Carbon\Carbon;
+use Filament\Notifications\Notification;
 use Filament\Forms\Components\ {
     TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle}
     ;
@@ -47,12 +48,22 @@ use Filament\Forms\Components\ {
                     ->required(),
                     TextInput::make('discount')
                     ->numeric()
-                    ->label('Discount'),
+                    ->label('Discount')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($record, $component, $state) {
+                        $record->{$component->getName()} = $state;
+                        $record->save();
+                         Notification::make()
+                            ->title('Discount Updated')
+                            ->success()
+                            ->send();
+                    }),
                 ] );
             }
 
             public static function table( Table $table ): Table {
                 return $table
+                ->defaultSort( 'created_at', 'desc' )
                 ->columns( [
                     TextColumn::make( 'mainstatus' )
                     ->label( '' )
@@ -93,7 +104,7 @@ use Filament\Forms\Components\ {
                     ->sortable(),
                     // ->toggleable()
 
-                TextColumn::make( 'user.name' ),
+                TextColumn::make( 'user.name' )->searchable(),
                 // ->description(fn ( $record ) => $record->orderid),
                 TextColumn::make( 'orderid' ),
                 ToggleColumn::make('clnstatus')

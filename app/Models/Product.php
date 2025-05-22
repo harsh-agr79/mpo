@@ -27,7 +27,8 @@ class Product extends BaseModel
 
     protected $casts = [
         'order_num' => 'integer',
-        'sub_category_id' => 'array'
+        'sub_category_id' => 'array',
+        'offer' => 'array'
     ];
 
     public static function booted()

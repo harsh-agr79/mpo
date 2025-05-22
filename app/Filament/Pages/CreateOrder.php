@@ -147,17 +147,39 @@ class CreateOrder extends Page {
             'nepmonth' => getNepaliMonth($this->order_date),
             'nepyear' => getNepaliYear($this->order_date),
         ]);
-        foreach ($this->getCartItems() as $item) {
-            OrderItem::create([
-                'orderid' => $order->orderid,
-                'product_id' => $item['id'],
-                'offer'=> \App\Models\Product::find($item['id'])->offer,
-                'price' => $item['price'],
-                'quantity' => $item['quantity'],
-                'approvedquantity' => 0,
-                'status' => 'pending'
-            ]);
-        }
+            foreach ($this->getCartItems() as $item) {
+                $product = \App\Models\Product::find($item['id']);
+                $offers = $product->offer;
+                $quantity = $item['quantity'];
+
+                // Initialize empty matched offer
+                $matchedOffer = [];
+
+                if (!empty($offers)) {
+                    // Convert keys to integers and sort descending
+                    $sortedKeys = collect($offers)
+                        ->keys()
+                        ->map(fn($key) => (int) $key)
+                        ->sortDesc()
+                        ->values();
+
+                    foreach ($sortedKeys as $key) {
+                        if ($quantity >= $key) {
+                            $matchedOffer = [$key => $offers[$key]];
+                            break;
+                        }
+                    }
+                }
+                OrderItem::create([
+                    'orderid' => $order->orderid,
+                    'product_id' => $item['id'],
+                    'offer' => json_encode($matchedOffer),
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'approvedquantity' => 0,
+                    'status' => 'pending'
+                ]);
+            }
         $this->selectedUser = null;
         $this->order_date = now()->toDateString();
         foreach ($this->quantities as $key => $val) {

@@ -22,10 +22,10 @@ class EditOrder extends EditRecord {
         ];
     }
 
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
+    // protected function getRedirectUrl(): string
+    // {
+    //     return $this->getResource()::getUrl('index');
+    // }
 
     public function mount( $record ): void {
         parent::mount( $record );

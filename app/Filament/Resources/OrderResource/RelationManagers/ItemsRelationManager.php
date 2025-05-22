@@ -92,13 +92,30 @@ class ItemsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('Product.name')
                     ->label('Product Name')
                     ->sortable()
-                    ->wrap()
-                    ->description(fn ($record) => $record->offer),
-                // Tables\Columns\TextColumn::make('offer'),
-                Tables\Columns\TextColumn::make('quantity'),
+                    ->wrap(),
+                Tables\Columns\SelectColumn::make('offer')
+                   
+                 ->options(function ($record) {
+                        // If you have a relationship called `product`, you can use:
+                        $product = $record->product ?? Product::find($record->product_id);
+
+                        if (! $product || ! $product->offer) {
+                            return [];
+                        }
+
+                        $offers = $product->offer;
+
+                        return collect($offers)
+                            ->mapWithKeys(fn ($price, $qty) => [json_encode([$qty => $price]) => "{$qty} pcs : ₹{$price}"])
+                            ->toArray();
+                    })
+                    ->searchable()
+                    ->sortable()
+                    ->label('Offer (pcs:price)'),
+                Tables\Columns\TextColumn::make('quantity')->color('success'),
                 Tables\Columns\TextInputColumn::make('approvedquantity')
-                    ->label('Approved Quantity'),
-                Tables\Columns\TextInputColumn::make('price'),
+                    ->label('Approved Quantity')->rules(['integer']),
+                Tables\Columns\TextInputColumn::make('price')->rules(['integer']),
                 Tables\Columns\SelectColumn::make('status')
                 ->options([
                     'pending' => 'Pending',

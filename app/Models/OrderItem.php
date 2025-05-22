@@ -20,11 +20,38 @@ class OrderItem extends BaseModel
         'price' => 'integer',
         'quantity' => 'integer',
         'approvedquantity' => 'integer',
+        // 'offer' => 'array',
     ];
 
     protected static function boot()
     {
         parent::boot();
+
+         $handleOfferPricing = function ($item) {
+            if ($item->status === 'approved') {
+                $offer = is_string($item->offer) ? json_decode($item->offer, true) : $item->offer;
+
+                // Offer is filled: apply first value as price
+                if (is_array($offer) && !empty($offer)) {
+                    $item->price = (int) reset($offer);
+                }
+
+                // Offer is now null/empty — but was previously filled (only for updating)
+                elseif ($item->exists) {
+                    $originalOffer = is_string($item->getOriginal('offer'))
+                        ? json_decode($item->getOriginal('offer'), true)
+                        : $item->getOriginal('offer');
+
+                    if (is_array($originalOffer) && !empty($originalOffer)) {
+                        // Offer changed from filled → empty/null
+                        $item->price = optional($item->product)->price ?? $item->price;
+                    }
+                }
+            }
+        };
+
+        static::creating($handleOfferPricing);
+        static::updating($handleOfferPricing);
 
         static::saved(function ($item) {
             $item->updateOrderTotalsAndStatus();

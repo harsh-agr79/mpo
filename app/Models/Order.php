@@ -44,15 +44,23 @@ class Order extends BaseModel
         parent::boot();
 
         static::updating(function ($order) {
-            if ($order->total && $order->discount !== null) {
-                $order->net_total = $order->total - ($order->discount / 100) * $order->total;
+            $dis = 0;
+            if ($order->discount !== null) {
+                $dis = $order->discount;
+            }
+            if ($order->total) {
+                $order->net_total = $order->total - ($dis / 100) * $order->total;
             }
         });
 
         // Optional: Handle create also
         static::creating(function ($order) {
-            if ($order->total && $order->discount !== null) {
-                $order->net_total = $order->total - ($order->discount / 100) * $order->total;
+            $dis = 0;
+            if ($order->discount !== null) {
+                $dis = $order->discount;
+            }
+            if ($order->total) {
+                $order->net_total = $order->total - ($dis / 100) * $order->total;
             }
         });
     }

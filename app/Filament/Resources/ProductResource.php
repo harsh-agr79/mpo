@@ -13,6 +13,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -44,7 +45,7 @@ class ProductResource extends Resource
         return $form
             ->schema([
                   GazeBanner::make()
-                ->pollTimer(1)
+                ->pollTimer(5)
                 ->lock()
                 ->canTakeControl(fn() => auth()->user()?->hasRole('Admin'))
                 ->hideOnCreate()
@@ -58,7 +59,7 @@ class ProductResource extends Resource
                     ->options(Category::all()->pluck('name', 'id'))
                     ->label('Category'),
                 Select::make('sub_category_id')
-                    ->required()
+                    // ->required()
                     ->label('SubCategories')
                     ->multiple()
                     ->reactive()
@@ -81,11 +82,10 @@ class ProductResource extends Resource
                     ->label('Out of Stock'),
                 Toggle::make('hidden')
                     ->label('Hide'),
-                TextInput::make('prod_unique_id')->unique(ignoreRecord: true)->required()->label('Unique ID/Slug')
-                ,
-                TextInput::make('offer')
-                    ->numeric()
-                    ->inputMode('decimal')
+                TextInput::make('prod_unique_id')->unique(ignoreRecord: true)->required()->label('Unique ID/Slug'),
+                KeyValue::make('offer')
+                    ->KeyLabel('Pcs')
+                    ->ValueLabel('Price')
                     ->label('Offer'),
                 FileUpload::make('image')
                     ->required()
