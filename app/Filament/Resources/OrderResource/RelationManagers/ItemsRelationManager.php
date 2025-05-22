@@ -140,7 +140,6 @@ class ItemsRelationManager extends RelationManager
                     ->sortable()
                     ->wrap(),
                 Tables\Columns\SelectColumn::make('offer')
-                   
                  ->options(function ($record) {
                         // If you have a relationship called `product`, you can use:
                         $product = $record->product ?? Product::find($record->product_id);
