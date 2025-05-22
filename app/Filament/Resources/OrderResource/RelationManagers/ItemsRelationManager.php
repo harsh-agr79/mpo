@@ -22,58 +22,90 @@ class ItemsRelationManager extends RelationManager
     protected static string $relationship = 'items';
 
     public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Select::make('product_id')
-                    ->label('Product')
-                    ->relationship('product', 'name')
-                    ->searchable()
-                    ->required()
-                    ->reactive()
-                    ->afterStateUpdated(fn ($state, callable $set) => $this->updatePrices($state, $set)),
+{
+    return $form
+        ->schema([
+            Select::make('product_id')
+                ->label('Product')
+                ->relationship('product', 'name')
+                ->searchable()
+                ->required()
+                ->reactive()
+                ->afterStateUpdated(fn ($state, callable $set, $get, $livewire) =>
+                    $this->updateOfferAndPrice($state, $get('quantity'), $set, $livewire)
+                ),
 
-                TextInput::make('quantity')
-                    ->label('Quantity')
-                    ->numeric()
-                    ->default(1)
-                    ->required()
-                    ->reactive(),
+            TextInput::make('quantity')
+                ->label('Quantity')
+                ->numeric()
+                ->default(1)
+                ->required()
+                ->reactive()
+                ->afterStateUpdated(fn ($state, callable $set, $get, $livewire) =>
+                    $this->updateOfferAndPrice($get('product_id'), $state, $set, $livewire)
+                ),
 
-                TextInput::make('price')
-                    ->label('Price')
-                    ->prefix('रु')
-                    ->numeric()
-                    ->readonly(), // Prevent manual input
-                TextInput::make('offer')
-                    ->label('offer')
-                    ->readonly(), // Prevent manual input
+            TextInput::make('price')
+                ->label('Price')
+                ->prefix('₹')
+                ->numeric()
+                ->readonly(),
 
-                Hidden::make('status')
-                    ->default('pending'),
-                Hidden::make('approvedquantity')
-                    ->default(0),
+            // ✅ Offer stored in JSON format
+            TextInput::make('offer')
+                ->label('Offer')
+                ->helperText('Auto-filled as JSON, e.g. {"10": "1000"}')
+                ->reactive(),
 
-                
-                Hidden::make('orderid')
-                    ->default(fn ($livewire) => $livewire->ownerRecord->orderid),
-                // Forms\Components\TextInput::make('orderid')
-                //     ->required()
-                //     ->maxLength(255),
-            ]);
+            Hidden::make('status')->default('pending'),
+            Hidden::make('approvedquantity')->default(0),
+            Hidden::make('orderid')->default(fn ($livewire) => $livewire->ownerRecord->orderid),
+        ]);
+}
+
+
+public function updateOfferAndPrice($productId, $quantity, callable $set, $livewire)
+{
+    $product = Product::find($productId);
+    $isEditing = !is_null($livewire->mountedTableActionRecord);
+
+    if (!$product || !$quantity) {
+        $set('offer', null);
+        return;
     }
 
-    public function updatePrices($productId, $set)
-        {
-            $product = Product::find($productId);
-            if ($product) {
-                $set('price', $product->price);
-                $set('offer', $product->offer); // Assuming 'offer' is a DB field
-            } else {
-                $set('price', null);
-                $set('offer', null);
+    $offers = $product->offer; // JSON decoded offer: {"5":"1200", "10":"1000"}
+    $bestMatch = null;
+    $bestQty = null;
+
+    // Find best match (highest offer qty ≤ input quantity)
+    foreach ($offers as $offerQty => $offerPrice) {
+        if ((int)$offerQty <= $quantity) {
+            if (is_null($bestQty) || (int)$offerQty > $bestQty) {
+                $bestQty = (int)$offerQty;
+                $bestMatch = $offerPrice;
             }
         }
+    }
+
+    // Update offer field only on creation (not editing)
+    if (!$isEditing && $bestMatch !== null) {
+        $set('offer', json_encode([$bestQty => $bestMatch]));
+    }
+
+    // Set price field logic
+    if ($isEditing) {
+        if ($bestMatch && $livewire->mountedTableActionRecord->status === 'approved') {
+            $set('price', $bestMatch);
+        } else {
+            $set('price', $product->price);
+        }
+    } else {
+        $set('price', $product->price);
+    }
+}
+
+
 
 
     public function table(Table $table): Table
