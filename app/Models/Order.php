@@ -83,7 +83,7 @@ class Order extends BaseModel
 
     public function remarks()
     {
-        return $this->hasMany(OrderRemark::class, 'orderid', 'orderid');
+        return $this->hasMany(order_remarks::class, 'orderid', 'orderid');
     }
 
     public function getItemsTotalAttribute()

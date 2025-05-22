@@ -171,7 +171,7 @@ use Filament\Forms\Components\ {
     public static function getRelations(): array {
         return [
             RelationManagers\ItemsRelationManager::class,
-            // RelationManagers\RemarksRelationManager::class,
+            RelationManagers\RemarksRelationManager::class,
         ];
     }
     public static function canCreate(): bool {
