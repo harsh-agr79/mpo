@@ -82,6 +82,7 @@ class PartsPurchaseResource extends Resource
                 ->minItems(1)->createItemButtonLabel('Add Item')
                 ->columnSpan('full'),
             ]);
+            
     }
 
     public static function table(Table $table): Table
