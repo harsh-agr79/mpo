@@ -15,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Colors\Color;
 use Carbon\Carbon;
+use Closure;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\ {
     TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle}
@@ -149,6 +150,19 @@ use Filament\Forms\Components\ {
             )
             ->color( fn ( $state ) => $state === 'NOT SEEN' ? 'danger' : 'success' )
         ] )
+         ->recordClasses(function ($record) {
+           
+            if ($record->seenby === null) return '';
+
+            if ($record->mainstatus === 'pending') return 'bg-status-pending';
+            if ($record->mainstatus === 'rejected') return 'bg-status-rejected';
+            if ($record->mainstatus === 'approved' && $record->clnstatus === null) return 'bg-status-approved';
+            if ($record->clnstatus === 'packing' && $record->mainstatus === 'approved') return 'bg-status-packing';
+            if ($record->clnstatus === 'delivered' && $record->delivered_at !== null) return 'bg-status-delivered';
+
+            return '';
+        })
+
         ->filters( [
             Tables\Filters\TrashedFilter::make(),
         ] )

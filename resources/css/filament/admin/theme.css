@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+@import '../../../../vendor/filament/filament/resources/css/base.css';
+
+@config 'tailwind.config.js';
+
+/* Light mode */
+.bg-status-pending       { background-color: #effaff; }  /* sky-300 */
+.bg-status-rejected      { background-color: #fdf5f5; }  /* red-100 */
+.bg-status-approved      { background-color: #fff7df; }  /* amber-300 */
+.bg-status-packing       { background-color: #f0e3ff; }  /* purple-100 */
+.bg-status-delivered     { background-color: #effff4; }  /* green-100 */
+
+/* Dark mode overrides */
+.dark .bg-status-pending       { background-color: #152f3d; }  /* sky-900 */
+.dark .bg-status-rejected      { background-color: #3d1515; }  /* red-900 */
+.dark .bg-status-approved      { background-color: #3f2312; }  /* amber-900 */
+.dark .bg-status-packing       { background-color: #2f1544; }  /* purple-900 */
+.dark .bg-status-delivered     { background-color: #102518; }  /* green-900 */
+

@@ -16,7 +16,7 @@
     <div class="bg-white items-center border rounded-lg p-3">
         {{ $this->form }}
         <div class="py-2 flex justify-between items-center">
-            <div class="w-14">
+            <div class="w-30">
                 <x-filament::actions :actions="$this->getActions()" />
             </div>
             <div class="flex-1 px-2">
@@ -33,11 +33,11 @@
             @foreach ($this->Products as $product)
                 <div class="product-card flex items-center gap-4 border rounded-lg p-4 bg-white shadow-sm w-full">
                     {{-- 📸 Smaller image (48 × 48 px on all screens) --}}
-                    <div class="flex-shrink-0 w-12 overflow-hidden rounded border">
+                    <div class="flex overflow-hidden rounded border">
                         <img src="{{ $product->image && file_exists(storage_path('app/public/' . $product->image))
                             ? asset('storage/' . $product->image)
                             : asset('images/dummy.png') }}"
-                            alt="{{ $product->name }}" style="height: 60px;" />
+                            alt="{{ $product->name }}" style="width: 80px;" />
                     </div>
 
                     {{-- Details --}}
