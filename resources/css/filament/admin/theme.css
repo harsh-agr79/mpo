@@ -8,9 +8,9 @@
 
 /* Light mode */
 .bg-status-pending       { background-color: #effaff; }  /* sky-300 */
-.bg-status-rejected      { background-color: #fdf5f5; }  /* red-100 */
+.bg-status-rejected      { background-color: #ffe4e4; }  /* red-100 */
 .bg-status-approved      { background-color: #fff7df; }  /* amber-300 */
-.bg-status-packing       { background-color: #f0e3ff; }  /* purple-100 */
+.bg-status-packing       { background-color: #f2ecfa; }  /* purple-100 */
 .bg-status-delivered     { background-color: #effff4; }  /* green-100 */
 
 /* Dark mode overrides */
