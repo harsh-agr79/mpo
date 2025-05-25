@@ -131,8 +131,8 @@ class ItemsRelationManager extends RelationManager
                 Tables\Columns\ImageColumn::make('product.image')
                     ->label('Image')
                     ->square()
-                    ->width(100)
-                    ->height(100)
+                    ->width(50)
+                    ->height(50)
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('Product.name')

@@ -90,4 +90,10 @@ class Order extends BaseModel
     {
         return $this->approvedquantity*$this->price;
     }
+
+    public function materials()
+    {
+        return $this->hasMany(OrderMaterial::class, 'orderid', 'orderid');
+    }
+
 }

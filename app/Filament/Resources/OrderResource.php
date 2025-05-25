@@ -171,6 +171,7 @@ use Filament\Forms\Components\ {
     public static function getRelations(): array {
         return [
             RelationManagers\ItemsRelationManager::class,
+            RelationManagers\OrderMaterialsRelationManager::class,
             RelationManagers\RemarksRelationManager::class,
         ];
     }
