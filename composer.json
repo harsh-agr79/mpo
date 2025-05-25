@@ -13,6 +13,7 @@
         "althinect/filament-spatie-roles-permissions": "^2.3",
         "discoverydesign/filament-gaze": "^1.1",
         "filament/filament": "^3.3",
+        "icetalker/filament-table-repeater": "^1.4",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "tomatophp/filament-pwa": "^1.0"

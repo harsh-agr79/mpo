@@ -27,6 +27,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use PartsPurchaseLogsRelationManager;
 use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
+use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+
 
 class PartsPurchaseResource extends Resource
 {
@@ -62,7 +64,9 @@ class PartsPurchaseResource extends Resource
                     )
                     ->disabled()
                     ->dehydrated(),
-                Repeater::make('items')->relationship()->schema([
+                    TableRepeater::make('items')
+                ->relationship('items')
+                ->schema([
                     Select::make('part_id')->relationship('part', 'name')->searchable()->options(Part::all()->pluck('name', 'id'))->required(),
                     Select::make('voucher')->searchable()->options([
                         'purchase' => 'Purchase',
@@ -73,7 +77,10 @@ class PartsPurchaseResource extends Resource
                         'office_dmg_use' => 'Office Damage Use'
                     ])->required(),
                     TextInput::make('quantity')->numeric()->required(),
-                ])->columnSpanFull()->columns(3)->minItems(1)->createItemButtonLabel('Add Item'),
+                ])
+                ->reorderable()
+                ->minItems(1)->createItemButtonLabel('Add Item')
+                ->columnSpan('full'),
             ]);
     }
 

@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use ProductsPurchaseAdjustmentLogsRelationManager;
 use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
+use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
 class ProductsPurchaseAdjustmentResource extends Resource
 {
@@ -65,12 +66,88 @@ class ProductsPurchaseAdjustmentResource extends Resource
                     ->disabled()
                     ->dehydrated(),
 
-                Repeater::make('items')
-                    ->relationship()
-                    ->reactive()
-                    ->columns(2)
-                    ->schema([
-                        Select::make('prod_unique_id')
+                // Repeater::make('items')
+                //     ->relationship()
+                //     ->reactive()
+                //     ->columns(2)
+                //     ->schema([
+                //         Select::make('prod_unique_id')
+                //             ->label('Product')
+                //             ->relationship('product', 'name')
+                //             ->required()
+                //             ->reactive()
+                //             ->searchable()
+                //             ->options(Product::all()->pluck('name', 'prod_unique_id')),
+
+                //         TextInput::make('price')
+                //             ->numeric()
+                //             ->reactive()
+                //             ->dehydrated()
+                //             ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                //                 $price = (float) ($state ?? 0);
+                //                 $quantity = (float) ($get('quantity') ?? 0);
+                //                 $set('total', $price * $quantity);
+
+                //                 // ✅ Recalculate total_price
+                //                 $items = $get('../../items'); // navigate up the repeater context
+                //                 $grandTotal = collect($items)->sum('total');
+                //                 $set('../../total_price', $grandTotal);
+                //             })
+                //         ,
+                //         TextInput::make('quantity')
+                //             ->numeric()
+                //             ->required()
+                //             ->default(1)
+                //             ->reactive()
+                //             ->minValue(1)
+                //             ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                //                 $price = (float) ($get('price') ?? 0);
+                //                 $quantity = (float) ($state ?? 1);
+                //                 $set('total', $price * $quantity);
+
+                //                 // ✅ Recalculate total_price
+                //                 $items = $get('../../items'); // navigate up the repeater context
+                //                 $grandTotal = collect($items)->sum('total');
+                //                 $set('../../total_price', $grandTotal);
+                //             }),
+
+
+                //         TextInput::make('total')
+                //             ->numeric()
+                //             ->disabled()
+                //             ->dehydrated()
+                //             ->afterStateHydrated(function ($state, callable $set, callable $get) {
+                //                 $price = (float) ($get('price') ?? 0);
+                //                 $quantity = (float) ($get('quantity') ?? 0);
+
+                //                 $set('total', $price * $quantity);
+                //             }),
+
+                //         Select::make('type')
+                //             ->searchable()
+                //             ->options([
+                //                 'increase' => 'Increase',
+                //                 'decrease' => 'Decrease'
+                //             ])
+                //             ->required()
+                //     ])
+                //     ->afterStateUpdated(function (Set $set, $state, $get) {
+                //         // Recalculate total_price immediately when any item's state changes
+                //         $totalPrice = collect($get('items') ?? [])
+                //             ->sum(fn($item) => floatval($item['total'] ?? 0)); // Sum of all item totals
+            
+                //         // Update grand total in the 'total_price' field
+                //         $set('total_price', $totalPrice);
+                //     })
+                //     ->createItemButtonLabel('Add Product')
+                //     ->required()
+                //     ->columnSpanFull()
+                // ,
+
+                 TableRepeater::make('items')
+                ->relationship('items')
+                ->schema([
+                   Select::make('prod_unique_id')
                             ->label('Product')
                             ->relationship('product', 'name')
                             ->required()
@@ -129,19 +206,18 @@ class ProductsPurchaseAdjustmentResource extends Resource
                                 'decrease' => 'Decrease'
                             ])
                             ->required()
-                    ])
-                    ->afterStateUpdated(function (Set $set, $state, $get) {
+                ])
+                ->reorderable()
+                ->afterStateUpdated(function (Set $set, $state, $get) {
                         // Recalculate total_price immediately when any item's state changes
                         $totalPrice = collect($get('items') ?? [])
                             ->sum(fn($item) => floatval($item['total'] ?? 0)); // Sum of all item totals
             
                         // Update grand total in the 'total_price' field
                         $set('total_price', $totalPrice);
-                    })
-                    ->createItemButtonLabel('Add Product')
-                    ->required()
-                    ->columnSpanFull()
-                ,
+                })
+                ->createItemButtonLabel('Add Product')
+                ->columnSpan('full'),
                 TextInput::make('total_price')
                     ->label('Total Price')
                     ->disabled()

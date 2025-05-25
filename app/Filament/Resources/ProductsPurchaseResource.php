@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use ProductsPurchaseLogsRelationManager;
 use DiscoveryDesign\FilamentGaze\Forms\Components\GazeBanner;
+use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 
 class ProductsPurchaseResource extends Resource
 {
@@ -63,12 +64,11 @@ class ProductsPurchaseResource extends Resource
                     ->disabled()
                     ->dehydrated(),
 
-                Repeater::make('items')
-                    ->relationship()
-                    ->reactive()
-                    ->columns(2)
-                    ->schema([
-                        Select::make('prod_unique_id')
+              
+                TableRepeater::make('items')
+                ->relationship('items')
+                ->schema([
+                    Select::make('prod_unique_id')
                             ->label('Product')
                             ->relationship('product', 'name')
                             ->required()
@@ -118,8 +118,9 @@ class ProductsPurchaseResource extends Resource
 
                                 $set('total', $price * $quantity);
                             })
-                    ])
-                    ->afterStateUpdated(function (Set $set, $state, $get) {
+                ])
+                ->reorderable()
+                ->afterStateUpdated(function (Set $set, $state, $get) {
                         // Recalculate total_price immediately when any item's state changes
                         $totalPrice = collect($get('items') ?? [])
                             ->sum(fn($item) => floatval($item['total'] ?? 0)); // Sum of all item totals
@@ -127,10 +128,8 @@ class ProductsPurchaseResource extends Resource
                         // Update grand total in the 'total_price' field
                         $set('total_price', $totalPrice);
                     })
-                    ->createItemButtonLabel('Add Product')
-                    ->required()
-                    ->columnSpanFull()
-                ,
+                ->columnSpan('full'),
+                
                 TextInput::make('total_price')
                     ->label('Total Price')
                     ->disabled()
