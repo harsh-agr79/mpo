@@ -7,20 +7,28 @@
         .instock {
             color: green;
         }
+        .hide-scrollbar {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none;  /* IE and Edge */
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+        }
     </style>
     @if (session()->has('message'))
         <div class="mb-4 p-3 bg-green-100 text-green-800 rounded">
             {{ session('message') }}
         </div>
     @endif
-    <div class="bg-white items-center border rounded-lg p-3">
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm items-center border rounded-lg p-3">
         {{ $this->form }}
         <div class="py-2 flex justify-between items-center">
             <div class="w-30">
                 <x-filament::actions :actions="$this->getActions()" />
             </div>
             <div class="flex-1 px-2">
-                <input type="text" id="productSearch" placeholder="Search products..."
+                <input type="text" id="productSearch"  style="color:black;" placeholder="Search products..."
                     class="w-full px-4 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50" />
             </div>
         </div>
@@ -28,11 +36,10 @@
             Cart Total: रु{{ number_format($this->cartTotal, 2) }}
         </div>
     </div>
-    <div style="height: 65vh; overflow-y:scroll;">
-        <form wire:submit.prevent="checkout" class="space-y-4">
+    <div style="height: 65vh; overflow-y:scroll;" class="hide-scrollbar">
+        <form wire:submit.prevent="checkout">
             @foreach ($this->Products as $product)
-                <div class="product-card flex items-center gap-4 border rounded-lg p-4 bg-white shadow-sm w-full">
-                    {{-- 📸 Smaller image (48 × 48 px on all screens) --}}
+               <div class="product-card flex items-center gap-4 border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm w-full" style="margin-bottom:5px;">
                     <div class="flex overflow-hidden rounded border">
                         <img src="{{ $product->image && file_exists(storage_path('app/public/' . $product->image))
                             ? asset('storage/' . $product->image)
@@ -61,7 +68,7 @@
                         </div>
                         <input type="number" wire:model.lazy="quantities.{{ $product->id }}" min="0"
                             placeholder="Qty"
-                            class="w-full px-3 py-1 text-sm border border-gray-300 rounded-md shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50" />
+                            class="w-full px-3 py-1 text-sm border border-gray-300 rounded-md text-black shadow-sm focus:border-primary-500 focus:ring focus:ring-primary-500 focus:ring-opacity-50" style="color:black;" />
                     </div>
                 </div>
             @endforeach
