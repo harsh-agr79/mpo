@@ -16,18 +16,16 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Colors\Color;
 use Carbon\Carbon;
 use Closure;
+use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\ {
-    TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle}
-    ;
-    use Filament\Tables\Columns\ {
-        ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn}
-        ;
-        use Illuminate\Database\Eloquent\SoftDeletingScope;
-        use Filament\Tables\Columns\Layout\Stack;
-        use Filament\Tables\Columns\Layout\Split;
+use Filament\Forms\Components\ {TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle};
+use Filament\Tables\Columns\ {ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\Layout\Split;
 
-        class OrderResource extends Resource {
+class OrderResource extends Resource {
             protected static ?string $model = Order::class;
 
             protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
@@ -37,16 +35,25 @@ use Filament\Forms\Components\ {
             public static function form( Form $form ): Form {
                 return $form
                 ->schema( [
-                     Select::make('user_id')
-                    ->relationship(name: 'user', titleAttribute: 'name')
-                    ->label('Customer')
-                    ->searchable()
-                    ->options(User::all()->pluck('name', 'id'))
-                    ->required(),
-                    DatePicker::make( 'date' )
-                    ->label( 'Order Date' )
-                    ->default( now() ) // ⬅️ sets today's date
-                    ->required(),
+                    Section::make('Order Specifics')
+                    ->schema([
+                        Select::make('user_id')
+                        ->relationship(name: 'user', titleAttribute: 'name')
+                        ->label('Customer')
+                        ->searchable()
+                        ->options(User::all()->pluck('name', 'id'))
+                        ->required(),
+                        DatePicker::make( 'date' )
+                        ->label( 'Order Date' )
+                        ->default( now() ) // ⬅️ sets today's date
+                        ->required(),
+                    ])->columns(2),
+                     Section::make('Shippent Details')
+                    ->schema([
+                    TextInput::make('cartoons'),
+                    TextInput::make('transport')
+                     ]) ->collapsible()
+                        ->persistCollapsed()->columns(2),
                     TextInput::make('discount')
                     ->numeric()
                     ->label('Discount')
@@ -184,9 +191,16 @@ use Filament\Forms\Components\ {
 
     public static function getRelations(): array {
         return [
-            RelationManagers\ItemsRelationManager::class,
-            RelationManagers\OrderMaterialsRelationManager::class,
-            RelationManagers\RemarksRelationManager::class,
+             RelationGroup::make('Items', [
+                RelationManagers\ItemsRelationManager::class,
+                // RelationManagers\OrderMaterialsRelationManager::class,
+                RelationManagers\RemarksRelationManager::class
+             ]),
+              RelationGroup::make('Materials', [
+                // RelationManagers\ItemsRelationManager::class,
+                RelationManagers\OrderMaterialsRelationManager::class,
+                RelationManagers\RemarksRelationManager::class
+             ]),
         ];
     }
     public static function canCreate(): bool {
