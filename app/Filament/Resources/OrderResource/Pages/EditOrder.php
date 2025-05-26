@@ -7,6 +7,7 @@ use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Resources\OrderResource\Widgets\OrderSummary;
+use App\Filament\Resources\OrderResource\Widgets\categorySummary;
 use App\Models\Order;
 use App\Filament\Resources\OrderResource\RelationManagers;
 
@@ -21,6 +22,12 @@ class EditOrder extends EditRecord {
     protected function getHeaderWidgets(): array {
         return [
             OrderSummary::class,
+        ];
+    }
+
+    protected function getFooterWidgets(): array {
+        return [
+            categorySummary::class,
         ];
     }
 
