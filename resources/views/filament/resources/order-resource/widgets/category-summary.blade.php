@@ -18,8 +18,8 @@
 
             <div
                 class="p-4 bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500 dark:border-blue-400 rounded shadow-sm">
-                <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">User Remarks:</h3>
-                <p class="text-sm text-black dark:text-white">
+                <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">User Remarks:</h3>
+                <p class="text-xs text-black dark:text-white">
                     {{ $order->user_remarks ?? 'No remarks provided' }}
                 </p>
             </div>
@@ -27,7 +27,7 @@
             <div style="overflow-x: scroll;" class="hide-scrollbar">
                 @if ($categoryCounts->isNotEmpty())
                     <table
-                        class="w-full text-sm text-left text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded mt-6">
+                        class="w-full text-xs text-left text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded mt-6">
                         <thead>
                             <tr class="bg-gray-100 dark:bg-gray-700">
                                 <th class="px-4 py-2 border dark:border-gray-700 text-left">Metric</th>
@@ -69,13 +69,13 @@
                         </tbody>
                     </table>
                 @else
-                    <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">No items found in this order.</p>
+                    <p class="mt-4 text-xs text-gray-600 dark:text-gray-400">No items found in this order.</p>
                 @endif
             </div>
             <div
                 class="mt-6 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
                 <h3 class="text-base font-semibold text-black dark:text-white mb-3">Summary</h3>
-                <div class="flex flex-col space-y-1 text-sm text-black dark:text-white whitespace-nowrap">
+                <div class="flex flex-col space-y-1 text-xs text-black dark:text-white whitespace-nowrap">
                     <div><span class="font-medium">Total Items:</span> {{ $totalItems }}</div>
                     <div><span class="font-medium">Total Approved Quantity:</span> {{ $totalApprovedQuantity }}</div>
                     <div><span class="font-medium">Total Approved Value:</span>
