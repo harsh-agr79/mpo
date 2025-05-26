@@ -8,7 +8,7 @@
         </div>
 
         @if($categoryCounts->isNotEmpty())
-            <table class="w-full text-sm text-left text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded mt-6">
+            <table class="w-full text-sm text-left text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded mt-6" style="overflow-x: scroll;">
                 <thead>
                     <tr class="bg-gray-100 dark:bg-gray-700">
                         <th class="px-4 py-2 border dark:border-gray-700 text-left">Metric</th>
