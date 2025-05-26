@@ -68,6 +68,7 @@ class OrderMaterialsRelationManager extends RelationManager
                Tables\Columns\TextColumn::make('material.name')
                     ->label('Product Name')
                     ->sortable()
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->wrap(),
                 Tables\Columns\TextInputColumn::make('quantity'),
                 Tables\Columns\SelectColumn::make('status')

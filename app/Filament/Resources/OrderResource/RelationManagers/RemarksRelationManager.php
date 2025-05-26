@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\{TextInput, Select, Hidden};
+use Filament\Tables\Columns\{TextColumn, BadgeColumn};
 
 class RemarksRelationManager extends RelationManager
 {
@@ -37,9 +38,15 @@ class RemarksRelationManager extends RelationManager
             ->defaultSort('created_at', 'desc')
             ->paginated(false)
             ->columns([
-                Tables\Columns\TextColumn::make('admin.name'),
-                Tables\Columns\TextColumn::make('remark'),
-                Tables\Columns\TextColumn::make('created_at'),
+                Tables\Columns\TextColumn::make('admin.name')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
+                ,
+                Tables\Columns\TextColumn::make('remark')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
+                ,
+                Tables\Columns\TextColumn::make('created_at')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
+                ,
             ])
             ->filters([
                 //
