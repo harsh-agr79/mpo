@@ -1,5 +1,18 @@
 <x-filament-widgets::widget>
     <x-filament::section>
+        <style>
+            .hide-scrollbar {
+                scrollbar-width: none;
+                /* Firefox */
+                -ms-overflow-style: none;
+                /* IE and Edge */
+            }
+
+            .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+                /* Chrome, Safari, Opera */
+            }
+        </style>
         <div class="p-4 bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500 dark:border-blue-400 rounded shadow-sm">
             <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1">User Remarks:</h3>
             <p class="text-sm text-black dark:text-white">
@@ -7,7 +20,7 @@
             </p>
         </div>
 
-        <div style="overflow-x: scroll;">
+        <div style="overflow-x: scroll;" class="hide-scrollbar">
             @if ($categoryCounts->isNotEmpty())
                 <table
                     class="w-full text-sm text-left text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded mt-6">

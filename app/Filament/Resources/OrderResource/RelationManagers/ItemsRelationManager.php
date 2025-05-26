@@ -138,7 +138,8 @@ class ItemsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('Product.name')
                     ->label('Product Name')
                     ->sortable()
-                    ->wrap(),
+                    ->wrap()
+                    ->size(TextColumn\TextColumnSize::ExtraSmall),
                 Tables\Columns\SelectColumn::make('offer')
                  ->options(function ($record) {
                         // If you have a relationship called `product`, you can use:
@@ -157,7 +158,8 @@ class ItemsRelationManager extends RelationManager
                     ->searchable()
                     ->sortable()
                     ->label('Offer (pcs:price)'),
-                Tables\Columns\TextColumn::make('quantity'),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall),
                 Tables\Columns\TextInputColumn::make('approvedquantity')
                     ->label('Approved Quantity')->rules(['integer']),
                 Tables\Columns\TextInputColumn::make('price')->rules(['integer']),
@@ -185,6 +187,7 @@ class ItemsRelationManager extends RelationManager
                     }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Total')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->formatStateUsing(function ($state, $record) {
                         if ($record->status === 'pending' || $record->status === 'rejected') {
                             return '0';
