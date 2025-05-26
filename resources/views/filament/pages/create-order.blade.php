@@ -39,7 +39,7 @@
     <div style="height: 65vh; overflow-y:scroll;" class="hide-scrollbar">
         <form wire:submit.prevent="checkout">
             @foreach ($this->Products as $product)
-               <div class="product-card flex items-center gap-4 border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm w-full" style="margin-bottom:5px;">
+               <div class="product-card flex items-center gap-4 border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm w-full" style="margin-bottom:5px;">
                     <div class="flex overflow-hidden rounded border">
                         <img src="{{ $product->image && file_exists(storage_path('app/public/' . $product->image))
                             ? asset('storage/' . $product->image)
