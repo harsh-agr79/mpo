@@ -16,15 +16,36 @@ class categorySummary extends Widget
 
     protected function getViewData(): array
     {
-        $categoryCounts = $this->record->items()
-        ->with('product.category')
-        ->get()
-        ->groupBy(fn ($item) => $item->product->category->name ?? 'Uncategorized')
-        ->map(fn ($group) => $group->count());
+       $items = $this->record->items()->with('product.category')->get();
+
+        $grouped = $items->groupBy(fn ($item) => $item->product->category->name ?? 'Uncategorized');
+
+        $categoryCounts = $grouped->map(fn ($group) => $group->count());
+
+        $categoryApprovedSums = $grouped->map(fn ($group) => $group->sum('approvedquantity'));
+
+        $categoryApprovedValueSums = $grouped->map(fn ($group) =>
+            $group->sum(fn ($item) => ($item->approvedquantity ?? 0) * ($item->price ?? 0))
+        );
+
+        // Totals
+        $totalItems = $items->count();
+        $totalApprovedQuantity = $items->sum('approvedquantity');
+        $totalApprovedValue = $items->sum(fn ($item) => ($item->approvedquantity ?? 0) * ($item->price ?? 0));
+
+        $discount = $this->record->discount ?? 0;
+        $finalTotal = $totalApprovedValue - (($discount/100) * $totalApprovedValue);
 
         return [
             'order' => $this->record,
             'categoryCounts' => $categoryCounts,
+            'categoryApprovedSums' => $categoryApprovedSums,
+            'categoryApprovedValueSums' => $categoryApprovedValueSums,
+            'totalItems' => $totalItems,
+            'totalApprovedQuantity' => $totalApprovedQuantity,
+            'totalApprovedValue' => $totalApprovedValue,
+            'discount' => $discount,
+            'finalTotal' => $finalTotal,
         ];
     }
 

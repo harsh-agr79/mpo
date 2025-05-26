@@ -157,7 +157,7 @@ class ItemsRelationManager extends RelationManager
                     ->searchable()
                     ->sortable()
                     ->label('Offer (pcs:price)'),
-                Tables\Columns\TextColumn::make('quantity')->color('success'),
+                Tables\Columns\TextColumn::make('quantity'),
                 Tables\Columns\TextInputColumn::make('approvedquantity')
                     ->label('Approved Quantity')->rules(['integer']),
                 Tables\Columns\TextInputColumn::make('price')->rules(['integer']),
