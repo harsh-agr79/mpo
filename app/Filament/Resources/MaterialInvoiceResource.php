@@ -31,7 +31,7 @@ class MaterialInvoiceResource extends Resource
 {
     protected static ?string $model = MaterialInvoice::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-archive-box';
 
      protected static ?string $navigationGroup = 'Materials';
 

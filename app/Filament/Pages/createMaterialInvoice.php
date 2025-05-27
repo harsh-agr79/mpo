@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Hash;
 
 class createMaterialInvoice extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-squares-plus';
 
     protected static string $view = 'filament.pages.create-material-invoice';
 
