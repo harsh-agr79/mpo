@@ -17,10 +17,10 @@ class ProductController extends Controller
         ->select('products.*') // Important to avoid column name conflict
         ->where('products.hidden', '0')
         ->get();
-
-        //  $products->subcategories = $products->subcategory();
-
-        // Return the products as a JSON response
+        $products->transform(function ($product) {
+            $product->subcategories = $product->subcategory(); // calls your custom method
+            return $product;
+        });
         return response()->json($products);
     }
 
