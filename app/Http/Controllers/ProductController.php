@@ -27,8 +27,7 @@ class ProductController extends Controller
     public function getCategories(Request $request)
     {
         // Fetch categories from the database
-        $categories = \App\Models\Category::with(['products'])
-            ->orderBy('order_num')
+        $categories = \App\Models\Category::orderBy('order_num')
             ->get();
 
         // Return the categories as a JSON response
