@@ -23,4 +23,15 @@ class ProductController extends Controller
         // Return the products as a JSON response
         return response()->json($products);
     }
+
+    public function getCategories(Request $request)
+    {
+        // Fetch categories from the database
+        $categories = \App\Models\Category::with(['products'])
+            ->orderBy('order_num')
+            ->get();
+
+        // Return the categories as a JSON response
+        return response()->json($categories);
+    }
 }
