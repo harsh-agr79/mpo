@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MaterialInvoiceResource\Pages;
 use App\Filament\Resources\MaterialInvoiceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
 
 class EditMaterialInvoice extends EditRecord
 {
