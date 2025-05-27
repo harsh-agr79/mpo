@@ -112,7 +112,7 @@ class OrderResource extends Resource {
                     ->label('Date (B.S.)')
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->getStateUsing(fn($record) => getNepaliDate($record->date))
-                    ->sortable()
+                    // ->sortable()
                     ->description( fn ( $record ) => $record->date->format( 'm-d H:i' ) ),
                     // ->toggleable()
 
