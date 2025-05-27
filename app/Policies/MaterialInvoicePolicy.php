@@ -37,8 +37,8 @@ class MaterialInvoicePolicy
      */
     public function update(Admin $admin, MaterialInvoice $materialInvoice): bool
     {
-        if (!$admin->hasPermissionTo('Order View First') &&
-            ($order->seenby === null || $order->seenAdmin === null)) {
+        if (!$admin->hasPermissionTo('Material View First') &&
+            ($materialInvoice->seenby === null || $materialInvoice->seenAdmin === null)) {
             return false;
         }
         return true;
