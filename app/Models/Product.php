@@ -45,9 +45,17 @@ class Product extends BaseModel
         return $this->belongsTo(Category::class);
     }
 
-    public function subCategory()
-    {
-        return $this->belongsTo(SubCategory::class, 'sub_category_id');
+    // public function subCategory()
+    // {
+    //     return $this->belongsTo(SubCategory::class, 'sub_category_id');
+    // }
+
+    public function subcategory() {
+       // Check if subcategory_ids is not null and is an array
+        if (!empty($this->subcategory_ids) && is_array($this->subcategory_ids)) {
+            return Subcategory::whereIn('id', $this->subcategory_ids)->get();
+        }
+        return collect();
     }
 
     public function batches()
