@@ -27,6 +27,13 @@ class MaterialInvoice extends Model
         'transport',
     ];
 
+     protected $casts = [
+        // 'save' => 'boolean',
+        'clntime' => 'integer',
+        // 'discount' => 'integer',
+        'date' => 'datetime',
+    ];
+
     protected $dates = ['date', 'deleted_at'];
 
     public function user()
@@ -37,5 +44,10 @@ class MaterialInvoice extends Model
     public function items()
     {
         return $this->hasMany(MaterialInvoiceItem::class, 'invoice_id', 'invoice_id');
+    }
+
+     public function seenAdmin()
+    {
+        return $this->belongsTo(Admin::class, 'seenby');
     }
 }
