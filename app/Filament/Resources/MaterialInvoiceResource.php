@@ -1,46 +1,81 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Resources;
 
-use Filament\Pages\Page;
-
+use App\Filament\Resources\MaterialInvoiceResource\Pages;
+use App\Filament\Resources\MaterialInvoiceResource\RelationManagers;
+use App\Models\MaterialInvoice;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
 use Filament\Tables;
-use App\Models\Order;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Contracts\HasTable;
-// use Filament\Tables;
- use Filament\Tables\Columns\ {
-        ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn}
-        ;
-use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Model;
-use Filament\Tables\Filters\TrashedFilter;
+// use Illuminate\Database\Eloquent\Builder;
+use Filament\Support\Colors\Color;
+use Carbon\Carbon;
+use Closure;
+use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Forms\Components\Section;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\ {TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle};
+use Filament\Tables\Columns\ {ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
+// use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\Layout\Split;
 
-class UnseenOrders extends Page implements HasTable
+class MaterialInvoiceResource extends Resource
 {
-    use InteractsWithTable;
+    protected static ?string $model = MaterialInvoice::class;
 
-    protected static string $view = 'filament.pages.unseen-orders';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $title = '';
-    protected static ?string $navigationLabel = 'Unseen Orders';
-    protected static ?string $navigationGroup = 'Orders';
-    protected static ?string $navigationIcon = 'heroicon-o-eye-slash'; // optional
-    protected static ?int $navigationSort = 0;
+     protected static ?string $navigationGroup = 'Materials';
 
-    public function table(Table $table): Table
+     public static function form( Form $form ): Form {
+                return $form
+                ->schema( [
+                    Section::make('Invoice Specifics')
+                    ->schema([
+                        Select::make('user_id')
+                        ->relationship(name: 'user', titleAttribute: 'name')
+                        ->label('Customer')
+                        ->searchable()
+                        ->options(User::all()->pluck('name', 'id'))
+                        ->required(),
+                        DatePicker::make( 'date' )
+                        ->label( 'Order Date' )
+                        ->default( now() ) // ⬅️ sets today's date
+                        ->required(),
+                    ])->columns(2),
+                     Section::make('Shippent Details')
+                    ->schema([
+                    TextInput::make('cartoons'),
+                    TextInput::make('transport')
+                     ]) ->collapsible()
+                        ->persistCollapsed()->columns(2),
+                    TextInput::make('discount')
+                    ->numeric()
+                    ->label('Discount')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function ($record, $component, $state) {
+                        $record->{$component->getName()} = $state;
+                        $record->save();
+                         Notification::make()
+                            ->title('Discount Updated')
+                            ->success()
+                            ->send();
+                    }),
+                ] );
+            }
+
+    public static function table(Table $table): Table
     {
-        return $table
-                ->query(Order::query()->where('mainstatus', 'pending')->whereNull('seenby'))
+       return $table
                 ->defaultSort( 'created_at', 'desc' )
                 ->columns( [
-                   TextColumn::make( 'mainstatus' )
-                    ->toggleable()
+                    TextColumn::make( 'mainstatus' )
                     ->label( '' )
                     ->formatStateUsing( function ( ?string $state, $record ): string {
                         $colorMap = [
@@ -75,19 +110,13 @@ class UnseenOrders extends Page implements HasTable
                 ->html(),
                 TextColumn::make('nepali_date')
                     ->label('Date (B.S.)')
-                    ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->getStateUsing(fn($record) => getNepaliDate($record->date))
-                    ->sortable()
-                    ->description( fn ( $record ) => $record->date->format( 'm-d H:i' ) ),
+                    ->sortable(),
                     // ->toggleable()
 
-                TextColumn::make( 'user.name' )->description(fn ($record) => $record->user->shop_name)
-                    ->size(TextColumn\TextColumnSize::ExtraSmall)
-                ->searchable(),
+                TextColumn::make( 'user.name' )->searchable(),
                 // ->description(fn ( $record ) => $record->orderid),
-                TextColumn::make( 'orderid' )
-                    ->size(TextColumn\TextColumnSize::ExtraSmall)
-                ->toggleable(),
+                TextColumn::make( 'invoice_id' ),
                 ToggleColumn::make('clnstatus')
                 ->label('Pack')
                 ->disabled(fn ($record, $state) => $record->mainstatus === 'approved' && $record->clnstatus !== 'delivered'? false : true)
@@ -103,9 +132,7 @@ class UnseenOrders extends Page implements HasTable
                             'clntime' => null,
                         ]);
                     }
-                })
-                    ->toggleable()
-                ,
+                }),
                 ToggleColumn::make('delivered_at')
                 ->label('Delivered')
                 ->disabled(fn ($record, $state) => $record->mainstatus === 'approved' && ($record->clnstatus === 'packing' || $record->clnstatus === 'delivered') ? false : true)
@@ -121,15 +148,11 @@ class UnseenOrders extends Page implements HasTable
                             'delivered_at' => null,
                         ]);
                     }
-                })
-                    ->toggleable()
-                ,
+                }),
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
                 TextColumn::make( 'seenby' )
-                ->size(TextColumn\TextColumnSize::ExtraSmall)
                 ->label( 'Seen By' )
                 ->badge()
-                 ->toggleable()
                 ->formatStateUsing( function ( $state, $record ) {
                     return $record->seenby === null ? 'NOT SEEN' : optional( $record->seenAdmin )->name;
                 }
@@ -148,34 +171,39 @@ class UnseenOrders extends Page implements HasTable
 
             return '';
         })
-
-        ->filters( [
-            Tables\Filters\TrashedFilter::make(),
-        ] )
-        ->actions( [
-            // Tables\Actions\EditAction::make(),
-            // Tables\Actions\DeleteAction::make(),
-            Tables\Actions\ForceDeleteAction::make(),
-            Tables\Actions\RestoreAction::make(),
-        ] )
-        ->bulkActions( [
-            Tables\Actions\BulkActionGroup::make( [
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
-            ] )
-
-        ] )
-         ->recordUrl(fn (Order $record) => route('filament.admin.resources.orders.edit', ['record' => $record->getKey()]));
+            ->filters([
+                Tables\Filters\TrashedFilter::make(),
+            ])
+            ->actions([
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
+            ])
+            ->bulkActions([
+                 Tables\Actions\BulkActionGroup::make( [
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                ] ),
+            ]);
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getRelations(): array
     {
-        return (string) Order::where('mainstatus', 'pending')->whereNull('seenby')->count();
+        return [
+            //
+        ];
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    public static function getPages(): array
     {
-        return 'gray';
+        return [
+            'index' => Pages\ListMaterialInvoices::route('/'),
+            'create' => Pages\CreateMaterialInvoice::route('/create'),
+            'edit' => Pages\EditMaterialInvoice::route('/{record}/edit'),
+        ];
+    }
+
+     public static function canCreate(): bool {
+        return false;
     }
 }

@@ -28,7 +28,7 @@ class PackingOrders extends Page implements HasTable
 
     protected static string $view = 'filament.pages.packing-orders';
 
-    protected static ?string $title = 'Chalan';
+    protected static ?string $title = '';
     protected static ?string $navigationLabel = 'Chalan';
     protected static ?string $navigationGroup = 'Orders';
     protected static ?string $navigationIcon = 'heroicon-o-cube'; // optional
@@ -40,7 +40,8 @@ class PackingOrders extends Page implements HasTable
                 ->query(Order::query()->where('mainstatus', 'approved')->where('clnstatus', 'packing'))
                 ->defaultSort( 'created_at', 'desc' )
                 ->columns( [
-                    TextColumn::make( 'mainstatus' )
+                  TextColumn::make( 'mainstatus' )
+                    ->toggleable()
                     ->label( '' )
                     ->formatStateUsing( function ( ?string $state, $record ): string {
                         $colorMap = [
@@ -75,13 +76,19 @@ class PackingOrders extends Page implements HasTable
                 ->html(),
                 TextColumn::make('nepali_date')
                     ->label('Date (B.S.)')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->getStateUsing(fn($record) => getNepaliDate($record->date))
-                    ->sortable(),
+                    ->sortable()
+                    ->description( fn ( $record ) => $record->date->format( 'm-d H:i' ) ),
                     // ->toggleable()
 
-                TextColumn::make( 'user.name' )->searchable(),
+                TextColumn::make( 'user.name' )->description(fn ($record) => $record->user->shop_name)
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
+                ->searchable(),
                 // ->description(fn ( $record ) => $record->orderid),
-                TextColumn::make( 'orderid' ),
+                TextColumn::make( 'orderid' )
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
+                ->toggleable(),
                 ToggleColumn::make('clnstatus')
                 ->label('Pack')
                 ->disabled(fn ($record, $state) => $record->mainstatus === 'approved' && $record->clnstatus !== 'delivered'? false : true)
@@ -97,7 +104,9 @@ class PackingOrders extends Page implements HasTable
                             'clntime' => null,
                         ]);
                     }
-                }),
+                })
+                    ->toggleable()
+                ,
                 ToggleColumn::make('delivered_at')
                 ->label('Delivered')
                 ->disabled(fn ($record, $state) => $record->mainstatus === 'approved' && ($record->clnstatus === 'packing' || $record->clnstatus === 'delivered') ? false : true)
@@ -113,11 +122,15 @@ class PackingOrders extends Page implements HasTable
                             'delivered_at' => null,
                         ]);
                     }
-                }),
+                })
+                    ->toggleable()
+                ,
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
                 TextColumn::make( 'seenby' )
+                ->size(TextColumn\TextColumnSize::ExtraSmall)
                 ->label( 'Seen By' )
                 ->badge()
+                 ->toggleable()
                 ->formatStateUsing( function ( $state, $record ) {
                     return $record->seenby === null ? 'NOT SEEN' : optional( $record->seenAdmin )->name;
                 }

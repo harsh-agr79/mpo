@@ -19,6 +19,11 @@ class ListOrders extends ListRecords
         ];
     }
 
+     public function getTitle(): string
+            {
+                return ''; // Ensure nothing is rendered
+            }
+
     public function getTabs(): array
     {
         return [
