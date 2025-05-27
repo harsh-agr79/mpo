@@ -9,6 +9,8 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\User;
+use App\Models\Admin;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -55,18 +57,6 @@ class MaterialInvoiceResource extends Resource
                     TextInput::make('transport')
                      ]) ->collapsible()
                         ->persistCollapsed()->columns(2),
-                    TextInput::make('discount')
-                    ->numeric()
-                    ->label('Discount')
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function ($record, $component, $state) {
-                        $record->{$component->getName()} = $state;
-                        $record->save();
-                         Notification::make()
-                            ->title('Discount Updated')
-                            ->success()
-                            ->send();
-                    }),
                 ] );
             }
 
@@ -190,7 +180,7 @@ class MaterialInvoiceResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\ItemsRelationManager::class,
         ];
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\OrderResource\RelationManagers;
+namespace App\Filament\Resources\MaterialInvoiceResource\RelationManagers;
 
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,16 +11,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\{TextInput, Select, Hidden};
 use Filament\Tables\Columns\{TextColumn, BadgeColumn};
-
-class OrderMaterialsRelationManager extends RelationManager
+class ItemsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'materials';
+    protected static string $relationship = 'items';
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Select::make('material_id')
+                 Select::make('material_id')
                 ->label('Material')
                 ->searchable()
                 ->required()
@@ -48,17 +47,17 @@ class OrderMaterialsRelationManager extends RelationManager
                     ->required(),
 
                  Hidden::make('status')->default('pending'),
-                 Hidden::make('orderid')->default(fn ($livewire) => $livewire->ownerRecord->orderid),
+                 Hidden::make('invoice_id')->default(fn ($livewire) => $livewire->ownerRecord->invoice_id),
             ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('orderid')
-            ->poll('3s')
+            ->recordTitleAttribute('invoice_id')
+             ->poll('3s')
             ->columns([
-                Tables\Columns\ImageColumn::make('material.image')
+               Tables\Columns\ImageColumn::make('material.image')
                     ->label('Image')
                     ->square()
                     ->width(50)
@@ -127,6 +126,7 @@ class OrderMaterialsRelationManager extends RelationManager
                 ->color('info')
                 ->button(),
                 Tables\Actions\CreateAction::make(),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
