@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\MIddleware\api_key;
+use App\Http\Middleware\api_key;
 use App\Http\Controllers\ProductController;
 
 
