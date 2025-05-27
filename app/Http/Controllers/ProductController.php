@@ -18,7 +18,7 @@ class ProductController extends Controller
         ->where('products.hidden', '0')
         ->get();
 
-         $product->subcategories = $product->subcategory();
+        //  $products->subcategories = $products->subcategory();
 
         // Return the products as a JSON response
         return response()->json($products);
