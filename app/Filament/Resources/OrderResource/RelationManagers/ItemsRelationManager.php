@@ -72,6 +72,7 @@ class ItemsRelationManager extends RelationManager
                     ->reactive(),
 
                 Hidden::make('status')->default('pending'),
+                Hidden::make('actualprice'),
                 Hidden::make('approvedquantity')->default(0),
                 Hidden::make('orderid')->default(fn ($livewire) => $livewire->ownerRecord->orderid),
         ]);
@@ -116,6 +117,9 @@ class ItemsRelationManager extends RelationManager
             }
         } else {
             $set('price', $product->price);
+        }
+        if(!$isEditing){
+            $set('actualprice', $product->price);
         }
     }
 

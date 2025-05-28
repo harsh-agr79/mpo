@@ -14,10 +14,12 @@ class OrderItem extends BaseModel
         'quantity',
         'approvedquantity',
         'offer',
+        'actualprice',
     ];
 
     protected $casts = [
         'price' => 'integer',
+        'actualprice' => 'integer',
         'quantity' => 'integer',
         'approvedquantity' => 'integer',
         // 'offer' => 'array',

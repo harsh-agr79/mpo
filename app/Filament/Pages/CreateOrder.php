@@ -175,6 +175,7 @@ class CreateOrder extends Page {
                     'product_id' => $item['id'],
                     'offer' => json_encode($matchedOffer),
                     'price' => $item['price'],
+                    'actualprice' => $item['price'],
                     'quantity' => $item['quantity'],
                     'approvedquantity' => 0,
                     'status' => 'pending'
