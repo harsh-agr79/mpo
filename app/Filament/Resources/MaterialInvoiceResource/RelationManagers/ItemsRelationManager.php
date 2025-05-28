@@ -80,6 +80,7 @@ class ItemsRelationManager extends RelationManager
             ->filters([
                 //
             ])
+            ->paginated(false)
             ->headerActions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('bulkApproveAll')

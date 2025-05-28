@@ -95,4 +95,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(MaterialInvoice::class);
     }
+
+    public function salesReturns()
+    {
+        return $this->hasMany(SalesReturn::class);
+    }
 }

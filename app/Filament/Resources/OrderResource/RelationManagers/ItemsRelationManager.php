@@ -198,6 +198,16 @@ class ItemsRelationManager extends RelationManager
             ->filters([
                 //
             ])
+             ->recordClasses(function ($record) {
+
+                if ($record->status === 'pending') return 'bg-status-pending';
+                if ($record->status === 'rejected') return 'bg-status-rejected';
+                if ($record->status === 'approved' && ($record->offer == "[]" || $record->offer == null)) return 'bg-status-approved';
+                if ($record->status === 'approved') return 'bg-status-packing';
+                // if ($record->clnstatus === 'delivered' && $record->delivered_at !== null) return 'bg-status-delivered';
+
+                return '';
+            })
             ->paginated(false)
             ->headerActions([
                   Action::make('total_head')

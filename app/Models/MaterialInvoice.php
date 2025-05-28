@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class MaterialInvoice extends Model
+class MaterialInvoice extends BaseModel
 {
     use HasFactory, SoftDeletes;
 
@@ -27,10 +27,8 @@ class MaterialInvoice extends Model
         'transport',
     ];
 
-     protected $casts = [
-        // 'save' => 'boolean',
+    protected $casts = [
         'clntime' => 'integer',
-        // 'discount' => 'integer',
         'date' => 'datetime',
     ];
 
@@ -46,8 +44,31 @@ class MaterialInvoice extends Model
         return $this->hasMany(MaterialInvoiceItem::class, 'invoice_id', 'invoice_id');
     }
 
-     public function seenAdmin()
+    public function seenAdmin()
     {
         return $this->belongsTo(Admin::class, 'seenby');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($invoice) {
+            self::applyNepaliDate($invoice);
+        });
+
+        static::updating(function ($invoice) {
+            if ($invoice->isDirty('date')) {
+                self::applyNepaliDate($invoice);
+            }
+        });
+    }
+
+    protected static function applyNepaliDate($invoice)
+    {
+        if ($invoice->date) {
+            $invoice->nepmonth = getNepaliMonth($invoice->date);
+            $invoice->nepyear = getNepaliYear($invoice->date);
+        }
     }
 }

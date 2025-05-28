@@ -43,26 +43,28 @@ class Order extends BaseModel
     {
         parent::boot();
 
-        static::updating(function ($order) {
-            $dis = 0;
-            if ($order->discount !== null) {
-                $dis = $order->discount;
-            }
-            if ($order->total) {
-                $order->net_total = $order->total - ($dis / 100) * $order->total;
-            }
+        static::creating(function ($order) {
+            self::applyDiscountAndNepaliDate($order);
         });
 
-        // Optional: Handle create also
-        static::creating(function ($order) {
-            $dis = 0;
-            if ($order->discount !== null) {
-                $dis = $order->discount;
-            }
-            if ($order->total) {
-                $order->net_total = $order->total - ($dis / 100) * $order->total;
-            }
+        static::updating(function ($order) {
+            self::applyDiscountAndNepaliDate($order, true);
         });
+    }
+
+    protected static function applyDiscountAndNepaliDate($order, $isUpdate = false)
+    {
+        // Handle discount & net total
+        $dis = $order->discount ?? 0;
+        if ($order->total) {
+            $order->net_total = $order->total - ($dis / 100) * $order->total;
+        }
+
+        // Handle Nepali date conversion (if creating or if date changed)
+        if (!$isUpdate || $order->isDirty('date')) {
+            $order->nepmonth = getNepaliMonth($order->date);
+            $order->nepyear = getNepaliYear($order->date);
+        }
     }
 
     // Relationships

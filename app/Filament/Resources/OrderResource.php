@@ -72,7 +72,7 @@ class OrderResource extends Resource {
 
             public static function table( Table $table ): Table {
                 return $table
-                ->defaultSort( 'created_at', 'desc' )
+                ->defaultSort( 'date', 'desc' )
                 ->columns( [
                     TextColumn::make( 'mainstatus' )
                     ->toggleable()
