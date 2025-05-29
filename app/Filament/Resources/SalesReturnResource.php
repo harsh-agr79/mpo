@@ -16,11 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Support\Colors\Color;
 use Carbon\Carbon;
 use Closure;
+use App\Filament\Resources\SalesReturnResource\RelationManagers\SalesReturnLogsRelationManager;
+
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
-use Filament\Forms\Components\ {TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle};
-use Filament\Tables\Columns\ {ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
+use Filament\Forms\Components\{TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle};
+use Filament\Tables\Columns\{ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
 
 class SalesReturnResource extends Resource
 {
@@ -35,15 +37,15 @@ class SalesReturnResource extends Resource
         return $form
             ->schema([
                 Select::make('user_id')
-                        ->relationship(name: 'user', titleAttribute: 'name')
-                        ->label('Customer')
-                        ->searchable()
-                        ->options(User::all()->pluck('name', 'id'))
-                        ->required(),
-                DatePicker::make( 'date' )
-                        ->label( 'Order Date' )
-                        ->default( now() ) // ⬅️ sets today's date
-                        ->required(),
+                    ->relationship(name: 'user', titleAttribute: 'name')
+                    ->label('Customer')
+                    ->searchable()
+                    ->options(User::all()->pluck('name', 'id'))
+                    ->required(),
+                DatePicker::make('date')
+                    ->label('Order Date')
+                    ->default(now()) // ⬅️ sets today's date
+                    ->required(),
                 TextInput::make('discount')
                     ->numeric()
                     ->label('Discount')
@@ -51,7 +53,7 @@ class SalesReturnResource extends Resource
                     ->afterStateUpdated(function ($record, $component, $state) {
                         $record->{$component->getName()} = $state;
                         $record->save();
-                         Notification::make()
+                        Notification::make()
                             ->title('Discount Updated')
                             ->success()
                             ->send();
@@ -63,40 +65,40 @@ class SalesReturnResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->defaultSort( 'date', 'desc' )
+            ->defaultSort('date', 'desc')
             ->columns([
                 TextColumn::make('nepali_date')
                     ->label('Date (B.S.)')
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->getStateUsing(fn($record) => getNepaliDate($record->date))
                     // ->sortable()
-                    ->description( fn ( $record ) => $record->date->format( 'm-d H:i' ) ),
-                    // ->toggleable()
+                    ->description(fn($record) => $record->date->format('m-d H:i')),
+                // ->toggleable()
 
-                TextColumn::make( 'user.name' )->description(fn ($record) => $record->user->shop_name)
+                TextColumn::make('user.name')->description(fn($record) => $record->user->shop_name)
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
-                ->searchable(),
+                    ->searchable(),
                 // ->description(fn ( $record ) => $record->orderid),
-                TextColumn::make( 'return_id' )
+                TextColumn::make('return_id')
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
-                ->toggleable(),
-                TextColumn::make( 'net_total' )
+                    ->toggleable(),
+                TextColumn::make('net_total')
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
-                ->toggleable(),
+                    ->toggleable(),
             ])
             ->filters([
-                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                  Tables\Actions\ForceDeleteAction::make(),
-                    Tables\Actions\RestoreAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
-               Tables\Actions\BulkActionGroup::make( [
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
-             ] ),
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
+                ]),
             ]);
     }
 
@@ -104,6 +106,7 @@ class SalesReturnResource extends Resource
     {
         return [
             RelationManagers\ItemsRelationManager::class,
+            SalesReturnLogsRelationManager::class
         ];
     }
 

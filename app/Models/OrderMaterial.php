@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderMaterial extends Model
+class OrderMaterial extends BaseModel
 {
     protected $fillable = [
         'orderid',
