@@ -13,6 +13,7 @@ Route::middleware(api_key::class)->group(function () {
 
     Route::get('/products', [ProductController::class, 'getProducts']);
     Route::get('/categories', [ProductController::class, 'getCategories']);
+    Route::get('/getinventory', [ProductController::class, 'getInventory']);
 
    Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user', function (Request $request) {return $request->user();});

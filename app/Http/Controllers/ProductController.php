@@ -33,4 +33,28 @@ class ProductController extends Controller
         // Return the categories as a JSON response
         return response()->json($categories);
     }
+
+    public function getInventory(Request $request)
+    {
+        $products = Product::with(['category']) // eager load both relationships
+        ->join('categories', 'products.category_id', '=', 'categories.id')
+        ->orderBy('categories.order_num') // Order by category order
+        ->orderBy('products.order_num')   // Order within each category
+        ->select('products.*') // Important to avoid column name conflict
+        ->where('products.hidden', '0')
+        ->get();
+        $products->transform(function ($product) {
+            $product->subcategories = $product->subcategory(); // calls your custom method
+            return $product;
+        });
+
+         $categories = \App\Models\Category::orderBy('order_num')
+            ->with('subCategories')->get();
+
+        // Return the inventory as a JSON response
+        return response()->json([
+            'products' => $products,
+            'categories' => $categories
+        ]);
+    }
 }
