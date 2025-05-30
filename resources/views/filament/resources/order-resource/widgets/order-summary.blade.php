@@ -6,21 +6,17 @@
                 <div><strong>Name:</strong> {{ $order->user->name }}</div>
                 <div><strong>Date:</strong> {{ $order->date }}</div>
 
-                <!-- Collapsible fields -->
-                <template x-if="open">
-                    <template>
-                        <div><strong>Shop:</strong> {{ $order->user->shop_name }}</div>
-                        <div><strong>Miti:</strong> {{ getNepaliDate($order->date) }}</div>
+                <!-- These stay in 2-column layout and collapse -->
+                <div x-show="open"><strong>Shop:</strong> {{ $order->user->shop_name }}</div>
+                <div x-show="open"><strong>Miti:</strong> {{ getNepaliDate($order->date) }}</div>
 
-                        <div><strong>Phone no.:</strong> {{ $order->user->contact }}</div>
-                        <div><strong>Order ID:</strong> {{ $order->orderid }}</div>
+                <div x-show="open"><strong>Phone no.:</strong> {{ $order->user->contact }}</div>
+                <div x-show="open"><strong>Order ID:</strong> {{ $order->orderid }}</div>
 
-                        <div><strong>Address:</strong> {{ $order->user->address }}</div>
-                        <div><strong>Pan no.:</strong> {{ $order->user->tax_no }}</div>
-                    </template>
-                </template>
+                <div x-show="open"><strong>Address:</strong> {{ $order->user->address }}</div>
+                <div x-show="open"><strong>Pan no.:</strong> {{ $order->user->tax_no }}</div>
 
-                <!-- Toggle button spans both columns -->
+                <!-- Toggle button spans 2 columns -->
                 <div class="col-span-2">
                     <button @click="open = !open"
                         class="text-blue-600 hover:underline focus:outline-none text-sm">
