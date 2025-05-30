@@ -1,16 +1,25 @@
-<x-filament-widgets::widget>
-    <x-filament::section>
-        <div x-data="{ open: false }">
-            {{-- Always-visible fields --}}
-            {!! $infoList->columns(2)->toHtml() !!}
-
-            {{-- Toggle Button --}}
-            <div class="mt-2">
-                <button @click="open = !open" class="text-blue-600 hover:underline text-sm">
-                    <span x-show="!open">Show More</span>
-                    <span x-show="open">Show Less</span>
-                </button>
-            </div>
+<div x-data="{ open: true }" class="space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+        {{-- Always visible fields --}}
+        <div>
+            {!! $infoList->render()->filter(fn($item) => in_array($item->getLabel(), ['Name'])) !!}
         </div>
-    </x-filament::section>
-</x-filament-widgets::widget>
+        <div>
+            {!! $infoList->render()->filter(fn($item) => in_array($item->getLabel(), ['Date'])) !!}
+        </div>
+    </div>
+
+    {{-- Toggle button --}}
+    <button
+        x-on:click="open = !open"
+        class="text-sm text-blue-600 hover:underline"
+        type="button"
+    >
+        <span x-text="open ? 'Hide details' : 'Show details'"></span>
+    </button>
+
+    {{-- Collapsible fields --}}
+    <div x-show="open" x-transition>
+        {!! $infoList->render() !!}
+    </div>
+</div>

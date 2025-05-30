@@ -4,12 +4,9 @@ namespace App\Filament\Resources\OrderResource\Widgets;
 
 use Filament\Widgets\Widget;
 use App\Models\Order;
-// use Filament\Infolists\Components\InfoList;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\TextEntry;
-use Illuminate\Support\HtmlString;
-
 
 class OrderSummary extends Widget
 {
@@ -36,16 +33,17 @@ class OrderSummary extends Widget
 
     protected int | string | array $columnSpan = 'full';
 
-     public function getInfoList(): InfoList
+    public function getInfolist(): Infolist
     {
-        return InfoList::make()
+        return Infolist::make()
+            ->record($this->record)  // <-- important
             ->columns(2)
             ->schema([
-                // Always-visible fields
+                // Always visible fields
                 TextEntry::make('user.name')->label('Name'),
                 TextEntry::make('date')->label('Date'),
 
-                // Collapsible fields (handled in Blade view with Alpine.js)
+                // Collapsible group (Alpine.js toggle in Blade)
                 Group::make([
                     TextEntry::make('user.shop_name')->label('Shop'),
                     TextEntry::make('user.contact')->label('Phone no.'),
@@ -54,17 +52,17 @@ class OrderSummary extends Widget
                     TextEntry::make('orderid')->label('Order ID'),
                     TextEntry::make('miti')
                         ->label('Miti')
-                        ->default(fn () => getNepaliDate($this->order->date)),
+                        ->default(fn () => getNepaliDate($this->record->date)),
                 ])
                 ->extraAttributes(['x-show' => 'open'])
-                ->columnSpanFull(), // Keeps layout clean
+                ->columnSpanFull(),
             ]);
     }
 
     public function render(): \Illuminate\Contracts\View\View
     {
         return view(static::$view, [
-            'infoList' => $this->getInfoList(),
+            'infoList' => $this->getInfolist(),
         ]);
     }
 }
