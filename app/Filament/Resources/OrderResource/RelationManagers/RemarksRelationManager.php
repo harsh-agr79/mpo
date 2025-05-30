@@ -58,8 +58,11 @@ class RemarksRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()->label('Add Remark')->icon('heroicon-o-plus-circle'),
             ])
             ->actions([
-                // Tables\Actions\EditAction::make(),
-                // Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn ($record) => $record->remarks_by === auth()->id()),
+
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn ($record) => $record->remarks_by === auth()->id()),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
