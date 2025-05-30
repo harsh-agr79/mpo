@@ -1,55 +1,41 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <div x-data="{ open: false }" class="text-xs w-full">
-            <table class="w-full table-auto text-center">
+            <table class="w-full text-center table-auto border-collapse">
                 <tbody>
-                    {{-- Always Visible Row --}}
+                    {{-- Always visible row --}}
                     <tr>
-                        <td class="font-semibold">Name:</td>
-                        <td>{{ $order->user->name }}</td>
+                        <td class="w-1/2">
+                            <div><strong>Name:</strong> {{ $order->user->name }}</div>
+                        </td>
+                        <td class="w-1/2">
+                            <div><strong>Date:</strong> {{ $order->date }}</div>
+                        </td>
                     </tr>
 
-                    {{-- Collapsible Rows --}}
+                    {{-- Collapsible rows --}}
                     <template x-if="open">
-                        <tbody>
+                        <template>
                             <tr>
-                                <td class="font-semibold">Shop:</td>
-                                <td>{{ $order->user->shop_name }}</td>
+                                <td><div><strong>Shop:</strong> {{ $order->user->shop_name }}</div></td>
+                                <td><div><strong>Miti:</strong> {{ getNepaliDate($order->date) }}</div></td>
                             </tr>
                             <tr>
-                                <td class="font-semibold">Phone no.:</td>
-                                <td>{{ $order->user->contact }}</td>
+                                <td><div><strong>Phone no.:</strong> {{ $order->user->contact }}</div></td>
+                                <td><div><strong>Order ID:</strong> {{ $order->orderid }}</div></td>
                             </tr>
                             <tr>
-                                <td class="font-semibold">Address:</td>
-                                <td>{{ $order->user->address }}</td>
+                                <td><div><strong>Address:</strong> {{ $order->user->address }}</div></td>
+                                <td><div><strong>Pan no.:</strong> {{ $order->user->tax_no }}</div></td>
                             </tr>
-                            <tr>
-                                <td class="font-semibold">Pan no.:</td>
-                                <td>{{ $order->user->tax_no }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-semibold">Date:</td>
-                                <td>{{ $order->date }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-semibold">Miti:</td>
-                                <td>{{ getNepaliDate($order->date) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="font-semibold">Order ID:</td>
-                                <td>{{ $order->orderid }}</td>
-                            </tr>
-                        </tbody>
+                        </template>
                     </template>
                 </tbody>
             </table>
 
+            {{-- Toggle button --}}
             <div class="text-center mt-2">
-                <button 
-                    class="text-blue-500 hover:underline text-sm"
-                    @click="open = !open"
-                >
+                <button @click="open = !open" class="text-blue-500 hover:underline text-sm">
                     <span x-text="open ? 'Show less' : 'Show more'"></span>
                 </button>
             </div>
