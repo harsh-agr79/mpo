@@ -133,7 +133,7 @@ class OrderMaterialsRelationManager extends RelationManager
             ])
             ->emptyStateHeading('')
             ->emptyStateDescription('')
-            // ->emptyStateIcon('')
+            ->emptyStateIcon(null)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
