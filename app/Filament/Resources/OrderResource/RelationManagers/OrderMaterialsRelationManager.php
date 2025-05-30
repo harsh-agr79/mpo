@@ -131,6 +131,9 @@ class OrderMaterialsRelationManager extends RelationManager
                     ->icon('heroicon-o-plus-circle')
                     ->color('primary'),
             ])
+            ->emptyStateHeading('')
+            ->emptyStateDescription('')
+            ->emptyStateIcon('')
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

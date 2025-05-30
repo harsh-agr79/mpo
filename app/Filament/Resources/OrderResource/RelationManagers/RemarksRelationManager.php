@@ -51,6 +51,9 @@ class RemarksRelationManager extends RelationManager
             ->filters([
                 //
             ])
+             ->emptyStateHeading('')
+            ->emptyStateDescription('')
+            ->emptyStateIcon('')
             ->headerActions([
                 Tables\Actions\CreateAction::make()->label('Add Remark')->icon('heroicon-o-plus-circle'),
             ])
