@@ -1,41 +1,43 @@
 <x-filament-widgets::widget>
     <x-filament::section>
         <div x-data="{ open: false }" class="text-xs w-full">
-            <table class="w-full text-center table-auto border-collapse">
+            <table class="w-full table-auto text-center border-separate border-spacing-y-2">
                 <tbody>
                     {{-- Always visible row --}}
                     <tr>
-                        <td class="w-1/2">
-                            <div><strong>Name:</strong> {{ $order->user->name }}</div>
-                        </td>
-                        <td class="w-1/2">
-                            <div><strong>Date:</strong> {{ $order->date }}</div>
-                        </td>
+                        <td class="w-1/4"><strong>Name:</strong></td>
+                        <td class="w-1/4">{{ $order->user->name }}</td>
+                        <td class="w-1/4"><strong>Date:</strong></td>
+                        <td class="w-1/4">{{ $order->date }}</td>
                     </tr>
 
-                    {{-- Collapsible rows --}}
-                    <template x-if="open">
-                        <template>
-                            <tr>
-                                <td><div><strong>Shop:</strong> {{ $order->user->shop_name }}</div></td>
-                                <td><div><strong>Miti:</strong> {{ getNepaliDate($order->date) }}</div></td>
-                            </tr>
-                            <tr>
-                                <td><div><strong>Phone no.:</strong> {{ $order->user->contact }}</div></td>
-                                <td><div><strong>Order ID:</strong> {{ $order->orderid }}</div></td>
-                            </tr>
-                            <tr>
-                                <td><div><strong>Address:</strong> {{ $order->user->address }}</div></td>
-                                <td><div><strong>Pan no.:</strong> {{ $order->user->tax_no }}</div></td>
-                            </tr>
-                        </template>
-                    </template>
+                    {{-- Toggleable rows --}}
+                    <tr x-show="open">
+                        <td><strong>Shop:</strong></td>
+                        <td>{{ $order->user->shop_name }}</td>
+                        <td><strong>Miti:</strong></td>
+                        <td>{{ getNepaliDate($order->date) }}</td>
+                    </tr>
+                    <tr x-show="open">
+                        <td><strong>Phone no.:</strong></td>
+                        <td>{{ $order->user->contact }}</td>
+                        <td><strong>Order ID:</strong></td>
+                        <td>{{ $order->orderid }}</td>
+                    </tr>
+                    <tr x-show="open">
+                        <td><strong>Address:</strong></td>
+                        <td>{{ $order->user->address }}</td>
+                        <td><strong>Pan no.:</strong></td>
+                        <td>{{ $order->user->tax_no }}</td>
+                    </tr>
                 </tbody>
             </table>
 
-            {{-- Toggle button --}}
             <div class="text-center mt-2">
-                <button @click="open = !open" class="text-blue-500 hover:underline text-sm">
+                <button 
+                    @click="open = !open"
+                    class="text-blue-500 hover:underline text-sm"
+                >
                     <span x-text="open ? 'Show less' : 'Show more'"></span>
                 </button>
             </div>
