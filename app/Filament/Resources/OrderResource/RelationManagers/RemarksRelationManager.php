@@ -52,7 +52,7 @@ class RemarksRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()->label('Add Remark'),
+                Tables\Actions\CreateAction::make()->label('Add Remark')->icon('heroicon-o-plus-circle'),
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),

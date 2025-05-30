@@ -40,7 +40,7 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Order Specifics')
+                Section::make('Order Specifications')
                     ->schema([
                         Select::make('user_id')
                             ->relationship(name: 'user', titleAttribute: 'name')

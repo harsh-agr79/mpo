@@ -81,6 +81,7 @@ class OrderMaterialsRelationManager extends RelationManager
             ->filters([
                 //
             ])
+            ->heading('Input')
             ->headerActions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('bulkApproveAll')
@@ -126,7 +127,9 @@ class OrderMaterialsRelationManager extends RelationManager
                 ->icon('heroicon-m-ellipsis-vertical')
                 ->color('info')
                 ->button(),
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->label('Add Input')
+                    ->icon('heroicon-o-plus-circle')
+                    ->color('primary'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

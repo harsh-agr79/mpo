@@ -279,7 +279,7 @@ class ItemsRelationManager extends RelationManager
                 ->icon('heroicon-m-ellipsis-vertical')
                 ->color('info')
                 ->button(),
-                 Tables\Actions\CreateAction::make(),
+                 Tables\Actions\CreateAction::make()->label('Add Item')->icon('heroicon-o-plus-circle'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->icon('')->label(''),
