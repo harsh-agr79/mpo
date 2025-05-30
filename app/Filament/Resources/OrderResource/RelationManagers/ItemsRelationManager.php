@@ -69,7 +69,8 @@ class ItemsRelationManager extends RelationManager
                 TextInput::make('offer')
                     ->label('Offer')
                     ->helperText('Auto-filled as JSON, e.g. {"10": "1000"}')
-                    ->reactive(),
+                    ->reactive()
+                    ->readonly(),
 
                 Hidden::make('status')->default('pending'),
                 Hidden::make('actualprice'),
