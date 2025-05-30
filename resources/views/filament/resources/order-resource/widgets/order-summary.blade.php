@@ -1,58 +1,32 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        <div x-data="{ open: false }" class="text-xs">
-            <!-- Grid container with consistent 2-column layout -->
-            <div class="grid grid-cols-2 gap-2 w-full">
-                <!-- Persistent fields (always visible) -->
-                <div class="break-words">
-                    <strong>Name:</strong> {{ $order->user->name }}
-                </div>
-                <div class="break-words">
-                    <strong>Date:</strong> {{ $order->date }}
-                </div>
+        <div x-data="{ open: false }">
+            {{-- Always-visible info list --}}
+            <x-filament::info-list :columns="2">
+                <x-filament::info-list-item label="Name" :value="$order->user->name" />
+                <x-filament::info-list-item label="Date" :value="$order->date" />
+            </x-filament::info-list>
 
-                <!-- Collapsible fields (2-column layout) -->
-                <template x-if="open">
-                    <div class="break-words">
-                        <strong>Shop:</strong> {{ $order->user->shop_name }}
-                    </div>
-                </template>
-                <template x-if="open">
-                    <div class="break-words">
-                        <strong>Miti:</strong> {{ getNepaliDate($order->date) }}
-                    </div>
-                </template>
+            {{-- Collapsible info list --}}
+            <div x-show="open">
+                <x-filament::info-list :columns="2" class="mt-2">
+                    <x-filament::info-list-item label="Shop" :value="$order->user->shop_name" />
+                    <x-filament::info-list-item label="Miti" :value="getNepaliDate($order->date)" />
 
-                <template x-if="open">
-                    <div class="break-words">
-                        <strong>Phone no.:</strong> {{ $order->user->contact }}
-                    </div>
-                </template>
-                <template x-if="open">
-                    <div class="break-words">
-                        <strong>Order ID:</strong> {{ $order->orderid }}
-                    </div>
-                </template>
+                    <x-filament::info-list-item label="Phone no." :value="$order->user->contact" />
+                    <x-filament::info-list-item label="Order ID" :value="$order->orderid" />
 
-                <template x-if="open">
-                    <div class="break-words">
-                        <strong>Address:</strong> {{ $order->user->address }}
-                    </div>
-                </template>
-                <template x-if="open">
-                    <div class="break-words">
-                        <strong>Pan no.:</strong> {{ $order->user->tax_no }}
-                    </div>
-                </template>
+                    <x-filament::info-list-item label="Address" :value="$order->user->address" />
+                    <x-filament::info-list-item label="Pan no." :value="$order->user->tax_no" />
+                </x-filament::info-list>
+            </div>
 
-                <!-- Toggle button -->
-                <div class="col-span-2 pt-1">
-                    <button @click="open = !open"
-                            class="text-blue-600 hover:underline focus:outline-none text-sm">
-                        <span x-show="!open">Show More</span>
-                        <span x-show="open">Show Less</span>
-                    </button>
-                </div>
+            {{-- Toggle Button --}}
+            <div class="mt-2">
+                <button @click="open = !open" class="text-blue-600 hover:underline text-sm">
+                    <span x-show="!open">Show More</span>
+                    <span x-show="open">Show Less</span>
+                </button>
             </div>
         </div>
     </x-filament::section>
