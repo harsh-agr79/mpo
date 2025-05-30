@@ -1,6 +1,10 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        <div x-data="{ open: false }" class="text-xs w-full">
+        <div 
+            x-data="{ open: false }" 
+            @click="open = !open"
+            class="text-xs w-full cursor-pointer"
+        >
             <table class="w-full table-auto text-center border-separate border-spacing-y-2">
                 <tbody>
                     {{-- Always visible row --}}
@@ -24,15 +28,6 @@
                     </tr>
                 </tbody>
             </table>
-
-            <div class="text-center mt-2">
-                <button 
-                    @click="open = !open"
-                    class="text-blue-500 hover:underline text-sm"
-                >
-                    <span x-text="open ? 'Show less' : 'Show more'"></span>
-                </button>
-            </div>
         </div>
     </x-filament::section>
 </x-filament-widgets::widget>
