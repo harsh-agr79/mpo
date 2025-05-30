@@ -31,10 +31,9 @@ class SalesReturnLogsRelationManager extends RelationManager
                         ->where('primary_key_value', $salesReturn->id);
                 })->orWhere(function ($q) use ($salesReturn) {
                     $q->where('table_name', 'sales_return_items')
-                        ->whereIn('primary_key_value', function ($sub) use ($salesReturn) {
-                            $sub->select('id')
-                                ->from('sales_return_items')
-                                ->where('return_id', $salesReturn->return_id);
+                        ->where(function ($q2) use ($salesReturn) {
+                            $q2->where('old_data', 'like', '%return_id%' . $salesReturn->return_id . '%')
+                                ->orWhere('new_data', 'like', '%return_id%' . $salesReturn->return_id . '%');
                         });
                 });
             });

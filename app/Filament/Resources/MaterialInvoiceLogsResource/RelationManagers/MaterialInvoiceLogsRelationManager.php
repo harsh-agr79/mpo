@@ -30,10 +30,9 @@ class MaterialInvoiceLogsRelationManager extends RelationManager
                         ->where('primary_key_value', $invoice->id);
                 })->orWhere(function ($q) use ($invoice) {
                     $q->where('table_name', 'material_invoice_items')
-                        ->whereIn('primary_key_value', function ($sub) use ($invoice) {
-                            $sub->select('id')
-                                ->from('material_invoice_items')
-                                ->where('invoice_id', $invoice->invoice_id);
+                        ->where(function ($q2) use ($invoice) {
+                            $q2->where('old_data', 'like', '%invoice_id%' . $invoice->invoice_id . '%')
+                                ->orWhere('new_data', 'like', '%invoice_id%' . $invoice->invoice_id . '%');
                         });
                 });
             });

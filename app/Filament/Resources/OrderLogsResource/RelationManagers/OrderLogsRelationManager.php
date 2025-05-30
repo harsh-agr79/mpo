@@ -20,32 +20,61 @@ class OrderLogsRelationManager extends RelationManager
 {
     protected static string $relationship = 'activityLogs';
 
+    // private function getActivityLogQuery(): Builder
+    // {
+    //     $order = $this->getOwnerRecord();
+
+    //     return ActivityLog::query()
+    //         ->where(function ($query) use ($order) {
+    //             $query->where(function ($q) use ($order) {
+    //                 $q->where('table_name', 'orders')
+    //                     ->where('primary_key_value', $order->id);
+    //             })->orWhere(function ($q) use ($order) {
+    //                 $q->where('table_name', 'order_items')
+    //                     ->whereIn('primary_key_value', function ($sub) use ($order) {
+    //                         $sub->select('id')
+    //                             ->from('order_items')
+    //                             ->where('orderid', $order->orderid);
+    //                     });
+    //             })->orWhere(function ($q) use ($order) {
+    //                 $q->where('table_name', 'order_materials')
+    //                     ->whereIn('primary_key_value', function ($sub) use ($order) {
+    //                         $sub->select('id')
+    //                             ->from('order_materials')
+    //                             ->where('orderid', $order->orderid);
+    //                     });
+    //             });
+    //         });
+    // }
+
     private function getActivityLogQuery(): Builder
     {
         $order = $this->getOwnerRecord();
 
         return ActivityLog::query()
             ->where(function ($query) use ($order) {
-                $query->where(function ($q) use ($order) {
-                    $q->where('table_name', 'orders')
-                        ->where('primary_key_value', $order->id);
-                })->orWhere(function ($q) use ($order) {
-                    $q->where('table_name', 'order_items')
-                        ->whereIn('primary_key_value', function ($sub) use ($order) {
-                            $sub->select('id')
-                                ->from('order_items')
-                                ->where('orderid', $order->orderid);
-                        });
-                })->orWhere(function ($q) use ($order) {
-                    $q->where('table_name', 'order_materials')
-                        ->whereIn('primary_key_value', function ($sub) use ($order) {
-                            $sub->select('id')
-                                ->from('order_materials')
-                                ->where('orderid', $order->orderid);
-                        });
-                });
+                $query
+                    ->where(function ($q) use ($order) {
+                        $q->where('table_name', 'orders')
+                            ->where('primary_key_value', $order->id);
+                    })
+                    ->orWhere(function ($q) use ($order) {
+                        $q->where('table_name', 'order_items')
+                            ->where(function ($q2) use ($order) {
+                                $q2->where('old_data', 'like', '%orderid%' . $order->orderid . '%')
+                                    ->orWhere('new_data', 'like', '%orderid%' . $order->orderid . '%');
+                            });
+                    })
+                    ->orWhere(function ($q) use ($order) {
+                        $q->where('table_name', 'order_materials')
+                            ->where(function ($q2) use ($order) {
+                                $q2->where('old_data', 'like', '%orderid%' . $order->orderid . '%')
+                                    ->orWhere('new_data', 'like', '%orderid%' . $order->orderid . '%');
+                            });
+                    });
             });
     }
+
 
     public function table(Table $table): Table
     {
