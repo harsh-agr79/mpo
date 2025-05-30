@@ -52,9 +52,6 @@ class OrderResource extends Resource
                             ->label('Order Date')
                             ->default(now()) // ⬅️ sets today's date
                             ->required(),
-                    ])->columns(2),
-                Section::make('Shippent Details')
-                    ->schema([
                         TextInput::make('cartoons'),
                         TextInput::make('transport')
                     ])->collapsible()
