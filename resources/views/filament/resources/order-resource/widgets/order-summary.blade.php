@@ -1,10 +1,7 @@
 <x-filament-widgets::widget>
-    <x-filament::section>
-        <div 
-            x-data="{ open: false }" 
-            @click="open = !open"
-            class="text-xs w-full cursor-pointer"
-        >
+    <x-filament::section  x-data="{ open: false }" 
+            @click="open = !open" class=" cursor-pointer">
+        <div class="text-xs w-full">
             <table class="w-full table-auto border-separate border-spacing-y-2">
                 <tbody>
                     {{-- Always visible row --}}
