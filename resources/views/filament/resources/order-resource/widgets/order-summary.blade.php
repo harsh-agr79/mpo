@@ -5,7 +5,7 @@
             @click="open = !open"
             class="text-xs w-full cursor-pointer"
         >
-            <table class="w-full table-auto text-center border-separate border-spacing-y-2">
+            <table class="w-full table-auto border-separate border-spacing-y-2">
                 <tbody>
                     {{-- Always visible row --}}
                     <tr>
