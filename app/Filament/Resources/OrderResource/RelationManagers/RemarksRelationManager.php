@@ -59,10 +59,10 @@ class RemarksRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn ($record) => $record->remarks_by === auth()->user()->id),
+                    ->disabled(fn ($record) => $record->remarks_by === auth()->user()->id),
 
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn ($record) => $record->remarks_by === auth()->user()->id),
+                    ->disabled(fn ($record) => $record->remarks_by === auth()->user()->id),
             ])
             ->bulkActions([
                 // Tables\Actions\BulkActionGroup::make([
