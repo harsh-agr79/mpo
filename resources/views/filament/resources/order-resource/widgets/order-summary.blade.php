@@ -1,20 +1,47 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-    <div class="text-xs">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <div class="space-y-2">
-                <div><strong>Name:</strong> {{ $order->user->name }}</div>
-                <div><strong>Shop:</strong> {{ $order->user->shop_name }}</div>
-                 <div><strong>Phone no.:</strong> {{ $order->user->contact }}</div>
-                <div><strong>Address:</strong> {{ $order->user->address }}</div>
-                <div><strong>Pan no.:</strong> {{ $order->user->tax_no }}</div>
-            </div>
-            <div class="space-y-2">
-                <div><strong>Date:</strong> {{ $order->date }}</div>
-                <div><strong>Miti:</strong> {{ getNepaliDate($order->date) }}</div>
-                <div><strong>Order ID:</strong> {{ $order->orderid }}</div>
-            </div>
+        <div x-data="{ open: false }" class="text-xs">
+            <table class="w-full table-auto border-separate border-spacing-y-2">
+                <tbody>
+                    <tr>
+                        <td><strong>Name:</strong></td>
+                        <td>{{ $order->user->name }}</td>
+                        <td><strong>Date:</strong></td>
+                        <td>{{ $order->date }}</td>
+                    </tr>
+                    <template x-if="open">
+                        <tr>
+                            <td><strong>Shop:</strong></td>
+                            <td>{{ $order->user->shop_name }}</td>
+                            <td><strong>Miti:</strong></td>
+                            <td>{{ getNepaliDate($order->date) }}</td>
+                        </tr>
+                    </template>
+                    <template x-if="open">
+                        <tr>
+                            <td><strong>Phone no.:</strong></td>
+                            <td>{{ $order->user->contact }}</td>
+                            <td><strong>Order ID:</strong></td>
+                            <td>{{ $order->orderid }}</td>
+                        </tr>
+                    </template>
+                    <template x-if="open">
+                        <tr>
+                            <td><strong>Address:</strong></td>
+                            <td>{{ $order->user->address }}</td>
+                            <td><strong>Pan no.:</strong></td>
+                            <td>{{ $order->user->tax_no }}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+
+            <button 
+                class="mt-2 text-blue-500 hover:underline text-sm"
+                @click="open = !open"
+            >
+                <span x-text="open ? 'Show less' : 'Show more'"></span>
+            </button>
         </div>
-    </div>
-</x-filament::section>
+    </x-filament::section>
 </x-filament-widgets::widget>
