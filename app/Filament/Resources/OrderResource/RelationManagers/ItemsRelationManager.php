@@ -140,11 +140,17 @@ class ItemsRelationManager extends RelationManager
                     ->height(50)
                     ->sortable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('Product.name')
-                    ->label('Product Name')
-                    ->sortable()
-                    ->wrap()
-                    ->size(TextColumn\TextColumnSize::ExtraSmall),
+               Tables\Columns\TextColumn::make('Product.name')
+                ->label('Product Name')
+                ->sortable()
+                ->wrap()
+                ->size(TextColumn\TextColumnSize::ExtraSmall)
+                ->formatStateUsing(function ($state, $record) {
+                    return $record->product->stock == 1
+                        ? '<span style="text-decoration: underline; text-decoration-color: red;">' . e($state) . '</span>'
+                        : e($state);
+                })
+                ->html(),
                 Tables\Columns\SelectColumn::make('offer')
                  ->options(function ($record) {
                         // If you have a relationship called `product`, you can use:
