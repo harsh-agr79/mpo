@@ -168,6 +168,7 @@ class ItemsRelationManager extends RelationManager
                     })
                     ->searchable()
                     ->sortable()
+                    ->toggleable()
                     ->label('Offer (pcs:price)'),
                 Tables\Columns\TextColumn::make('quantity')
                     ->size(TextColumn\TextColumnSize::ExtraSmall),
@@ -198,6 +199,7 @@ class ItemsRelationManager extends RelationManager
                     }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Total')
+                    ->toggleable()
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->formatStateUsing(function ($state, $record) {
                         if ($record->status === 'pending' || $record->status === 'rejected') {
