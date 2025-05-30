@@ -36,6 +36,7 @@ class RemarksRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('orderid')
             ->defaultSort('created_at', 'desc')
+            ->poll('2s')
             ->paginated(false)
             ->columns([
                 Tables\Columns\TextColumn::make('admin.name')
