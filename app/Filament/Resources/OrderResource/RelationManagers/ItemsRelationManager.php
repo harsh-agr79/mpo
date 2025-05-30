@@ -90,7 +90,7 @@ class ItemsRelationManager extends RelationManager
             return;
         }
 
-        $offers = $product->offer; // JSON decoded offer: {"5":"1200", "10":"1000"}
+        $offers = $product->offer ?? []; // JSON decoded offer: {"5":"1200", "10":"1000"}
         $bestMatch = [];
         $bestQty = null;
 
