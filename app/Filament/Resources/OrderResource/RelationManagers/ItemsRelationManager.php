@@ -91,7 +91,7 @@ class ItemsRelationManager extends RelationManager
         }
 
         $offers = $product->offer ?? []; // JSON decoded offer: {"5":"1200", "10":"1000"}
-        $bestMatch = [];
+        $bestMatch = null;
         $bestQty = null;
 
         // Find best match (highest offer qty ≤ input quantity)
