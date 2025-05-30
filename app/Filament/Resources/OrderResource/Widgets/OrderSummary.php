@@ -4,7 +4,8 @@ namespace App\Filament\Resources\OrderResource\Widgets;
 
 use Filament\Widgets\Widget;
 use App\Models\Order;
-use Filament\Infolists\Components\InfoList;
+// use Filament\Infolists\Components\InfoList;
+use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\HtmlString;
