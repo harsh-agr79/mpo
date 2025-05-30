@@ -182,6 +182,7 @@ class ItemsRelationManager extends RelationManager
                     'approved' => 'Approved',
                     'rejected' => 'Rejected',
                 ])
+                ->selectablePlaceholder(false)
                 ->afterStateUpdated(function ($record, $state) {
                          $quantity = (int) $record->quantity;
 
