@@ -168,6 +168,7 @@ class ItemsRelationManager extends RelationManager
                     })
                     ->searchable()
                     ->sortable()
+                    ->placeholder('No Offer')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Offer (pcs:price)'),
                 Tables\Columns\TextColumn::make('quantity')
