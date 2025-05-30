@@ -1,19 +1,20 @@
-<div x-data="{ open: true }" class="space-y-4">
-    <div class="grid grid-cols-2 gap-4">
-        {{-- Always visible --}}
-        <div>
-            {{ $infoList->only('user.name')->render() }}
-        </div>
-        <div>
-            {{ $infoList->only('date')->render() }}
+<x-filament-widgets::widget>
+    <x-filament::section>
+    <div class="text-xs">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+            <div class="space-y-2">
+                <div><strong>Name:</strong> {{ $order->user->name }}</div>
+                <div><strong>Shop:</strong> {{ $order->user->shop_name }}</div>
+                 <div><strong>Phone no.:</strong> {{ $order->user->contact }}</div>
+                <div><strong>Address:</strong> {{ $order->user->address }}</div>
+                <div><strong>Pan no.:</strong> {{ $order->user->tax_no }}</div>
+            </div>
+            <div class="space-y-2">
+                <div><strong>Date:</strong> {{ $order->date }}</div>
+                <div><strong>Miti:</strong> {{ getNepaliDate($order->date) }}</div>
+                <div><strong>Order ID:</strong> {{ $order->orderid }}</div>
+            </div>
         </div>
     </div>
-
-    <button x-on:click="open = !open" class="text-sm text-blue-600 hover:underline" type="button">
-        <span x-text="open ? 'Hide details' : 'Show details'"></span>
-    </button>
-
-    <div x-show="open" x-transition>
-        {{ $infoList->except(['user.name', 'date'])->render() }}
-    </div>
-</div>
+</x-filament::section>
+</x-filament-widgets::widget>
