@@ -1,5 +1,5 @@
 <x-filament-widgets::widget>
-    <x-filament::section class="bg-status-approved">
+    <x-filament::section class="bg-order-summary text-black dark:text-white">
         <div 
             x-data="{ open: false }" 
             @click="open = !open"

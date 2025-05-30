@@ -12,6 +12,7 @@
 .bg-status-approved      { background-color: #fff7df; }  /* amber-300 */
 .bg-status-packing       { background-color: #f2ecfa; }  /* purple-100 */
 .bg-status-delivered     { background-color: #effff4; }  /* green-100 */
+.bg-order-summary      { background-color: #ffe189; }  /* amber-300 */
 
 /* Dark mode overrides */
 .dark .bg-status-pending       { background-color: #101e25; }  /* sky-900 */
@@ -19,4 +20,6 @@
 .dark .bg-status-approved      { background-color: #251a13; }  /* amber-900 */
 .dark .bg-status-packing       { background-color: #231231; }  /* purple-900 */
 .dark .bg-status-delivered     { background-color: #0f2016; }  /* green-900 */
+.dark .bg-order-summary      { background-color: #2c250f; }  /* amber-300 */
+
 
