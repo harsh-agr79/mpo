@@ -140,14 +140,14 @@ class ItemsRelationManager extends RelationManager
                     ->height(50)
                     ->sortable()
                     ->toggleable(),
-               Tables\Columns\TextColumn::make('Product.name')
+              Tables\Columns\TextColumn::make('Product.name')
                 ->label('Product Name')
                 ->sortable()
                 ->wrap()
                 ->size(TextColumn\TextColumnSize::ExtraSmall)
                 ->formatStateUsing(function ($state, $record) {
                     return $record->product->stock == 1
-                        ? '<span style="text-decoration: underline; text-decoration-color: red;">' . e($state) . '</span>'
+                        ? '<span style="border-bottom: 2px solid red; padding-bottom: 1px;">' . e($state) . '</span>'
                         : e($state);
                 })
                 ->html(),
