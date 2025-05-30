@@ -147,7 +147,7 @@ class ItemsRelationManager extends RelationManager
                 ->size(TextColumn\TextColumnSize::ExtraSmall)
                 ->formatStateUsing(function ($state, $record) {
                     return $record->product->stock == 1
-                        ? '<span style="border-bottom: 2px solid red; padding-bottom: 1px;">' . e($state) . '</span>'
+                        ? '<span style="border-bottom: 3px solid red; padding-bottom: 1px;">' . e($state) . '</span>'
                         : e($state);
                 })
                 ->html(),
