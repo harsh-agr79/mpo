@@ -21,7 +21,7 @@
             {{ session('message') }}
         </div>
     @endif
-    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-status-approved dark:bg-gray-900 text-black dark:text-white shadow-sm items-center border rounded-lg p-3">
+    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-order-summary dark:bg-gray-900 text-black dark:text-white shadow-sm items-center border rounded-lg p-3">
         {{ $this->form }}
         <div class="py-2 flex justify-between items-center">
             <div class="w-30">
