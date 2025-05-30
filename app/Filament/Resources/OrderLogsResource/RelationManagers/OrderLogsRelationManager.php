@@ -86,6 +86,7 @@ class OrderLogsRelationManager extends RelationManager
             ->query(
                 $this->getActivityLogQuery()
             )
+            ->paginated([0,1,5,10, 25, 50, 100, 'all'])
             ->columns([
                 TextColumn::make('created_at')
                     ->label('DateTime (A.D.)')
