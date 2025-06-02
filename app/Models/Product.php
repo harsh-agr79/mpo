@@ -53,7 +53,7 @@ class Product extends BaseModel
     public function subcategory() {
        // Check if subcategory_ids is not null and is an array
         if (!empty($this->sub_category_id) && is_array($this->sub_category_id)) {
-            return Subcategory::whereIn('id', $this->sub_category_id)->get();
+            return SubCategory::whereIn('id', $this->sub_category_id)->get();
         }
         return collect();
     }
