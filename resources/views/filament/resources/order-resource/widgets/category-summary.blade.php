@@ -82,7 +82,7 @@
                         ₹{{ number_format($totalApprovedValue, 0) }}</div>
                     @if ($discount > 0)
                         <div><span class="font-medium text-red-600 dark:text-red-400">Discount:</span> -
-                            {{ number_format($discount, 0) }}%</div>
+                            {{ number_format($discount, 0) }}% ({{$totalApprovedValue - $finalTotal}})</div>
                         <div><span class="font-medium text-blue-600 dark:text-blue-400">Final Total:</span>
                             ₹{{ number_format($finalTotal, 0) }}</div>
                     @endif
