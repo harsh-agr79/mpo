@@ -35,7 +35,7 @@ class PartsPurchaseResource extends Resource
     protected static ?string $model = PartsPurchase::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
-    protected static ?string $navigationGroup = 'Purchase';
+    protected static ?string $navigationGroup = "Damage";
 
     public static function form(Form $form): Form
     {

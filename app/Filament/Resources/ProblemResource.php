@@ -31,7 +31,7 @@ class ProblemResource extends Resource
     protected static ?string $model = Problem::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-exclamation-circle';
-    protected static ?string $navigationGroup = 'Faults';
+    protected static ?string $navigationGroup = "Damage";
 
     public static function form(Form $form): Form
     {

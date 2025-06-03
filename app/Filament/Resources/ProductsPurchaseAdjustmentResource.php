@@ -34,7 +34,8 @@ class ProductsPurchaseAdjustmentResource extends Resource
     protected static ?string $model = ProductsPurchaseAdjustment::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
-    protected static ?string $navigationGroup = 'Purchase';
+        protected static ?string $navigationGroup = "Products";
+
 
     protected static ?string $navigationLabel = 'Products Adjustment';
 

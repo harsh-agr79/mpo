@@ -34,7 +34,8 @@ class ProductsPurchaseResource extends Resource
     protected static ?string $model = ProductsPurchase::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
-    protected static ?string $navigationGroup = 'Purchase';
+       protected static ?string $navigationGroup = "Products";
+
 
     public static function form(Form $form): Form
     {

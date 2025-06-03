@@ -30,7 +30,8 @@ class SubCategoryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-hashtag';
 
-    protected static ?string $navigationGroup = "Inventory";
+    protected static ?string $navigationGroup = "Products";
+
 
     public static function form(Form $form): Form
     {
