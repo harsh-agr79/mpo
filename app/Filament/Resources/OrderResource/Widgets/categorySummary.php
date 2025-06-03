@@ -36,6 +36,13 @@ class categorySummary extends Widget
         $discount = $this->record->discount ?? 0;
         $finalTotal = $totalApprovedValue - (($discount/100) * $totalApprovedValue);
 
+         $totalBenefit = $items->sum(function ($item) {
+            $actualPrice = $item->actualprice ?? 0;
+            $price = $item->price ?? 0;
+            $approvedQty = $item->approvedquantity ?? 0;
+            return ($actualPrice > $price) ? ($actualPrice - $price) * $approvedQty : 0;
+        });
+
         return [
             'order' => $this->record,
             'categoryCounts' => $categoryCounts,
@@ -46,6 +53,7 @@ class categorySummary extends Widget
             'totalApprovedValue' => $totalApprovedValue,
             'discount' => $discount,
             'finalTotal' => $finalTotal,
+            'totalBenefit' => $totalBenefit,
         ];
     }
 

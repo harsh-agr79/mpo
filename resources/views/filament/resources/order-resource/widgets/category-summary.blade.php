@@ -86,6 +86,7 @@
                         <div><span class="font-medium text-blue-600 dark:text-blue-400">Final Total:</span>
                             ₹{{ number_format($finalTotal, 0) }}</div>
                     @endif
+                    @if($totalBenefit > 0)<div><span class="font-medium">Total Benefit:</span> ₹{{ number_format($totalBenefit, 0) }}</div>@endif
                 </div>
             </div>
         </div>
