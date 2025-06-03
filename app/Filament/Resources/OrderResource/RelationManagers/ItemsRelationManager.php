@@ -231,12 +231,13 @@ class ItemsRelationManager extends RelationManager
                     ))
                     ->disabled()
                     ->color('danger'),
-                      Action::make('net_total_head')
+
+                    Action::make('net_total_head')
                     ->label(fn ($livewire) => 'Net Total: ' . number_format(
                         $livewire->ownerRecord->net_total
                     ))
                     ->disabled()
-                    ->color('success'),
+                    ->color('indigo'),
                
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('bulkApproveAll')
