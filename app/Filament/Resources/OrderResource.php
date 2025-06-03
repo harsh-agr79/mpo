@@ -40,22 +40,6 @@ class OrderResource extends Resource
     {
         return $form
             ->schema([
-                Section::make('Order Specifications')
-                    ->schema([
-                        Select::make('user_id')
-                            ->relationship(name: 'user', titleAttribute: 'name')
-                            ->label('Customer')
-                            ->searchable()
-                            ->options(User::all()->pluck('name', 'id'))
-                            ->required(),
-                        DatePicker::make('date')
-                            ->label('Order Date')
-                            ->default(now()) // ⬅️ sets today's date
-                            ->required(),
-                        TextInput::make('cartoons'),
-                        TextInput::make('transport')
-                    ])->collapsible()
-                    ->persistCollapsed()->columns(2),
                 TextInput::make('discount')
                     ->numeric()
                     ->label('Discount')
