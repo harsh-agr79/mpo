@@ -16,15 +16,31 @@
         <div class="text-xs">
 
 
-            <div
-                class="p-4 bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500 dark:border-blue-400 rounded shadow-sm">
-                <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">User Remarks:</h3>
-                <p class="text-xs text-black dark:text-white">
-                    {{ $order->user_remarks ?? 'No remarks provided' }}
-                </p>
-            </div>
 
-            <div style="overflow-x: scroll;" class="hide-scrollbar">
+
+           
+            <div
+                class="mt-6 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+                <h3 class="text-base font-semibold text-black dark:text-white mb-3">Summary</h3>
+                <div class="flex flex-col space-y-1 text-xs text-black dark:text-white whitespace-nowrap">
+                    <div><span class="font-medium">Total Items:</span> {{ $totalItems }}</div>
+                    <div><span class="font-medium">Total Approved Quantity:</span> {{ $totalApprovedQuantity }}</div>
+                    <div><span class="font-medium">Total Approved Value:</span>
+                        ₹{{ number_format($totalApprovedValue, 0) }}</div>
+                    @if ($discount > 0)
+                        <div><span class="font-medium text-red-600 dark:text-red-400">Discount:</span> -
+                            {{ number_format($discount, 0) }}% ({{ number_format($totalApprovedValue - $finalTotal) }})
+                        </div>
+                        <div><span class="font-medium text-blue-600 dark:text-blue-400">Final Total:</span>
+                            ₹{{ number_format($finalTotal, 0) }}</div>
+                    @endif
+                    @if ($totalBenefit > 0)
+                        <div><span class="font-medium">Total Benefit:</span> ₹{{ number_format($totalBenefit, 0) }}
+                        </div>
+                    @endif
+                </div>
+            </div>
+             <div style="overflow-x: scroll;" class="hide-scrollbar">
                 @if ($categoryCounts->isNotEmpty())
                     <table
                         class="w-full text-xs text-left text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded mt-6">
@@ -73,21 +89,11 @@
                 @endif
             </div>
             <div
-                class="mt-6 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
-                <h3 class="text-base font-semibold text-black dark:text-white mb-3">Summary</h3>
-                <div class="flex flex-col space-y-1 text-xs text-black dark:text-white whitespace-nowrap">
-                    <div><span class="font-medium">Total Items:</span> {{ $totalItems }}</div>
-                    <div><span class="font-medium">Total Approved Quantity:</span> {{ $totalApprovedQuantity }}</div>
-                    <div><span class="font-medium">Total Approved Value:</span>
-                        ₹{{ number_format($totalApprovedValue, 0) }}</div>
-                    @if ($discount > 0)
-                        <div><span class="font-medium text-red-600 dark:text-red-400">Discount:</span> -
-                            {{ number_format($discount, 0) }}% ({{ number_format($totalApprovedValue - $finalTotal)}})</div>
-                        <div><span class="font-medium text-blue-600 dark:text-blue-400">Final Total:</span>
-                            ₹{{ number_format($finalTotal, 0) }}</div>
-                    @endif
-                    @if($totalBenefit > 0)<div><span class="font-medium">Total Benefit:</span> ₹{{ number_format($totalBenefit, 0) }}</div>@endif
-                </div>
+                class="mt-2 p-4 bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500 dark:border-blue-400 rounded shadow-sm">
+                <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">User Remarks:</h3>
+                <p class="text-xs text-black dark:text-white">
+                    {{ $order->user_remarks ?? 'No remarks provided' }}
+                </p>
             </div>
         </div>
     </x-filament::section>
