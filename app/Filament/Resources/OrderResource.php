@@ -200,12 +200,12 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationGroup::make('', [
+            RelationGroup::make('Main', [
                 RelationManagers\ItemsRelationManager::class,
                 RelationManagers\OrderMaterialsRelationManager::class,
                 RelationManagers\RemarksRelationManager::class,
-                OrderLogsRelationManager::class
             ]),
+            OrderLogsRelationManager::class
         ];
     }
     public static function canCreate(): bool
