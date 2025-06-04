@@ -11,15 +11,18 @@ use App\Models\User;
 use App\Models\Admin;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Colors\Color;
 use Carbon\Carbon;
 use Closure;
 use Filament\Resources\RelationManagers\RelationGroup;
-use Filament\Forms\Components\Section;
+use Filament\Infolists\Components\Section;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\{TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle};
 use Filament\Tables\Columns\{ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
@@ -184,6 +187,65 @@ class OrderResource extends Resource
             ->actions([
                 // Tables\Actions\EditAction::make(),
                 // Tables\Actions\DeleteAction::make(),
+                ViewAction::make()->size('xl')
+                    ->label('')
+                    ->modalHeading(fn($record) => 'ORDER: ' . ucfirst($record->orderid))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+
+                                TextEntry::make('orderid')->label('ORDER ID'),
+                                TextEntry::make('date')->label('DATE'),
+                                TextEntry::make('custom_nep_date')
+                                    ->label('NEPALI DATE')
+                                    ->getStateUsing(fn($record) => ($record->nepyear && $record->nepmonth) ? "{$record->nepyear}/{$record->nepmonth}" : '-'),
+                                TextEntry::make('user.name')->label('USER'),
+                                TextEntry::make('net_total')->label('NET TOTAL')->money('NPR'),
+                                TextEntry::make('discount')->label('DISCOUNT')->formatStateUsing(fn($record) => $record->discount . '%')->default(0),
+                                TextEntry::make('total')->label('TOTAL')->money('NPR'),
+                                TextEntry::make('mainstatus')->label('MAIN STATUS'),
+                                TextEntry::make('clnstatus')->label('CLEAN STATUS')->default('N/A'),
+                                TextEntry::make('delivered_at')->label('DELIVERED AT')->default('N/A'),
+                                TextEntry::make('recieved_at')->label('RECEIVED AT')->default('N/A'),
+                                TextEntry::make('othersname')->label('OTHERS')->default('-'),
+                                TextEntry::make('cartoons')->label('CARTOONS')->default('-'),
+                                TextEntry::make('user_remarks')->label('REMARKS')->markdown()->default('-'),
+                                TextEntry::make('transport')->label('TRANSPORT')->markdown()->default('-'),
+                                TextEntry::make('created_at')->label('CREATED AT')->dateTime('Y-m-d H:i'),
+                                TextEntry::make('updated_at')->label('UPDATED AT')->dateTime('Y-m-d H:i'),
+                                TextEntry::make('deleted_at')
+                                    ->label('DELETED AT')
+                                    ->dateTime('Y-m-d H:i')
+                                    ->visible(fn($record) => filled($record->deleted_at)),
+                                RepeatableEntry::make('items')
+                                    ->label('ORDER ITEMS')
+                                    ->schema([
+                                        TextEntry::make('product.name')->label('PRODUCT'), // You can change this to product name if related
+                                        TextEntry::make('quantity')->label('QTY'),
+                                        TextEntry::make('price')->label('PRICE')->money('NPR'),
+                                        TextEntry::make('actualprice')->label('ACTUAL PRICE')->money('NPR'),
+                                        TextEntry::make('status')->label('STATUS'),
+                                        TextEntry::make('offer')->label('OFFER')->default('-')
+                                    ])
+                                    ->columns(3)
+                                    ->columnSpanFull()
+                                    ->visible(fn($record) => $record->items->isNotEmpty()),
+                                RepeatableEntry::make('materials')
+                                    ->label('ORDER MATERIALS')
+                                    ->schema([
+                                        TextEntry::make('material.name')->label('MATERIAL'),
+                                        TextEntry::make('quantity')->label('QUANTITY'),
+                                        TextEntry::make('status')->label('STATUS'),
+                                    ])
+                                    ->columns(3)
+                                    ->columnSpanFull()
+                                    ->visible(fn($record) => $record->materials->isNotEmpty()),
+
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])

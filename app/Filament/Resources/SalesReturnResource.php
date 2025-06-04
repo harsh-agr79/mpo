@@ -19,8 +19,10 @@ use Closure;
 use App\Filament\Resources\SalesReturnResource\RelationManagers\SalesReturnLogsRelationManager;
 
 use Filament\Resources\RelationManagers\RelationGroup;
-use Filament\Forms\Components\Section;
+use Filament\Infolists\Components\Section;
 use Filament\Notifications\Notification;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Infolists\Components\{TextEntry, RepeatableEntry};
 use Filament\Forms\Components\{TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle};
 use Filament\Tables\Columns\{ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
 
@@ -90,6 +92,44 @@ class SalesReturnResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                ViewAction::make()->size('xl')
+                    ->label('')
+                    ->modalHeading(fn($record) => 'RETURN: ' . ucfirst($record->return_id))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        Section::make()
+                            ->schema([
+                                TextEntry::make('return_id')->label('RETURN ID'),
+                                TextEntry::make('date')->label('DATE'),
+                                TextEntry::make('custom_nep_date')
+                                    ->label('NEPALI DATE')
+                                    ->getStateUsing(fn($record) => ($record->nepyear && $record->nepmonth) ? "{$record->nepyear}/{$record->nepmonth}" : '-'),
+                                TextEntry::make('user.name')->label('USER'),
+                                TextEntry::make('net_total')->label('NET TOTAL')->money('NPR'),
+                                TextEntry::make('discount')->label('DISCOUNT')->formatStateUsing(fn($record) => $record->discount . '%')->default(0),
+                                TextEntry::make('total')->label('TOTAL')->money('NPR'),
+                                TextEntry::make('remarks')->label('REMARKS')->markdown()->default('-'),
+                                TextEntry::make('created_at')->label('CREATED AT')->dateTime('Y-m-d H:i'),
+                                TextEntry::make('updated_at')->label('UPDATED AT')->dateTime('Y-m-d H:i'),
+                                TextEntry::make('deleted_at')
+                                    ->label('DELETED AT')
+                                    ->dateTime('Y-m-d H:i')
+                                    ->visible(fn($record) => filled($record->deleted_at)),
+
+                                RepeatableEntry::make('items')
+                                    ->label('RETURN ITEMS')
+                                    ->schema([
+                                        TextEntry::make('product.name')->label('PRODUCT'),
+                                        TextEntry::make('quantity')->label('QUANTITY'),
+                                        TextEntry::make('price')->label('PRICE')->money('NPR'),
+                                    ])
+                                    ->columns(3)
+                                    ->columnSpanFull()
+                                    ->visible(fn($record) => $record->items->isNotEmpty()),
+                            ])
+                            ->columns(2),
+                    ]),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])

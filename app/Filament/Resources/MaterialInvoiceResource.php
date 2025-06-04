@@ -9,10 +9,13 @@ use App\Filament\Resources\SalesReturnResource\RelationManagers\MaterialInvoiceL
 use App\Models\MaterialInvoice;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use App\Models\User;
 use App\Models\Admin;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -189,6 +192,49 @@ class MaterialInvoiceResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                ViewAction::make()
+                    ->size('xl')
+                    ->label('')
+                    ->modalHeading(fn($record) => 'INVOICE: ' . strtoupper($record->invoice_id))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Close')
+                    ->infolist([
+                        \Filament\Infolists\Components\Section::make()
+                            ->schema([
+                                TextEntry::make('invoice_id')->label('INVOICE ID'),
+                                TextEntry::make('date')->label('DATE'),
+                                TextEntry::make('custom_nep_date')
+                                    ->label('NEPALI DATE')
+                                    ->getStateUsing(fn($record) => ($record->nepyear && $record->nepmonth) ? "{$record->nepyear}/{$record->nepmonth}" : '-'),
+                                TextEntry::make('user.name')->label('USER'),
+                                TextEntry::make('mainstatus')->label('MAIN STATUS')->default('-'),
+                                TextEntry::make('clnstatus')->label('CLEAN STATUS')->default('N/A'),
+                                TextEntry::make('delivered_at')->label('DELIVERED AT')->default('N/A'),
+                                TextEntry::make('recieved_at')->label('RECEIVED AT')->default('N/A'),
+                                TextEntry::make('othersname')->label('OTHERS')->default('-'),
+                                TextEntry::make('cartoons')->label('CARTOONS')->default('-'),
+                                TextEntry::make('transport')->label('TRANSPORT')->markdown()->default('-'),
+                                TextEntry::make('created_at')->label('CREATED AT')->dateTime('Y-m-d H:i'),
+                                TextEntry::make('updated_at')->label('UPDATED AT')->dateTime('Y-m-d H:i'),
+                                TextEntry::make('deleted_at')
+                                    ->label('DELETED AT')
+                                    ->dateTime('Y-m-d H:i')
+                                    ->visible(fn($record) => filled($record->deleted_at)),
+
+                                RepeatableEntry::make('items')
+                                    ->label('INVOICE MATERIALS')
+                                    ->schema([
+                                        TextEntry::make('material.name')->label('MATERIAL'),
+                                        TextEntry::make('quantity')->label('QUANTITY'),
+                                        TextEntry::make('status')->label('STATUS'),
+                                    ])
+                                    ->columns(3)
+                                    ->columnSpanFull()
+                                    ->visible(fn($record) => $record->items->isNotEmpty()),
+                            ])
+                            ->columns(2),
+                    ]),
+
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
