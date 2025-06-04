@@ -26,6 +26,8 @@ use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\Repeater;
+// use Filament\Forms\Components\FileUpload;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -87,6 +89,13 @@ class ProductResource extends Resource
                     ->KeyLabel('Pcs')
                     ->ValueLabel('Price')
                     ->label('Offer'),
+                KeyValue::make('specifications')
+                    ->label('Specifications')
+                    ->keyLabel('Attribute')
+                    ->valueLabel('Value')
+                    ->reorderable()
+                    ->addButtonLabel('Add Specification'),
+               
                 FileUpload::make('image')
                     ->required()
                     ->directory('products')
@@ -100,6 +109,17 @@ class ProductResource extends Resource
                     ->maxSize(2048)
                     ->acceptedFileTypes(['image/svg', 'image/png', 'image/jpg', 'image/jpeg', 'image/webp'])
                     ->label('Additional Image'),
+                 Repeater::make('images')
+                    ->label('Product Images')
+                    ->schema([
+                        FileUpload::make('image')
+                            ->directory('products/images') // stored in storage/app/products/images
+                            ->image()
+                            ->imagePreviewHeight('100')
+                            ->preserveFilenames(),
+                    ])
+                    // ->addButtonLabel('Add Image')
+                    ->columns(1),
                 Textarea::make('details')
                     ->label('Product Details')
                     ->columnSpanFull()

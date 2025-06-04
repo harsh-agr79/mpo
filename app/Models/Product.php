@@ -22,13 +22,17 @@ class Product extends BaseModel
         'order_num',
         'image',
         'image_2',
-        'details'
+        'details',
+        'specificatons',
+        'images'
     ];
 
     protected $casts = [
         'order_num' => 'integer',
         'sub_category_id' => 'array',
-        'offer' => 'array'
+        'offer' => 'array',
+        'specifications' => 'array',
+        'images' => 'array',
     ];
 
     public static function booted()

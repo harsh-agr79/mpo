@@ -89,7 +89,8 @@
                 @endif
             </div>
             <div
-                class="mt-2 p-4 bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500 dark:border-blue-400 rounded shadow-sm">
+                class="mt-2 php artisan make:migration add_specifications_and_images_to_products_table
+p-4 bg-gray-50 dark:bg-gray-800 border-l-4 border-blue-500 dark:border-blue-400 rounded shadow-sm">
                 <h3 class="text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">User Remarks:</h3>
                 <p class="text-xs text-black dark:text-white">
                     {{ $order->user_remarks ?? 'No remarks provided' }}
