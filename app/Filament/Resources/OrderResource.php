@@ -272,11 +272,8 @@ class OrderResource extends Resource
                     ->label('PNG')
                     ->icon('heroicon-o-photo')
                     ->color('success')
-                    ->action(function (Order $record) {
-                        $path = OrderExportService::generatePng($record);
-
-                        return response()->download($path)->deleteFileAfterSend(true);
-                    }),
+                    ->url(fn(Order $record) => route('png.order', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
@@ -300,37 +297,6 @@ class OrderResource extends Resource
                         })
                         ->deselectRecordsAfterCompletion()
                     ,
-                    BulkAction::make('export_pngs')
-                        ->label('Export PNGs')
-                        ->icon('heroicon-o-photo')
-                        ->action(function (Collection $records) {
-                            $files = [];
-
-                            foreach ($records as $record) {
-                                // Ensure full model is loaded
-                                $order = $record instanceof Order
-                                    ? $record
-                                    : Order::findOrFail($record);
-
-                                $files[] = OrderExportService::generatePng($order);
-                            }
-
-                            // Optionally zip and return the files
-                            $zipPath = storage_path('app/public/orders_png_export.zip');
-                            $zip = new \ZipArchive;
-                            $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
-
-                            foreach ($files as $file) {
-                                $zip->addFile($file, basename($file));
-                            }
-
-                            $zip->close();
-
-                            return response()->download($zipPath)->deleteFileAfterSend(true);
-                        })
-                        ->deselectRecordsAfterCompletion()
-                        ->requiresConfirmation()
-                        ->color('info'),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),

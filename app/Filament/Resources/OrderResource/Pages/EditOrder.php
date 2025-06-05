@@ -104,15 +104,8 @@ class EditOrder extends EditRecord
                 ->label('Download PNG')
                 ->icon('heroicon-o-photo')
                 ->color('success')
-                ->action(function () {
-                    $order = $this->record instanceof Order
-                        ? $this->record
-                        : Order::findOrFail($this->record);
-
-                    $path = OrderExportService::generatePng($order);
-
-                    return response()->download($path)->deleteFileAfterSend(true);
-                })
+                ->url(fn(Order $record) => route('png.order', $record))
+                ->openUrlInNewTab(),
         ];
     }
 
