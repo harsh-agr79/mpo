@@ -29,7 +29,7 @@ class BatchResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
 
-    protected static ?string $navigationGroup = "Damage";
+   protected static ?string $navigationGroup = 'Damage Management';
 
     public static function form(Form $form): Form
     {
