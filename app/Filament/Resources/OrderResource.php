@@ -9,12 +9,15 @@ use App\Filament\Resources\SalesReturnResource\RelationManagers\OrderLogsRelatio
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Admin;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,6 +29,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Notifications\Notification;
 use Filament\Forms\Components\{TextInput, DatePicker, DateTimePicker, Textarea, Select, Toggle};
 use Filament\Tables\Columns\{ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\Layout\Split;
@@ -246,11 +250,46 @@ class OrderResource extends Resource
                             ])
                             ->columns(2),
                     ]),
+                Action::make('generate_ind_pdf')
+                    ->label('PDF')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('info')
+                    ->action(function (Order $record) {
+                        // Make sure related data is loaded
+                        $record->load([
+                            'items.product', // load order items and their product info
+                        ]);
+
+                        $pdf = Pdf::loadView('pdf.order', ['order' => $record]);
+
+                        return response()->streamDownload(
+                            fn() => print ($pdf->output()),
+                            'order-' . $record->id . '.pdf'
+                        );
+                    }),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    BulkAction::make('generate_bulk_pdf')
+                        ->label('Export Orders PDF')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('info')
+                        ->action(function (Collection $records) {
+                            $orders = $records->load(['items.product']); // eager load relations
+                
+                            $pdf = Pdf::loadView('pdf.orders', ['orders' => $orders]);
+
+                            $filename = 'orders-' . now()->format('Ymd_His') . '.pdf';
+                            $path = storage_path("app/public/{$filename}");
+
+                            file_put_contents($path, $pdf->output());
+
+                            return response()->download($path)->deleteFileAfterSend(true);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                    ,
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),

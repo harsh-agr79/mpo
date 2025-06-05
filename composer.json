@@ -11,6 +11,7 @@
     "require": {
         "php": "^8.2",
         "althinect/filament-spatie-roles-permissions": "^2.3",
+        "barryvdh/laravel-dompdf": "^3.1",
         "discoverydesign/filament-gaze": "^1.1",
         "filament/filament": "^3.3",
         "icetalker/filament-table-repeater": "^1.4",

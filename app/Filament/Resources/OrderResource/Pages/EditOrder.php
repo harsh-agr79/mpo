@@ -4,6 +4,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
 // use Filament\Pages\Actions\Action;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 // use Filament\Actions;
 use Filament\Pages\Actions\Action;
@@ -77,6 +78,22 @@ class EditOrder extends EditRecord {
                         ->title('Order Specification Updated')
                         ->success()
                         ->send();
+                }),
+                Action::make('download_pdf')
+                ->label('Download PDF')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('info')
+                ->action(function () {
+                    $record = $this->record;
+
+                    $record->load(['items.product']);
+
+                    $pdf = Pdf::loadView('pdf.order', ['order' => $record]);
+
+                    return response()->streamDownload(
+                        fn() => print($pdf->output()),
+                        'order-' . $record->id . '.pdf'
+                    );
                 }),
         ];
     }
