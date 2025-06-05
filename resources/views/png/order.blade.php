@@ -161,6 +161,8 @@
            link.href = canvas.toDataURL('image/png');
            link.download = 'order-{{ $order->id }}.png';
            link.click();
+       }).then(() => {
+         window.close();
        });
    }
 
