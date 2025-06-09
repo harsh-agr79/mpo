@@ -115,8 +115,9 @@ class ProductResource extends Resource
                         FileUpload::make('image')
                             ->directory('products/images') // stored in storage/app/products/images
                             ->image()
+                            ->acceptedFileTypes(['image/svg', 'image/png', 'image/jpg', 'image/jpeg', 'image/webp'])
                             ->imagePreviewHeight('100')
-                            ->preserveFilenames(),
+                            // ->preserveFilenames(),
                     ])
                     // ->addButtonLabel('Add Image')
                     ->columns(1),

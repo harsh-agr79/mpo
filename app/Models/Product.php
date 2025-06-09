@@ -23,7 +23,7 @@ class Product extends BaseModel
         'image',
         'image_2',
         'details',
-        'specificatons',
+        'specifications',
         'images'
     ];
 
