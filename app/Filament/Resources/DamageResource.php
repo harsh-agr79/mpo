@@ -134,8 +134,8 @@ class DamageResource extends Resource
                                             ->pluck('batch_no', 'id');
                                     })
                                     ->required()
-                                    ->reactive()
-                                    ->afterStateUpdated(fn ($set) => $set('batch_id', null)),
+                                    ->reactive(),
+                                    // ->afterStateUpdated(fn ($set) => $set('batch_id', null)),
                                     Select::make('problem_id')
                                     ->label('Problem')
                                     ->options(function (callable $get) {
