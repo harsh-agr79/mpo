@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DamageItemDetail extends Model
 {
     protected $fillable = [
+        'quantity',
         'invoice_id',
         'damage_item_id',
         'product_id',
-        'problem',
+        'problem_id',
         'solution',
         'condition',
         'warranty',
@@ -30,6 +31,10 @@ class DamageItemDetail extends Model
     public function damage(): BelongsTo
     {
         return $this->belongsTo(Damage::class, 'invoice_id', 'invoice_id');
+    }
+    public function problem()
+    {
+        return $this->belongsTo(\App\Models\Problem::class, 'problem_id');
     }
     public function batch()
     {

@@ -21,10 +21,19 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\DateTimePicker;
 use Closure;
 use Filament\Forms\Components\Grid;
+use Filament\Tables\Columns\{ColorColumn, CheckboxColumn, ToggleColumn, TextColumn, BooleanColumn, DateTimeColumn};
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+// use Filament\Forms\Components\Grid;
+use Illuminate\Support\Carbon;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 
 class DamageResource extends Resource
 {
@@ -43,10 +52,80 @@ class DamageResource extends Resource
                     ->searchable()
                     ->options(User::all()->pluck('name', 'id'))
                     ->required(),
-                DateTimePicker::make('sendbycus'),
-                DateTimePicker::make('recbycomp'),
-                DateTimePicker::make('sendbackbycomp'),
-                DateTimePicker::make('recbycus'),
+                TextInput::make('invoice_id')->reactive(),
+                Grid::make(4)->schema([
+                    Toggle::make('set_sendbycus_now')
+                        ->label('Send by Customer')
+                        
+                         ->live() 
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            if ($state) {
+                                $set('sendbycus',  now()->format('Y-m-d\TH:i:s'));
+                            }
+                            else {
+                                $set('sendbycus', null);
+                            }
+                        }),
+
+                    DateTimePicker::make('sendbycus')
+                        ->label('Send by Customer')
+                         ->live() 
+                        ->nullable(),
+
+                    Toggle::make('set_recbycomp_now')
+                        ->label('Received by Company')
+                        
+                         ->live() 
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            if ($state) {
+                                $set('recbycomp',  now()->format('Y-m-d\TH:i:s'));
+                            }
+                             else {
+                                $set('recbycomp', null);
+                            }
+                        }),
+
+                    DateTimePicker::make('recbycomp')
+                        ->label('Received by Company')
+                         ->live() 
+                        ->nullable(),
+
+                    Toggle::make('set_sendbackbycomp_now')
+                        ->label('Send Back by Company')
+                        
+                         ->live() 
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            if ($state) {
+                                $set('sendbackbycomp',  now()->format('Y-m-d\TH:i:s'));
+                            }
+                             else {
+                                $set('sendbackbycomp', null);
+                            }
+                        }),
+
+                    DateTimePicker::make('sendbackbycomp')
+                        ->label('Send Back by Company')
+                         ->live() 
+                        ->nullable(),
+
+                    Toggle::make('set_recbycus_now')
+                        ->label('Received by Customer')
+                         ->live() 
+                        
+                        ->afterStateUpdated(function ($state, callable $set) {
+                            if ($state) {
+                                $set('recbycus',  now()->format('Y-m-d\TH:i:s'));
+                            }
+                             else {
+                                $set('recbycus', null);
+                            }
+                        }),
+
+                    DateTimePicker::make('recbycus')
+                        ->label('Received by Customer')
+                         ->live() 
+                        ->nullable(),
+                    ]),
                 Textarea::make('remarks')->columnSpanFull(),
                 Repeater::make('damageItems') ->relationship('damageItems')->columnSpanFull()
                         ->schema([
@@ -55,8 +134,26 @@ class DamageResource extends Resource
                             ->relationship('product', 'name')
                             ->options(Product::all()->pluck('name', 'id'))
                             ->searchable()
-                            ->required(),
-                            TextInput::make('quantity')->numeric()->required(),
+                            ->required()
+                             ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                // Loop through all nested damageItemDetails and update
+                                $details = $get('damageItemDetails') ?? [];
+
+                                foreach ($details as $index => $detail) {
+                                    $set("damageItemDetails.{$index}.product_id", $state);
+
+                                    // Reset dependent fields
+                                    $set("damageItemDetails.{$index}.batch_id", null);
+                                    $set("damageItemDetails.{$index}.problem_id", null);
+                                    $set("damageItemDetails.{$index}.replaced_part", null);
+                                    // $set("damageItemDetails.{$index}.replaced_product", null);
+                                    // $set("damageItemDetails.{$index}.condition", null);
+                                    // $set("damageItemDetails.{$index}.warranty", null);
+                                    // $set("damageItemDetails.{$index}.warrantyproof", null);
+                                }
+                            }),
+                            TextInput::make('quantity')->numeric()->minValue(1)->required()->reactive(),
                             TextInput::make('cusremarks')->label('Customer Remarks'),
                             Select::make('instatus')
                                 ->options([
@@ -69,14 +166,56 @@ class DamageResource extends Resource
                             ]),
                            
                             Repeater::make('damageItemDetails')
+                            ->relationship('damageItemDetails')
+                             ->reactive()
+                            //  ->visible(fn (Get $get) => (int) $get('quantity') > 0)
+                               ->disableItemCreation(function (Get $get) {
+                                    $items = collect($get('damageItemDetails') ?? []);
+
+                                    $sum = $items->sum(function ($item) {
+                                        return is_numeric($item['quantity'] ?? null) ? (int) $item['quantity'] : 0;
+                                    });
+
+                                    $parentQty = is_numeric($get('quantity')) ? (int) $get('quantity') : 0;
+
+                                    return $sum >= $parentQty;
+                                })
                                 ->schema([
+                                    Hidden::make('invoice_id')
+                                    ->default(fn (Get $get) => $get('../../../../invoice_id')) // goes up 4 levels to root
+                                    ->afterStateHydrated(fn (Set $set, Get $get) => $set('invoice_id', $get('../../../../invoice_id')))
+                                    ->dehydrated()
+                                    ->reactive(),
                                     Grid::make(4)->schema([
                                    Hidden::make('product_id')
                                     ->default(fn (callable $get) => $get('../../product_id'))
-                                    ->afterStateHydrated(fn (callable $set, callable $get) => $set('product_id', $get('../../product_id')))
+                                    ->afterStateHydrated(fn (callable $set, callable $get) => $set('product_id', $get('../../product_id') ?? 0))
                                     ->dehydrated()
                                     ->required(),
-                                    TextInput::make('quantity')->numeric()->required(),
+                                   TextInput::make('quantity')
+                                    ->label('Quantity')
+                                    ->numeric()
+                                     ->minValue(1)
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(function (Set $set, Get $get, $state, $context) {
+                                            $state = is_numeric($state) ? (int) $state : 0;
+                                            $parentQty = is_numeric($get('quantity')) ? (int) $get('quantity') : 0;
+                                            $details = $get('damageItemDetails') ?? [];
+
+                                            $sum = 0;
+                                            foreach ($details as $i => $detail) {
+                                                $sum += is_numeric($detail['quantity'] ?? null) ? (int) $detail['quantity'] : 0;
+                                            }
+
+                                            if ($sum > $parentQty) {
+                                                $excess = $sum - $parentQty;
+                                                $correctedQty = max(0, $state - $excess);
+
+                                                $details[$context['index']]['quantity'] = $correctedQty;
+                                                $set('damageItemDetails', $details);
+                                            }
+                                    }),
                                    Select::make('condition')
                                     ->options([
                                         'new' => 'New',
@@ -178,10 +317,15 @@ class DamageResource extends Resource
                                         ->label('Replaced Parts')
                                         ->options(function (callable $get) {
                                             $productId = $get('../../product_id');
+
                                             if (!$productId) return [];
 
-                                            return \App\Models\Part::query()
-                                                ->whereJsonContains('product_id', $productId)
+                                            $product = \App\Models\Product::with('category')->find($productId);
+
+                                            if (!$product) return [];
+
+                                            return \App\Models\Part::all()
+                                                ->filter(fn($part) => in_array($product->id, $part->product_id ?? []))
                                                 ->pluck('name', 'id');
                                         })
                                         ->searchable()
@@ -210,7 +354,40 @@ class DamageResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Split::make([
+                    TextColumn::make('date'),
+                    TextColumn::make('user.name'),
+                    TextColumn::make('mainstatus'),
+                    TextColumn::make('invoice_id'),
+                ]),
+                Panel::make([
+                    Split::make([
+                        Stack::make([
+                            ToggleColumn::make('sendbycus'),
+                            TextColumn::make('sendbycus')->formatStateUsing(function ($state, $record){
+                                return "Send By Customer : {$state}";
+                            })
+                        ]),
+                        Stack::make([
+                            ToggleColumn::make('recbycomp'),
+                            TextColumn::make('recbycomp')->formatStateUsing(function ($state, $record){
+                                return "Received By Us : {$state}";
+                            })
+                        ]),
+                        Stack::make([
+                            ToggleColumn::make('sendbackbycomp'),
+                            TextColumn::make('sendbackbycomp')->formatStateUsing(function ($state, $record){
+                                return "Sent Back By Us: {$state}";
+                            })
+                        ]),
+                        Stack::make([
+                            ToggleColumn::make('recbycus'),
+                            TextColumn::make('recbycus')->formatStateUsing(function ($state, $record){
+                                return "Received By Customer : {$state}";
+                            })
+                        ])
+                    ])
+                ])->collapsible()
             ])
             ->filters([
                 //
