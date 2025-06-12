@@ -20,6 +20,7 @@ class DamageItemDetail extends Model
         'replaced_part',
         'replaced_product',
         'batch_id',
+        'remarks'
     ];
 
      protected $casts = [

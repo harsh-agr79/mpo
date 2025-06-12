@@ -30,7 +30,9 @@ use Filament\Tables\Columns\{ColorColumn, CheckboxColumn, ToggleColumn, TextColu
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
+use Illuminate\Validation\ValidationException;
 // use Filament\Forms\Components\Grid;
+use Filament\Notifications\Notification;
 use Illuminate\Support\Carbon;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -168,7 +170,6 @@ class DamageResource extends Resource
                             Repeater::make('damageItemDetails')
                             ->relationship('damageItemDetails')
                              ->reactive()
-                            //  ->visible(fn (Get $get) => (int) $get('quantity') > 0)
                                ->disableItemCreation(function (Get $get) {
                                     $items = collect($get('damageItemDetails') ?? []);
 
@@ -180,6 +181,45 @@ class DamageResource extends Resource
 
                                     return $sum >= $parentQty;
                                 })
+                                ->mutateRelationshipDataBeforeSaveUsing(function (array $data, Get $get): array {
+                                       $items = collect($get('damageItemDetails') ?? []);
+                                        $sum = $items->sum(function ($item) {
+                                            return is_numeric($item['quantity'] ?? null) ? (int) $item['quantity'] : 0;
+                                        });
+                                        $parentQty = is_numeric($get('quantity')) ? (int) $get('quantity') : 0;
+                                         $productId = $get('product_id');
+                                         $productName = Product::find($productId)?->name ?? 'Unknown Product';
+                                        
+                                        if ($sum > $parentQty) {
+                                            Notification::make()
+                                            ->title('Cannot Save: Quantity Exceeded')
+                                            ->body("$productName: Details total ($sum) > Parent Qty ($parentQty)")
+                                            ->danger()
+                                            // ->persistent()
+                                            ->send();
+                                            
+                                             throw ValidationException::withMessages([
+                                                'damageItems' => "$productName: Reduce quantities by " . ($sum - $parentQty),
+                                            ]);
+                                            // Return original data to prevent changes
+                                            return $get('damageItemDetails') ?? [];
+                                        }
+                                        
+                                        return $data;
+                                    })
+                                ->helperText(function (Get $get) {
+                                        $items = collect($get('damageItemDetails') ?? []);
+                                        $sum = $items->sum(function ($item) {
+                                            return is_numeric($item['quantity'] ?? null) ? (int) $item['quantity'] : 0;
+                                        });
+                                        $parentQty = is_numeric($get('quantity')) ? (int) $get('quantity') : 0;
+                                        
+                                        if ($sum >= $parentQty) {
+                                            return "Maximum items reached (total quantity: {$sum}/{$parentQty})";
+                                        }
+                                        
+                                        return null;
+                                    })
                                 ->schema([
                                     Hidden::make('invoice_id')
                                     ->default(fn (Get $get) => $get('../../../../invoice_id')) // goes up 4 levels to root
