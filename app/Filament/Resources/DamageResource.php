@@ -54,7 +54,8 @@ class DamageResource extends Resource
                     ->searchable()
                     ->options(User::all()->pluck('name', 'id'))
                     ->required(),
-                TextInput::make('invoice_id')->reactive(),
+                Hidden::make('invoice_id')->reactive()
+             ->default(fn (?Model $record) => $record?->invoice_id ?? (auth()->user()->id . time() . 'dmg')),
                 Grid::make(4)->schema([
                     Toggle::make('set_sendbycus_now')
                         ->label('Send by Customer')
@@ -390,12 +391,14 @@ class DamageResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+        ->defaultSort('date', 'desc')
+        ->searchable()
             ->columns([
                 Split::make([
-                    TextColumn::make('date'),
-                    TextColumn::make('user.name'),
-                    TextColumn::make('mainstatus'),
-                    TextColumn::make('invoice_id'),
+                    TextColumn::make('date')->searchable(),
+                    TextColumn::make('user.name')->searchable(),
+                    TextColumn::make('mainstatus')->searchable(),
+                    TextColumn::make('invoice_id')->searchable(),
                 ]),
                 Panel::make([
                     Split::make([
