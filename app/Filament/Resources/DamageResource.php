@@ -262,7 +262,6 @@ class DamageResource extends Resource
                                         'old' => 'Old',
                                     ])
                                     ->reactive()
-                                    ->required()
                                     ->afterStateUpdated(function ($state, callable $set) {
                                         if ($state !== 'old') {
                                             $set('warranty', null);
@@ -312,7 +311,6 @@ class DamageResource extends Resource
                                         return \App\Models\Batch::where('product_id', $productId)
                                             ->pluck('batch_no', 'id');
                                     })
-                                    ->required()
                                     ->reactive(),
                                     // ->afterStateUpdated(fn ($set) => $set('batch_id', null)),
                                     Select::make('problem_id')
@@ -330,8 +328,7 @@ class DamageResource extends Resource
                                             ->filter(fn($problem) => in_array($product->category->id, $problem->category_id ?? []))
                                             ->pluck('problem', 'id');
                                     })
-                                    ->searchable()
-                                    ->required(),
+                                    ->searchable(),
                                     Select::make('solution')
                                         ->label('Solution')
                                         ->options([
