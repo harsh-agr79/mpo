@@ -138,6 +138,7 @@ class ProductResource extends Resource
         return $table
             ->reorderable('order_num')
             ->defaultSort('order_num')
+            ->poll('5s')
             ->columns([
                 ImageColumn::make('image')
                     ->label('Image')
