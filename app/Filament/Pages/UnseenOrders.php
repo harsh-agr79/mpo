@@ -2,11 +2,14 @@
 
 namespace App\Filament\Pages;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Pages\Page;
 
 use Filament\Tables;
 use App\Models\Order;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 // use Filament\Tables;
  use Filament\Tables\Columns\ {
@@ -15,6 +18,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -157,12 +161,99 @@ class UnseenOrders extends Page implements HasTable
             // Tables\Actions\DeleteAction::make(),
             Tables\Actions\ForceDeleteAction::make(),
             Tables\Actions\RestoreAction::make(),
-        ] )
+                ActionGroup::make([
+                    Action::make('generate_ind_pdf')
+                        ->label('PDF')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('info')
+                        ->action(function (Order $record) {
+                            // Make sure related data is loaded
+                            $record->load([
+                                'items.product', // load order items and their product info
+                            ]);
+
+                            $pdf = Pdf::loadView('pdf.order', ['order' => $record]);
+
+                            return response()->streamDownload(
+                                fn() => print ($pdf->output()),
+                                'order-' . $record->id . '.pdf'
+                            );
+                        }),
+                    Action::make('generate_ind_pdf_with_images')
+                        ->label('PDF with Images')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('warning')
+                        ->action(function ($record) {
+                            // Eager load relations manually
+                            $record->load(['items.product']);
+
+                            // Use an array of one order to reuse the same Blade template
+                            $pdf = Pdf::loadView('pdf.orderImg', ['orders' => collect([$record])]);
+
+                            $filename = 'order-' . $record->orderid . '.pdf';
+                            $path = storage_path("app/public/{$filename}");
+
+                            file_put_contents($path, $pdf->output());
+
+                            return response()->download($path)->deleteFileAfterSend(true);
+                        }),
+                    Action::make('download_png')
+                        ->label('PNG')
+                        ->icon('heroicon-o-photo')
+                        ->color('success')
+                        ->url(fn(Order $record) => route('png.order', $record))
+                        ->openUrlInNewTab(),
+                    Action::make('download_png_with_image')
+                        ->label('PNG with Product Images')
+                        ->icon('heroicon-o-photo')
+                        ->color('warning')
+                        ->url(fn(Order $record) => route('png.orderImg', $record))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\RestoreAction::make(),
+                ])->icon('heroicon-m-ellipsis-horizontal')
+            ] )
         ->bulkActions( [
             Tables\Actions\BulkActionGroup::make( [
                 Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\ForceDeleteBulkAction::make(),
                 Tables\Actions\RestoreBulkAction::make(),
+                    BulkAction::make('generate_bulk_pdf')
+                        ->label('Export Orders PDF')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('info')
+                        ->action(function (Collection $records) {
+                            $orders = $records->load(['items.product']); // eager load relations
+                
+                            $pdf = Pdf::loadView('pdf.orders', ['orders' => $orders]);
+
+                            $filename = 'orders-' . now()->format('Ymd_His') . '.pdf';
+                            $path = storage_path("app/public/{$filename}");
+
+                            file_put_contents($path, $pdf->output());
+
+                            return response()->download($path)->deleteFileAfterSend(true);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                    ,
+                    BulkAction::make('generate_bulk_pdf_with_images')
+                        ->label('Export PDF with Images')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('warning')
+                        ->action(function (Collection $records) {
+                            $orders = $records->load(['items.product']); // eager load relations
+                
+                            $pdf = Pdf::loadView('pdf.orderImg', ['orders' => $orders]);
+
+                            $filename = 'orders-' . now()->format('Ymd_His') . '.pdf';
+                            $path = storage_path("app/public/{$filename}");
+
+                            file_put_contents($path, $pdf->output());
+
+                            return response()->download($path)->deleteFileAfterSend(true);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                    ,
             ] )
 
         ] )
