@@ -57,4 +57,23 @@ class ProductController extends Controller
             'categories' => $categories
         ]);
     }
+    public function stockFunc(){
+        $product = Product::find(200);
+
+        $order     = $product->approvedQuantityAfterOpenStock();
+        $slr       = $product->totalSalesReturnQuantityAfterOpenStock();
+        $purchase  = $product->totalPurchasedQuantityAfterOpenStock();
+        $inc       = $product->totalIncreasedQuantityAfterOpenStock();
+        $dec       = $product->totalDecreasedQuantityAfterOpenStock();
+        $replaced  = $product->totalDamageReplacedWithOtherAfterOpenStock();
+
+        $openStock = $product->open_stock_count;
+
+        // Calculate new stock
+        $newStockCount = $openStock + $purchase + $inc - $dec - $order - $slr - $replaced;
+
+        // Save it
+        $product->stock_count = $newStockCount;
+        $product->save();
+    }
 }

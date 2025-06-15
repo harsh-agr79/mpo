@@ -13,6 +13,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -127,6 +128,8 @@ class ProductResource extends Resource
                     ->label('Product Details')
                     ->columnSpanFull()
                     ->rows(10),
+                TextInput::make('open_stock_count')->numeric(),
+                DatePicker::make('open_stock_date')
             ]);
     }
 

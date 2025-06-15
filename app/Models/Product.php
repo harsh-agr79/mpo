@@ -24,7 +24,10 @@ class Product extends BaseModel
         'image_2',
         'details',
         'specifications',
-        'images'
+        'images',
+        'stock_count',
+        'open_stock_count',
+        'open_stock_date'
     ];
 
     protected $casts = [
@@ -49,13 +52,7 @@ class Product extends BaseModel
         return $this->belongsTo(Category::class);
     }
 
-    // public function subCategory()
-    // {
-    //     return $this->belongsTo(SubCategory::class, 'sub_category_id');
-    // }
-
     public function subcategory() {
-       // Check if subcategory_ids is not null and is an array
         if (!empty($this->sub_category_id) && is_array($this->sub_category_id)) {
             return SubCategory::whereIn('id', $this->sub_category_id)->get();
         }
@@ -71,4 +68,92 @@ class Product extends BaseModel
     {
         return $this->hasMany(Part::class);
     }
+
+    public function orderItems(){
+        return $this->hasMany(orderItem::class);
+    }
+
+    public function salesReturnItems(){
+        return $this->hasMany(SalesReturnItem::class);
+    }
+
+    public function productsPurchaseItems()
+    {
+        return $this->hasMany(ProductsPurchaseItem::class, 'prod_unique_id', 'prod_unique_id');
+    }
+
+    public function productsAdjustmentItems(){
+        return $this->hasMany(ProductsPurchaseAdjustmentItem::class, 'prod_unique_id', 'prod_unique_id');
+    }
+
+    public function damageItems(){
+        return $this->hasMany(DamageItem::class);
+    }
+
+    public function damageReplacedItems(){
+        return $this->hasMany(DamageItemDetail::class);
+    }
+
+    public function approvedQuantityAfterOpenStock()
+    {
+        return $this->orderItems()
+            ->where('status', 'approved')
+            ->whereHas('order', function ($query) {
+                $query->whereDate('date', '>', $this->open_stock_date)
+                    ->whereNull('deleted_at'); // exclude soft deleted orders
+            })
+            ->sum('approvedquantity');
+    }
+
+    public function totalSalesReturnQuantityAfterOpenStock()
+    {
+        return $this->salesReturnItems()
+            ->whereHas('salesReturn', function ($query) {
+                $query->whereDate('date', '>', $this->open_stock_date)
+                    ->whereNull('deleted_at'); // exclude soft deleted sales returns
+            })
+            ->sum('quantity');
+    }
+
+    public function totalPurchasedQuantityAfterOpenStock()
+    {
+        return $this->productsPurchaseItems()
+            ->whereHas('purchase', function ($query) {
+                $query->whereDate('date', '>', $this->open_stock_date);
+            })
+            ->sum('quantity');
+    }
+
+    public function totalIncreasedQuantityAfterOpenStock()
+    {
+        return $this->productsAdjustmentItems()
+            ->where('type', 'increase')
+            ->whereHas('purchase', function ($query) {
+                $query->whereDate('date', '>', $this->open_stock_date);
+            })
+            ->sum('quantity');
+    }
+
+    // Sum of quantity where type is 'decrease' and date > open_stock_date
+    public function totalDecreasedQuantityAfterOpenStock()
+    {
+        return $this->productsAdjustmentItems()
+            ->where('type', 'decrease')
+            ->whereHas('purchase', function ($query) {
+                $query->whereDate('date', '>', $this->open_stock_date);
+            })
+            ->sum('quantity');
+    }
+
+   public function totalDamageReplacedWithOtherAfterOpenStock()
+    {
+        return $this->damageReplacedItems()
+            ->where('solution', 'Replaced with new other item')
+            ->whereHas('damageItem.damage', function ($query) {
+                $query->whereDate('date', '>', $this->open_stock_date);
+                    // ->whereNull('deleted_at'); // exclude soft-deleted Damage
+            })
+            ->sum('quantity'); // ✅ sum instead of count
+    }
+
 }
