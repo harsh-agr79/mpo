@@ -106,6 +106,30 @@ class EditOrder extends EditRecord
                 ->color('success')
                 ->url(fn(Order $record) => route('png.order', $record))
                 ->openUrlInNewTab(),
+            Action::make('generate_ind_pdf_with_images')
+                ->label('PDF with Images')
+                ->icon('heroicon-o-document-arrow-down')
+                ->color('warning')
+                ->action(function ($record) {
+                    // Eager load relations manually
+                    $record->load(['items.product']);
+
+                    // Use an array of one order to reuse the same Blade template
+                    $pdf = Pdf::loadView('pdf.orderImg', ['orders' => collect([$record])]);
+
+                    $filename = 'order-' . $record->orderid . '.pdf';
+                    $path = storage_path("app/public/{$filename}");
+
+                    file_put_contents($path, $pdf->output());
+
+                    return response()->download($path)->deleteFileAfterSend(true);
+                }),
+            Action::make('download_png_with_image')
+                ->label('PNG with Product Images')
+                ->icon('heroicon-o-photo')
+                ->color('warning')
+                ->url(fn(Order $record) => route('png.orderImg', $record))
+                ->openUrlInNewTab(),
         ];
     }
 
