@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 
-Schedule::command('stock:update')->everyFiveMinutes();
+Schedule::command('stock:update')->everyMinute();
