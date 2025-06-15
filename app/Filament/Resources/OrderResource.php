@@ -268,6 +268,24 @@ class OrderResource extends Resource
                             'order-' . $record->id . '.pdf'
                         );
                     }),
+                Action::make('generate_ind_pdf_with_images')
+                    ->label('PDF with Images')
+                    ->icon('heroicon-o-document-arrow-down')
+                    ->color('warning')
+                    ->action(function ($record) {
+                        // Eager load relations manually
+                        $record->load(['items.product']);
+
+                        // Use an array of one order to reuse the same Blade template
+                        $pdf = Pdf::loadView('pdf.orderImg', ['orders' => collect([$record])]);
+
+                        $filename = 'order-' . $record->orderid . '.pdf';
+                        $path = storage_path("app/public/{$filename}");
+
+                        file_put_contents($path, $pdf->output());
+
+                        return response()->download($path)->deleteFileAfterSend(true);
+                    }),
                 Action::make('download_png')
                     ->label('PNG')
                     ->icon('heroicon-o-photo')
@@ -293,6 +311,24 @@ class OrderResource extends Resource
                             $orders = $records->load(['items.product']); // eager load relations
                 
                             $pdf = Pdf::loadView('pdf.orders', ['orders' => $orders]);
+
+                            $filename = 'orders-' . now()->format('Ymd_His') . '.pdf';
+                            $path = storage_path("app/public/{$filename}");
+
+                            file_put_contents($path, $pdf->output());
+
+                            return response()->download($path)->deleteFileAfterSend(true);
+                        })
+                        ->deselectRecordsAfterCompletion()
+                    ,
+                    BulkAction::make('generate_bulk_pdf_with_images')
+                        ->label('Export PDF with Images')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('warning')
+                        ->action(function (Collection $records) {
+                            $orders = $records->load(['items.product']); // eager load relations
+                
+                            $pdf = Pdf::loadView('pdf.orderImg', ['orders' => $orders]);
 
                             $filename = 'orders-' . now()->format('Ymd_His') . '.pdf';
                             $path = storage_path("app/public/{$filename}");
