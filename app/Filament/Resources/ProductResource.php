@@ -151,6 +151,7 @@ class ProductResource extends Resource
                     ->badge()
                     ->sortable()->toggleable(),
                 TextColumn::make('price')->label('Price')->money('npr')->sortable(),
+                TextColumn::make('stock_count')->label('Stock')->sortable(),
                 BooleanColumn::make('stock')->label('Stock')->sortable()->toggleable()->state(fn($record) => $record->stock ? false : true),
                 BooleanColumn::make('hidden')->label('Hidden')->sortable()->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('prod_unique_id')->label('Slug')->searchable()->sortable()->toggleable(isToggledHiddenByDefault: true),
