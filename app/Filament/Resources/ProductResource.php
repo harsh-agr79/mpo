@@ -96,28 +96,31 @@ class ProductResource extends Resource
                     ->reorderable()
                     ->addButtonLabel('Add Specification'),
                
-                FileUpload::make('image')
-                    ->required()
-                    ->directory('products')
-                    ->image()
-                    ->maxSize(2048)
-                    ->acceptedFileTypes(['image/svg', 'image/png', 'image/jpg', 'image/jpeg', 'image/webp'])
-                    ->label('Image'),
-                FileUpload::make('image_2')
-                    ->directory('products')
-                    ->image()
-                    ->maxSize(2048)
-                    ->acceptedFileTypes(['image/svg', 'image/png', 'image/jpg', 'image/jpeg', 'image/webp'])
-                    ->label('Additional Image'),
+                // FileUpload::make('image')
+                //     ->required()
+                //     ->directory('products')
+                //     ->image()
+                //     ->maxSize(2048)
+                //     ->acceptedFileTypes(['image/svg', 'image/png', 'image/jpg', 'image/jpeg', 'image/webp'])
+                //     ->label('Image'),
+                // FileUpload::make('image_2')
+                //     ->directory('products')
+                //     ->image()
+                //     ->maxSize(2048)
+                //     ->acceptedFileTypes(['image/svg', 'image/png', 'image/jpg', 'image/jpeg', 'image/webp'])
+                //     ->label('Additional Image'),
                  Repeater::make('images')
                     ->label('Product Images')
                     ->schema([
                         FileUpload::make('image')
                             ->directory('products/images') // stored in storage/app/products/images
                             ->image()
+                            ->acceptedFileTypes(['image/svg', 'image/png', 'image/jpg', 'image/jpeg', 'image/webp'])
                             ->imagePreviewHeight('100')
-                            ->preserveFilenames(),
+                            ->required()
+                            // ->preserveFilenames(),
                     ])
+                    ->minItems(2)
                     // ->addButtonLabel('Add Image')
                     ->columns(1),
                 Textarea::make('details')
