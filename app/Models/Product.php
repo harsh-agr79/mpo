@@ -90,8 +90,13 @@ class Product extends BaseModel
         return $this->hasMany(DamageItem::class);
     }
 
-    public function damageReplacedItems(){
+    public function damageItemDetails(){
         return $this->hasMany(DamageItemDetail::class);
+    }
+
+    public function damageReplacedItems()
+    {
+        return $this->hasMany(DamageItemDetail::class, 'replaced_product', 'id');
     }
 
     public function approvedQuantityAfterOpenStock()
