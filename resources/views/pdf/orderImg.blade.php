@@ -134,7 +134,7 @@
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td><img src="{{ public_path('storage/' . ($item->product->images[0]['image'] ?? ($item->product->image ?? $item->product->image_2))) }}"
-                              alt="{{ $item->product->name }}" style="max-width: 150px; height: auto;"
+                              alt="{{ $item->product->name }}" style="max-width: 80px; max-height: 80px;"
                                /></td>
                             <td>{{ $item->product->name }}</td>
                             <td>{{ $item->quantity }}</td>
