@@ -133,7 +133,7 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td><img src="{{ asset('storage/' . ($item->product->images[0]['image'] ?? ($item->product->image ?? $item->product->image_2))) }}"
-                                alt="{{ $item->product->name }}" style="max-width: 80px; max-height: 80px;"
+                                alt="{{ $item->product->name }}" style="max-width: 40px; max-height: 40px;"
                                 crossOrigin="anonymous" /></td>
                         <td>{{ $item->product->name }}</td>
                         <td>{{ $item->quantity }}</td>
