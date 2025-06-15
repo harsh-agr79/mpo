@@ -274,6 +274,12 @@ class OrderResource extends Resource
                     ->color('success')
                     ->url(fn(Order $record) => route('png.order', $record))
                     ->openUrlInNewTab(),
+                Action::make('download_png_with_image')
+                    ->label('PNG with Product Images')
+                    ->icon('heroicon-o-photo')
+                    ->color('warning')
+                    ->url(fn(Order $record) => route('png.orderImg', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
             ])
