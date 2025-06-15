@@ -18,6 +18,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Table;
@@ -251,55 +252,57 @@ class OrderResource extends Resource
                             ])
                             ->columns(2),
                     ]),
-                Action::make('generate_ind_pdf')
-                    ->label('PDF')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('info')
-                    ->action(function (Order $record) {
-                        // Make sure related data is loaded
-                        $record->load([
-                            'items.product', // load order items and their product info
-                        ]);
+                ActionGroup::make([
+                    Action::make('generate_ind_pdf')
+                        ->label('PDF')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('info')
+                        ->action(function (Order $record) {
+                            // Make sure related data is loaded
+                            $record->load([
+                                'items.product', // load order items and their product info
+                            ]);
 
-                        $pdf = Pdf::loadView('pdf.order', ['order' => $record]);
+                            $pdf = Pdf::loadView('pdf.order', ['order' => $record]);
 
-                        return response()->streamDownload(
-                            fn() => print ($pdf->output()),
-                            'order-' . $record->id . '.pdf'
-                        );
-                    }),
-                Action::make('generate_ind_pdf_with_images')
-                    ->label('PDF with Images')
-                    ->icon('heroicon-o-document-arrow-down')
-                    ->color('warning')
-                    ->action(function ($record) {
-                        // Eager load relations manually
-                        $record->load(['items.product']);
+                            return response()->streamDownload(
+                                fn() => print ($pdf->output()),
+                                'order-' . $record->id . '.pdf'
+                            );
+                        }),
+                    Action::make('generate_ind_pdf_with_images')
+                        ->label('PDF with Images')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('warning')
+                        ->action(function ($record) {
+                            // Eager load relations manually
+                            $record->load(['items.product']);
 
-                        // Use an array of one order to reuse the same Blade template
-                        $pdf = Pdf::loadView('pdf.orderImg', ['orders' => collect([$record])]);
+                            // Use an array of one order to reuse the same Blade template
+                            $pdf = Pdf::loadView('pdf.orderImg', ['orders' => collect([$record])]);
 
-                        $filename = 'order-' . $record->orderid . '.pdf';
-                        $path = storage_path("app/public/{$filename}");
+                            $filename = 'order-' . $record->orderid . '.pdf';
+                            $path = storage_path("app/public/{$filename}");
 
-                        file_put_contents($path, $pdf->output());
+                            file_put_contents($path, $pdf->output());
 
-                        return response()->download($path)->deleteFileAfterSend(true);
-                    }),
-                Action::make('download_png')
-                    ->label('PNG')
-                    ->icon('heroicon-o-photo')
-                    ->color('success')
-                    ->url(fn(Order $record) => route('png.order', $record))
-                    ->openUrlInNewTab(),
-                Action::make('download_png_with_image')
-                    ->label('PNG with Product Images')
-                    ->icon('heroicon-o-photo')
-                    ->color('warning')
-                    ->url(fn(Order $record) => route('png.orderImg', $record))
-                    ->openUrlInNewTab(),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
+                            return response()->download($path)->deleteFileAfterSend(true);
+                        }),
+                    Action::make('download_png')
+                        ->label('PNG')
+                        ->icon('heroicon-o-photo')
+                        ->color('success')
+                        ->url(fn(Order $record) => route('png.order', $record))
+                        ->openUrlInNewTab(),
+                    Action::make('download_png_with_image')
+                        ->label('PNG with Product Images')
+                        ->icon('heroicon-o-photo')
+                        ->color('warning')
+                        ->url(fn(Order $record) => route('png.orderImg', $record))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\ForceDeleteAction::make(),
+                    Tables\Actions\RestoreAction::make(),
+                ])->icon('heroicon-m-ellipsis-horizontal')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
