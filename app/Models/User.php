@@ -42,7 +42,14 @@ class User extends Authenticatable
         'tax_type',
         'tax_no',
         'open_balance_type',
-        'current_balance_type'
+        'current_balance_type',
+        'thirdays',
+        'fourdays',
+        'sixdays',
+        'nindays',
+        'activity',
+        'bill_count',
+        'invoice_permission',
     ];
 
     /**
