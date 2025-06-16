@@ -63,6 +63,9 @@ class AdminPanelProvider extends PanelProvider
                 // \TomatoPHP\FilamentPWA\FilamentPWAPlugin::make(),
                 \DiscoveryDesign\FilamentGaze\FilamentGazePlugin::make()
             ])
+            // ->pages([
+            //     App\Filament\Pages\TasksBoardBoardPage::class,
+            // ])
             ->authMiddleware([
                 Authenticate::class,
             ])
