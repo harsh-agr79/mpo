@@ -14,6 +14,8 @@
 
         .container {
             padding: 20px;
+            margin: 0 auto;
+            max-width: 1000px;
         }
 
         .logo {
@@ -82,17 +84,17 @@
    <div style="width: 100%; margin-bottom: 10px;">
       <table style="width: 100%; border: none; border-collapse: collapse;">
           <tr>
-              <td style="border:none!important; text-align: left; vertical-align: top; width: 30%;">
+              <td style="border:none!important; text-align: left; vertical-align: top; width: 30%; vertical-align: middle;">
                   <div style="font-size: 14px;"><strong>My Power</strong></div>
                   <div style="font-size: 12px;">+977 9843293275</div>
                   <div style="font-size: 12px;">Kathmandu</div>
               </td>
-              <td style="border:none!important; text-align: left; vertical-align: top; width: 40%;">
+              <td style="border:none!important; text-align: left; vertical-align: top; width: 40%; vertical-align: top;">
                  <div class="logo">
-                     <img src="{{ public_path('logo/long.png') }}" alt="Logo" height="60">
+                     <img src="{{ public_path('logo/light.svg') }}" alt="Logo" height="60">
                  </div>
               </td>
-              <td style="border:none!important; text-align: right; vertical-align: top; width: 30%;">
+              <td style="border:none!important; text-align: right; vertical-align: top; width: 30%; vertical-align: middle;">
                   <div style="font-size: 12px;">Date: {{ \Carbon\Carbon::parse($order->order_date)->format('Y-m-d') }}</div>
                   <div style="font-size: 12px;">Miti: {{ getNepaliDate(\Carbon\Carbon::parse($order->order_date)->format('Y-m-d')) }}</div>
               </td>
@@ -102,7 +104,7 @@
   
 
 
-    <div class="bill-to">Bill To</div>
+    <div class="bill-to">Estimate</div>
 
     <div class="bill-info">
       <strong>Order:</strong> #{{ $order->orderid }}<br>
@@ -142,7 +144,7 @@
         </tr>
         <tr>
             <td class="label">Discount ({{ $order->discount_percentage }}%)</td>
-            <td class="value">Rs. {{ number_format($order->discount, 0) }}</td>
+            <td class="value">{{ number_format($order->discount, 0) }}%</td>
         </tr>
         <tr class="total-row">
             <td class="label">Discounted</td>
