@@ -48,8 +48,12 @@ class ProductController extends Controller
             return $product;
         });
 
-         $categories = \App\Models\Category::orderBy('order_num')
-            ->with('subCategories')->get();
+         $categories = \App\Models\Category::with('subCategories')
+            ->withCount(['products as visible_products_count' => function ($query) {
+                $query->where('hidden', 0)->whereNull('deleted_at');
+            }])
+            ->orderBy('order_num')
+            ->get();
 
         // Return the inventory as a JSON response
         return response()->json([
