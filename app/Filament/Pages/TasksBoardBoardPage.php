@@ -18,16 +18,18 @@ class TasksBoardBoardPage extends KanbanBoardPage
 
    public function getSubject(): Builder
     {
-        $user = auth()->user();
+       $user = auth()->user();
+
+        if ($user->hasPermissionTo('View All Tasks')) {
+            return Task::query(); // No restrictions
+        }
 
         return Task::query()
-            ->when(!$user->hasPermissionTo('View All Tasks'), function (Builder $query) use ($user) {
-                $query->where(function ($q) use ($user) {
-                    $q->where('assigned_by', $user->id)
+            ->where(function ($query) use ($user) {
+                $query->where('assigned_by', $user->id)
                     ->orWhereJsonContains('assigned_to', $user->id);
-                });
             });
-    }
+        }
 
     public function mount(): void
     {
