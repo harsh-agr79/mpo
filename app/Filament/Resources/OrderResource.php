@@ -111,7 +111,7 @@ class OrderResource extends Resource
                     // ->sortable()
                     ->description(fn($record) => $record->date->format('m-d H:i')),
                 // ->toggleable()
-
+                
                 TextColumn::make('user.name')->description(fn($record) => $record->user->shop_name)
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->searchable(),
@@ -156,6 +156,11 @@ class OrderResource extends Resource
                     ->toggleable()
                 ,
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
+                TextColumn::make('net_total')
+                    ->money('NPR')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
+                    ->label('Net Total')
+                    ->toggleable(),
                 TextColumn::make('seenby')
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->label('Seen By')
