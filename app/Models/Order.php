@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Order extends BaseModel
 {
@@ -65,6 +66,13 @@ class Order extends BaseModel
             $order->nepmonth = getNepaliMonth($order->date);
             $order->nepyear = getNepaliYear($order->date);
         }
+    }
+
+    public function computed_total(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->net_total > 0 ? $this->net_total : $this->items->sum(fn ($item) => $item->quantity * $item->price)
+        );
     }
 
     // Relationships

@@ -156,7 +156,7 @@ class OrderResource extends Resource
                     ->toggleable()
                 ,
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
-                TextColumn::make('net_total')
+                TextColumn::make('computed_total')
                     ->money('NPR')
                     ->size(TextColumn\TextColumnSize::ExtraSmall)
                     ->label('Net Total')
