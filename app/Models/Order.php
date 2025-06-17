@@ -67,7 +67,7 @@ class Order extends BaseModel
         }
     }
 
-    public function getComputedNetTotal()
+    public function getComputedNetTotalAttribute()
     {
         if ($this->net_total > 0) {
             return $this->net_total;
