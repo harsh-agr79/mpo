@@ -27,7 +27,7 @@ class TasksBoardBoardPage extends KanbanBoardPage
         return Task::query()
             ->where(function ($query) use ($user) {
                 $query->where('assigned_by', $user->id)
-                    ->orWhereJsonContains('assigned_to', $user->id);
+                    ->orWhereJsonContains('assigned_to', (int) $user->id);
             });
         }
 
