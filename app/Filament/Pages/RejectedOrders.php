@@ -129,6 +129,11 @@ class RejectedOrders extends Page implements HasTable
                     ->toggleable()
                 ,
                 // TextColumn::make( 'mainstatus' )->limit( 20 ),
+                 TextColumn::make('computed_net_total')
+                    ->money('NPR')
+                    ->size(TextColumn\TextColumnSize::ExtraSmall)
+                    ->label('Net Total')
+                    ->toggleable(),
                 TextColumn::make( 'seenby' )
                 ->size(TextColumn\TextColumnSize::ExtraSmall)
                 ->label( 'Seen By' )
