@@ -20,7 +20,7 @@ Route::middleware(api_key::class)->group(function () {
    Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user', function (Request $request) {return $request->user();});
 
-
+        Route::post('/cartupdate', [CartController::class, 'updateOrRemove']);
 
     });
 });
