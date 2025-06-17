@@ -49,7 +49,7 @@ class ProductController extends Controller
         });
 
          $categories = \App\Models\Category::with('subCategories')
-            ->withCount(['products as visible_products_count' => function ($query) {
+            ->withCount(['products as count' => function ($query) {
                 $query->where('hidden', 0)->whereNull('deleted_at');
             }])
             ->orderBy('order_num')
