@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Order extends BaseModel
 {
@@ -68,11 +67,15 @@ class Order extends BaseModel
         }
     }
 
-    public function computed_total(): Attribute
+    public function getComputedNetTotal()
     {
-        return Attribute::make(
-            get: fn () => $this->net_total > 0 ? $this->net_total : $this->items->sum(fn ($item) => $item->quantity * $item->price)
-        );
+        if ($this->net_total > 0) {
+            return $this->net_total;
+        }
+
+        return $this->items->sum(function ($item) {
+            return $item->quantity * $item->price;
+        });
     }
 
     // Relationships
