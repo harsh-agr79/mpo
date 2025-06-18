@@ -90,55 +90,77 @@ class CartController extends Controller
         ]);
     }
 
-    public function checkout(Request $request){
+   public function checkout(Request $request)
+    {
         $user = $request->user();
-        $orderid = time().$user->id;
+
+        // Get all cart items for the user
+        $cartItems = CartItem::where('user_id', $user->id)->get();
+
+        if ($cartItems->isEmpty()) {
+            return response()->json(['message' => 'Cart is empty'], 400);
+        }
+
+        // Calculate total
+        $total = 0;
+        foreach ($cartItems as $item) {
+            $product = \App\Models\Product::find($item->product_id);
+            if (!$product) {
+                return response()->json(['message' => "Product not found for ID {$item->product_id}"], 404);
+            }
+            $total += $product->price * $item->quantity;
+        }
+
+        // Create Order
         $order = Order::create([
             'user_id' => $user->id,
-            'orderid' => $orderid,
+            'orderid' => time() . $user->id,
             'mainstatus' => 'pending',
             'date' => now()->toDateTimeString(),
-            'save' => $request->save ?? false,
-            'total' => $this->getCartTotal(),
-            'net_total' => $this->getCartTotal(),
+            'save' => $request->input('save', false),
+            'total' => $total,
+            'net_total' => $total,
             'nepmonth' => getNepaliMonth(now()),
             'nepyear' => getNepaliYear(now()),
         ]);
-        $cartItems = CartItem::where('user_id', $user->id)->get();
 
-        foreach($cartItems as $item){
-                $product = \App\Models\Product::find($item->product_id);
-                $offers = $product->offer;
-                $quantity = $item->quantity;
+        // Create Order Items
+        foreach ($cartItems as $item) {
+            $product = \App\Models\Product::find($item->product_id);
+            $offers = $product->offer ?? [];
 
-                // Initialize empty matched offer
-                $matchedOffer = [];
+            $quantity = $item->quantity;
+            $matchedOffer = [];
 
-                if (!empty($offers)) {
-                    // Convert keys to integers and sort descending
-                    $sortedKeys = collect($offers)
-                        ->keys()
-                        ->map(fn($key) => (int) $key)
-                        ->sortDesc()
-                        ->values();
+            // Find the best matched offer
+            if (!empty($offers)) {
+                $sortedKeys = collect($offers)
+                    ->keys()
+                    ->map(fn($key) => (int) $key)
+                    ->sortDesc()
+                    ->values();
 
-                    foreach ($sortedKeys as $key) {
-                        if ($quantity >= $key) {
-                            $matchedOffer = [$key => $offers[$key]];
-                            break;
-                        }
+                foreach ($sortedKeys as $key) {
+                    if ($quantity >= $key) {
+                        $matchedOffer = [$key => $offers[$key]];
+                        break;
                     }
                 }
-                OrderItem::create([
-                    'orderid' => $order->orderid,
-                    'product_id' => $item->product_id,
-                    'offer' => json_encode($matchedOffer),
-                    'price' => $product->price,
-                    'actualprice' => $product->price,
-                    'quantity' => $item->quantity,
-                    'approvedquantity' => 0,
-                    'status' => 'pending'
-                ]);
+            }
+
+            OrderItem::create([
+                'orderid' => $order->orderid,
+                'product_id' => $item->product_id,
+                'offer' => json_encode($matchedOffer),
+                'price' => $product->price,
+                'actualprice' => $product->price,
+                'quantity' => $quantity,
+                'approvedquantity' => 0,
+                'status' => 'pending',
+            ]);
         }
-    }   
+
+        return response()->json(['message' => 'Order placed successfully', 'order_id' => $order->orderid]);
+    }
+
 }
