@@ -22,5 +22,7 @@ Route::middleware(api_key::class)->group(function () {
 
         Route::post('/cartupdate', [CartController::class, 'updateOrRemove']);
 
+        Route::get('/logout', [AuthController::class, 'logout']);
+        Route::get('/check-token', [AuthController::class, 'checkToken']);
     });
 });
