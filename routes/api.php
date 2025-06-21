@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\api_key;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\ResourceController;
 
 
 Route::middleware(api_key::class)->group(function () {
@@ -26,5 +28,7 @@ Route::middleware(api_key::class)->group(function () {
 
         Route::get('/logout', [AuthController::class, 'logout']);
         Route::get('/check-token', [AuthController::class, 'checkToken']);
+
+        Route::get('/resources', [ResourceController::class, 'resources']);
     });
 });
