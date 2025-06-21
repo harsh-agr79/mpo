@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ResourceController;
+use App\Http\Controllers\DamageController;
 
 
 Route::middleware(api_key::class)->group(function () {
@@ -30,5 +31,6 @@ Route::middleware(api_key::class)->group(function () {
         Route::get('/check-token', [AuthController::class, 'checkToken']);
 
         Route::get('/resources', [ResourceController::class, 'resources']);
+        Route::post('/createdamageticket', [DamageController::class, 'createDamage']);
     });
 });
