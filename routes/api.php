@@ -23,21 +23,25 @@ Route::middleware(api_key::class)->group(function () {
    Route::middleware(['auth:sanctum', 'verified'])->group(function () {
         Route::get('/user', function (Request $request) {return $request->user();});
 
+        //Cart Routes
         Route::get('/cart', [CartController::class, 'getCart']);
         Route::post('/cartupdate', [CartController::class, 'updateOrRemove']);
         Route::post('/checkout', [CartController::class, 'checkout']);
 
+        //Order Routes
+        Route::get('/confirmedorders', [CartController::class, 'getConfirmedOrders']);
+        Route::get('/savedorders', [CartController::class, 'getSavedOrders']);
+        Route::get('/orderdetails/{id}', [CartController::class, 'getOrderDetails']);
+        
+        //Auth Routes
         Route::get('/logout', [AuthController::class, 'logout']);
         Route::get('/check-token', [AuthController::class, 'checkToken']);
 
+        //Resource Routes
         Route::get('/resources', [ResourceController::class, 'resources']);
+        Route::get('/download/{id}', [ResourceController::class, 'download']);
+        //
         Route::post('/createdamageticket', [DamageController::class, 'createDamage']);
-
-        Route::get('/confirmedorders', [CartController::class, 'getConfirmedOrders']);
-        Route::get('/savedorders', [CartController::class, 'getSavedOrders']);
-
-        Route::get('/orderdetails/{id}', [CartController::class, 'getOrderDetails']);
-
         Route::get('damagetickets', [DamageController::class, 'getDamageTickets']);
         Route::get('damageticket/{id}', [DamageController::class, 'getDamageTicket']);
     });

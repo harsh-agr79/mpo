@@ -15,4 +15,11 @@ class ResourceController extends Controller
             'resources' => $resources,
         ]);
     }
+
+    public function download(Request $request, $id)
+    {
+        $resource = Resource::findOrFail($id);
+
+        return response()->download(storage_path('app/' . $resource->path));
+    }
 }
