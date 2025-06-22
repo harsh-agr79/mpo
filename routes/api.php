@@ -32,5 +32,13 @@ Route::middleware(api_key::class)->group(function () {
 
         Route::get('/resources', [ResourceController::class, 'resources']);
         Route::post('/createdamageticket', [DamageController::class, 'createDamage']);
+
+        Route::get('/confirmedorders', [CartController::class, 'getConfirmedOrders']);
+        Route::get('/savedorders', [CartController::class, 'getSavedOrders']);
+
+        Route::get('/orderdetails/{id}', [CartController::class, 'getOrderDetails']);
+
+        Route::get('damagetickets', [DamageController::class, 'getDamageTickets']);
+        Route::get('damageticket/{id}', [DamageController::class, 'getDamageTicket']);
     });
 });

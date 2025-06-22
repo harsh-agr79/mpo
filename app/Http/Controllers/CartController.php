@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CartItem;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\OrderMaterial;
 use Carbon\Carbon;
 
 class CartController extends Controller
@@ -161,6 +164,52 @@ class CartController extends Controller
         }
 
         return response()->json(['message' => 'Order placed successfully', 'order_id' => $order->orderid]);
+    }
+
+    public function getConfirmedOrders(Request $request)
+    {
+        $user = $request->user();
+
+        $orders = Order::where('user_id', $user->id)
+            ->where('save', false)
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return response()->json($orders);
+    }
+
+    public function getSavedOrders(Request $request)
+    {
+        $user = $request->user();
+
+        $orders = Order::where('user_id', $user->id)
+            ->where('save', true)
+            ->orderBy('date', 'desc')
+            ->get();
+
+        return response()->json($orders);
+    }
+
+    public function getOrderDetails(Request $request, $id)
+    {
+        $user = $request->user();
+
+        $order = Order::where('orderid', $id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
+
+        $orderItems = OrderItem::where('orderid', $id)->with('product')->get();
+        $orderMaterials = OrderMaterial::where('orderid', $id)->with('material')->get();
+
+        return response()->json([
+            'order' => $order,
+            'items' => $orderItems,
+            'materials' => $orderMaterials,
+        ]);
     }
 
 }

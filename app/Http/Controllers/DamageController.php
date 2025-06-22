@@ -46,4 +46,39 @@ class DamageController extends Controller
 
         return response()->json(['message' => 'Processed successfully']);
     }
+
+    public function getDamageTickets(Request $request)
+    {
+        $user = $request->user();
+        $tickets = Damage::where('user_id', $user->id)
+            ->get();
+
+        return response()->json($tickets);
+    }
+
+    public function getDamageTicket(Request $request, $id)
+    {
+        $user = $request->user();
+        $damage = Damage::with([
+            'user', // Adjust fields as needed
+            'damageItems.product', // Load Product info for each damage item
+            'damageItems.damageItemDetails' => function ($query) {
+                $query->with([
+                    'problem',
+                    'batch',
+                    'product',
+                    'replacedPart',
+                    'replacedProduct'
+                ]);
+            }
+        ])->where('invoice_id', $id)->where('user_id', $user->id)->first();
+
+        if (!$damage) {
+            return response()->json(['error' => 'Ticket not found'], 404);
+        }
+
+        return response()->json([
+            'ticket' => $damage
+        ]);
+    }
 }
