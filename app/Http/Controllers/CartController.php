@@ -162,7 +162,7 @@ class CartController extends Controller
                 'status' => 'pending',
             ]);
         }
-
+        CartItem::where('user_id', $user->id)->delete();
         return response()->json(['message' => 'Order placed successfully', 'order_id' => $order->orderid]);
     }
 
