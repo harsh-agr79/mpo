@@ -31,8 +31,7 @@
                         <div><span class="font-medium text-red-600 dark:text-red-400">Discount:</span> -
                             {{ number_format($discount, 0) }}% ({{ number_format($totalApprovedValue - $finalTotal) }})
                         </div>
-                        <div><span class="font-medium text-blue-600 dark:text-blue-400">Final Total:</span>
-                            ₹{{ number_format($finalTotal, 0) }}</div>
+                       
                     @endif
                     @if ($totalBenefit > 0)
                         <div><span class="font-medium">Offered Benefit:</span> ₹{{ number_format($totalBenefit, 0) }}
@@ -44,6 +43,8 @@
                             ₹{{ number_format($totalApprovedValue - $finalTotal + $totalBenefit, 0) }}
                         </div>
                     @endif
+                    <div><span class="font-medium text-blue-600 dark:text-blue-400">Final Total:</span>
+                            ₹{{ number_format($finalTotal, 0) }}</div>
                 </div>
             </div>
              <div style="overflow-x: scroll;" class="hide-scrollbar">
