@@ -31,7 +31,7 @@
     <div class="mb-4">
         <strong>Statement for:</strong> {{ $this->Data['customer']['name'] }}<br>
         <strong>Period:</strong> {{ $this->startDate }} to {{ $this->endDate }}<br>
-        <strong>Opening Balance:</strong> {{ number_format($this->openingBalance, 2) }}
+        <strong>Opening Balance:</strong> {{ number_format($this->openingBalance, 0) }}
     </div>
 
     <table class="table-auto w-full border mt-4 text-xs">
@@ -59,11 +59,11 @@
             <tr class="bg-gray-50 font-bold">
                 <td colspan="3" class="px-2 py-1 text-right">Opening Balance</td>
                 @if($this->openingBalance > 0)
-                <td class="border px-2 py-1">{{ number_format($this->openingBalance, 2) }}</td>
+                <td class="border px-2 py-1">{{ number_format($this->openingBalance, 0) }}</td>
                 <td class="border px-2 py-1">0</td>
                 @else
                 <td class="border px-2 py-1">0</td>
-                <td class="border px-2 py-1">{{ number_format(-1*$this->openingBalance, 2) }}</td>
+                <td class="border px-2 py-1">{{ number_format(-1*$this->openingBalance, 0) }}</td>
                 @endif
             </tr>
             @php
@@ -74,8 +74,8 @@
                     <td class="border px-2 py-1">{{ \Carbon\Carbon::parse($entry['created'])->toDateString() }}</td>
                     <td class="border px-2 py-1">{{ $entry['ent_id'] }}</td>
                     <td class="border px-2 py-1">{{ $entry['type'] }}</td>
-                    <td class="border px-2 py-1">{{ number_format($entry['debit'], 2) }}</td>
-                    <td class="border px-2 py-1">{{ number_format($entry['credit'], 2) }}</td>
+                    <td class="border px-2 py-1">{{ number_format($entry['debit'], 0) }}</td>
+                    <td class="border px-2 py-1">{{ number_format($entry['credit'], 0) }}</td>
                     {{-- <td class="border px-2 py-1">{{ $entry['remarks'] ?? '' }}</td> --}}
                     @php
                         $amt = $amt + $entry['debit'] - $entry['credit'];
@@ -83,7 +83,7 @@
                     @endphp
 
                     <td class="amount-cell {{ $isNegative ? 'amount-negative' : 'amount-positive' }}">
-                        {{ number_format(abs($amt), 2) }}
+                        {{ number_format(abs($amt), 0) }}
                     </td>
                 </tr>
             @endforeach
