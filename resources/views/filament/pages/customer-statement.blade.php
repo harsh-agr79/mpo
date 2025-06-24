@@ -34,7 +34,7 @@
         <strong>Opening Balance:</strong> {{ number_format($this->openingBalance, 2) }}
     </div>
 
-    <table class="table-auto w-full border mt-4 text-sm">
+    <table class="table-auto w-full border mt-4 text-xs">
         <thead class="bg-gray-100">
             <tr>
                 <th class="cursor-pointer border px-2 py-1" wire:click="sortBy('created')">
