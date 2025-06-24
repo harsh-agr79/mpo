@@ -71,7 +71,7 @@
             @endphp
             @foreach ($this->entries as $entry)
                 <tr>
-                    <td class="border px-2 py-1">{{ \Carbon\Carbon::parse($entry['created'])->toDateString() }}</td>
+                    <td class="border px-2 py-1">{{ getNepaliDate(\Carbon\Carbon::parse($entry['created'])->toDateString()) }}</td>
                     <td class="border px-2 py-1">{{ $entry['ent_id'] }}</td>
                     <td class="border px-2 py-1">{{ $entry['type'] }}</td>
                     <td class="border px-2 py-1">{{ number_format($entry['debit'], 0) }}</td>
