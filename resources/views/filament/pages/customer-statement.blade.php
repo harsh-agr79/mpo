@@ -15,24 +15,24 @@
         border: 1px solid #e5e7eb;
     }
 </style>
-    <div class="mb-4">
-        <form method="GET">
-            <label for="customer">Select Customer:</label>
-            <select name="customerId" id="customer" onchange="this.form.submit()" class="border rounded px-2 py-1">
-                @foreach ($this->Customers as $cust)
-                    <option value="{{ $cust['id'] }}" {{ $cust['id'] == $selectedCustomerId ? 'selected' : '' }}>
-                        {{ $cust['name'] }}
-                    </option>
-                @endforeach
-            </select>
-        </form>
+   <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-order-summary dark:bg-gray-900 text-black dark:text-white shadow-sm items-center">
+        {{ $this->form }}
+        {{-- <div class="py-2 flex justify-end">
+            <button
+                type="submit"
+                wire:click.prevent="getDataProperty"
+                class="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
+            >
+                Show Statement
+            </button>
+        </div> --}}
     </div>
     @if(!empty($this->Data))
-    <div class="mb-4">
+    {{-- <div class="mb-4">
         <strong>Statement for:</strong> {{ $this->Data['customer']['name'] }}<br>
         <strong>Period:</strong> {{ $this->startDate }} to {{ $this->endDate }}<br>
         <strong>Opening Balance:</strong> {{ number_format($this->openingBalance, 0) }}
-    </div>
+    </div> --}}
 
     <table class="table-auto w-full border mt-4 text-xs">
         <thead class="bg-gray-100">

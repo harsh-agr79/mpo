@@ -12,6 +12,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Request;
+use Filament\Forms\Form;
+use Filament\Forms\Components\{Grid, Select, DatePicker};
 // use Carbon\Carbon;
 
 
@@ -43,7 +45,41 @@ class CustomerStatement extends Page
         }
     }
 
-  public function mount(?int $customerId = null): void
+    public function form(Form $form): Form
+    {
+        return $form->schema([
+            Grid::make(3)->schema([
+                Select::make('customerId')
+                    ->label('Select Customer')
+                    ->options(User::pluck('name', 'id'))
+                    ->searchable()
+                    ->required()
+                    ->live(), // 👈 Live update
+
+                DatePicker::make('startDate')
+                    ->label('Start Date')
+                    ->required()
+                    ->default(getStartOfFiscalYear())
+                    ->live(), // 👈 Live update
+
+                DatePicker::make('endDate')
+                    ->label('End Date')
+                    ->required()
+                    ->default(getEndOfFiscalYear())
+                    ->live(), // 👈 Live update
+            ]),
+        ]);
+    }
+
+    public function updated($property)
+    {
+        if (in_array($property, ['customerId', 'startDate', 'endDate'])) {
+            $this->customer = User::findOrFail($this->customerId);
+            $this->getDataProperty(); // Refresh the statement
+        }
+    }
+
+    public function mount(?int $customerId = null): void
     {
         $this->customers = User::orderBy('name')->get();
         $this->selectedCustomerId = $customerId ?? request()->get('customerId') ?? $this->customers->first()?->id;
@@ -51,8 +87,14 @@ class CustomerStatement extends Page
         $this->customerId = $this->selectedCustomerId;
         $this->customer = User::findOrFail($this->customerId);
 
-        $this->startDate = getStartOfFiscalYear();
-        $this->endDate = getEndOfFiscalYear();
+        $this->startDate = request()->get('startDate') ?? getStartOfFiscalYear();
+        $this->endDate = request()->get('endDate') ?? getEndOfFiscalYear();
+
+        $this->form->fill([
+            'customerId' => $this->customerId,
+            'startDate' => $this->startDate,
+            'endDate' => $this->endDate,
+        ]);
     }
 
     public function getCustomersProperty(): array
