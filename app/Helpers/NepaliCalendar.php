@@ -1056,3 +1056,73 @@ function getAdjustmentInvoiceId($customDate = null)
 
     return 'adj_' . $invoice_id;
 }
+
+function getStartOfFiscalYear($date = null)
+{
+    $date = $date ? \Carbon\Carbon::parse($date) : now();
+
+    // Convert English date to Nepali
+    $nepali = NepaliCalender::getInstance()->eng_to_nep($date);
+
+    $nepaliYear = $nepali['year'];
+    $nepaliMonth = $nepali['month'];
+
+    // If Nepali month is less than 7, fiscal year started last year
+    if ($nepaliMonth < 7) {
+        $nepaliYear -= 1;
+    }
+
+    // Fiscal year always starts on 7/1 (Nepali)
+    $fiscalStartNepaliYear = $nepaliYear;
+    $fiscalStartNepaliMonth = 7;
+    $fiscalStartNepaliDay = 1;
+
+    $englishDate = NepaliCalender::getInstance()->nep_to_eng(
+        $fiscalStartNepaliYear,
+        $fiscalStartNepaliMonth,
+        $fiscalStartNepaliDay
+    );
+
+    return $englishDate['year'] . '-' .
+        str_pad($englishDate['month'], 2, '0', STR_PAD_LEFT) . '-' .
+        str_pad($englishDate['date'], 2, '0', STR_PAD_LEFT);
+}
+
+
+function getEndOfFiscalYear($date = null)
+{
+    $date = $date ? \Carbon\Carbon::parse($date) : now();
+
+    // Convert English date to Nepali
+    $nepali = NepaliCalender::getInstance()->eng_to_nep($date);
+
+    $nepaliYear = $nepali['year'];
+    $nepaliMonth = $nepali['month'];
+
+    // If Nepali month < 7, then current fiscal year ends this year
+    // Else it ends next year
+    if ($nepaliMonth < 7) {
+        $fiscalEndNepaliYear = $nepaliYear;
+    } else {
+        $fiscalEndNepaliYear = $nepaliYear + 1;
+    }
+
+    $fiscalEndNepaliMonth = 7;
+    $fiscalEndNepaliDay = 1;
+
+    // Get the English date of next year's 7/1 (start of next fiscal year)
+    $nextFiscalStartEng = NepaliCalender::getInstance()->nep_to_eng(
+        $fiscalEndNepaliYear,
+        $fiscalEndNepaliMonth,
+        $fiscalEndNepaliDay
+    );
+
+    // Subtract 1 day from that date to get the last day of this fiscal year
+    $endDate = \Carbon\Carbon::createFromDate(
+        $nextFiscalStartEng['year'],
+        $nextFiscalStartEng['month'],
+        $nextFiscalStartEng['date']
+    )->subDay();
+
+    return $endDate->format('Y-m-d');
+}
