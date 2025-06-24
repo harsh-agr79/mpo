@@ -35,7 +35,13 @@
                             ₹{{ number_format($finalTotal, 0) }}</div>
                     @endif
                     @if ($totalBenefit > 0)
-                        <div><span class="font-medium">Total Benefit:</span> ₹{{ number_format($totalBenefit, 0) }}
+                        <div><span class="font-medium">Offered Benefit:</span> ₹{{ number_format($totalBenefit, 0) }}
+                        </div>
+                    @endif
+                    @if ($totalApprovedValue - $finalTotal + $totalBenefit > 0)
+                        <div class="text-green-600 dark:text-green-400">
+                            <span class="font-medium">Net Benefit:</span>
+                            ₹{{ number_format($totalApprovedValue - $finalTotal + $totalBenefit, 0) }}
                         </div>
                     @endif
                 </div>
