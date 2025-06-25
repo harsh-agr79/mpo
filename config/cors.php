@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*', 'http://localhost:3000', 'https://mp-b2b-c.vercel.app'],
+    'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
 
