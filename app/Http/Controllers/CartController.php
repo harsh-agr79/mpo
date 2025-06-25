@@ -192,59 +192,24 @@ class CartController extends Controller
 
     public function getOrderDetails(Request $request, $id)
     {
-        // try {
-        //     $user = $request->user();
+        $user = $request->user();
 
-        //     if (!$user) {
-        //         return response()->json(['message' => 'Unauthorized user'], 401);
-        //     }
+        $order = Order::where('orderid', $id)
+            ->where('user_id', $user->id)
+            ->first();
 
-        //     // Check if the order exists for this user
-        //     $order = Order::where('orderid', $id)
-        //         ->where('user_id', $user->id)
-        //         ->first();
+        if (!$order) {
+            return response()->json(['message' => 'Order not found'], 404);
+        }
 
-        //     if (!$order) {
-        //         return response()->json(['message' => 'Order not found or access denied'], 404);
-        //     }
+        $orderItems = OrderItem::where('orderid', $id)->with('product')->get();
+        $orderMaterials = OrderMaterial::where('orderid', $id)->with('material')->get();
 
-        //     // Fetch order items with product relation
-        //     $orderItems = OrderItem::where('orderid', $id)
-        //         ->with('product')
-        //         ->get();
-
-        //     if ($orderItems->isEmpty()) {
-        //         // Optional: not an error, but you may want to notify
-        //         \Log::info("Order $id has no items for user " . $user->id);
-        //     }
-
-        //     // Fetch order materials with material relation
-        //     $orderMaterials = OrderMaterial::where('orderid', $id)
-        //         ->with('material')
-        //         ->get();
-
-        //     if ($orderMaterials->isEmpty()) {
-        //         // Optional: not an error, but loggable
-        //         \Log::info("Order $id has no materials for user " . $user->id);
-        //     }
-
-        //     return response()->json([
-        //         'order' => $order,
-        //         'items' => $orderItems,
-        //         'materials' => $orderMaterials,
-        //     ]);
-        // } catch (\Exception $e) {
-        //     \Log::error("Error fetching order $id: " . $e->getMessage());
-
-        //     return response()->json([
-        //         'message' => 'An error occurred while fetching order details',
-        //         'error' => config('app.debug') ? $e->getMessage() : null
-        //     ], 500);
-        // }
         return response()->json([
-            'message' => 'This endpoint is not implemented yet.'
-        ], 200);
+            'order' => $order,
+            'items' => $orderItems,
+            'materials' => $orderMaterials,
+        ]);
     }
-
 
 }
