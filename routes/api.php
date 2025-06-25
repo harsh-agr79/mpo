@@ -42,7 +42,7 @@ Route::middleware(api_key::class)->group(function () {
         Route::get('/download/{id}', [ResourceController::class, 'download']);
         //
         Route::post('/createdamageticket', [DamageController::class, 'createDamage']);
-        Route::get('damagetickets', [DamageController::class, 'getDamageTickets']);
-        Route::get('damageticket/{id}', [DamageController::class, 'getDamageTicket']);
+        Route::get('/damagetickets', [DamageController::class, 'getDamageTickets']);
+        Route::get('/damageticket/{id}', [DamageController::class, 'getDamageTicket']);
     });
 });
