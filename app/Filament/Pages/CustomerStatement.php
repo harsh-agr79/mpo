@@ -35,6 +35,11 @@ class CustomerStatement extends Page
     public string $sortField = 'created';
     public string $sortDirection = 'asc'; // default to descending
 
+    public function getTitle(): string
+    {
+        return ''; // Ensure nothing is rendered
+    }
+
     public function sortBy($field)
     {
         if ($this->sortField === $field) {
