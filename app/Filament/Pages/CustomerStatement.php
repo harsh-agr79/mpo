@@ -31,6 +31,10 @@ class CustomerStatement extends Page
     public $customer;
     public $entries;
     public $openingBalance = 0;
+    public $showVoucher = false;
+    public $showRemarks = false;
+    public $useNepaliDate = true;
+           
 
     public string $sortField = 'created';
     public string $sortDirection = 'asc'; // default to descending
@@ -112,7 +116,7 @@ class CustomerStatement extends Page
         })->toArray();
     }
 
-    public function getDataProperty()
+   public function getDataProperty()
     {
         $start = Carbon::parse($this->startDate);
         $end = Carbon::parse($this->endDate)->addDay();
@@ -137,10 +141,8 @@ class CustomerStatement extends Page
             ->whereDate('expense_date', '<', $start)
             ->get();
 
-        $openingDebit = $ordersBefore->sum('net_total') +
-                         $expensesBefore->sum('amount');
-        $openingCredit = $paymentsBefore->sum('amount') +
-                          $returnsBefore->sum('net_total');
+        $openingDebit = $ordersBefore->sum('net_total') + $expensesBefore->sum('amount');
+        $openingCredit = $paymentsBefore->sum('amount') + $returnsBefore->sum('net_total');
 
         $this->openingBalance = $openingDebit - $openingCredit;
 
@@ -167,9 +169,13 @@ class CustomerStatement extends Page
 
         $entries = collect();
 
+        $totalSales = 0;
+        $totalPayments = 0;
+        $totalReturns = 0;
+        $totalExpenses = 0;
+
         foreach ($orders as $order) {
-            // $sum = $order->approvedquantity * $order->price;
-            // $dis = $order->discount * 0.01 * $sum;
+            $totalSales += $order->net_total;
             $entries->push([
                 'created' => $order->date,
                 'ent_id' => $order->orderid,
@@ -177,12 +183,13 @@ class CustomerStatement extends Page
                 'credit' => 0,
                 'type' => 'Sale',
                 'voucher' => '',
-                'remarks' => $order->remarks,
-                'othersname' => $order->othersname
+                'remarks' => '',
+                'othersname' => $order->othersname,
             ]);
         }
 
         foreach ($payments as $payment) {
+            $totalPayments += $payment->amount;
             $entries->push([
                 'created' => $payment->payment_date,
                 'ent_id' => $payment->id,
@@ -190,12 +197,13 @@ class CustomerStatement extends Page
                 'credit' => $payment->amount,
                 'type' => 'Payment',
                 'voucher' => $payment->voucher,
-                'remarks' => '',
-                'othersname' => ''
+                'remarks' => $payment->remarks,
+                'othersname' => '',
             ]);
         }
 
         foreach ($returns as $return) {
+            $totalReturns += $return->net_total;
             $entries->push([
                 'created' => $return->date,
                 'ent_id' => $return->return_id,
@@ -204,11 +212,12 @@ class CustomerStatement extends Page
                 'type' => 'Sales Return',
                 'voucher' => '',
                 'remarks' => '',
-                'othersname' => ''
+                'othersname' => '',
             ]);
         }
 
         foreach ($expenses as $expense) {
+            $totalExpenses += $expense->amount;
             $entries->push([
                 'created' => $expense->expense_date,
                 'ent_id' => $expense->id,
@@ -217,17 +226,20 @@ class CustomerStatement extends Page
                 'type' => 'Expense',
                 'voucher' => $expense->particular,
                 'remarks' => '',
-                'othersname' => ''
+                'othersname' => '',
             ]);
         }
 
-        
-       $this->entries = $entries->map(function ($item) {
+        $this->entries = $entries->map(function ($item) {
             $item['created'] = Carbon::parse($item['created']);
             return $item;
         })->sortBy(function ($item) {
             return $item[$this->sortField];
         }, SORT_REGULAR, $this->sortDirection === 'desc')->values();
+
+        $totalDebit = $this->entries->sum('debit');
+        $totalCredit = $this->entries->sum('credit');
+        $netBalance = $totalDebit - $totalCredit;
 
         return [
             'entries' => $this->entries,
@@ -235,6 +247,14 @@ class CustomerStatement extends Page
             'openingBalance' => $this->openingBalance,
             'startDate' => $this->startDate,
             'endDate' => $this->endDate,
+            'totals' => [
+                'sales' => $totalSales,
+                'payments' => $totalPayments,
+                'returns' => $totalReturns,
+                'expenses' => $totalExpenses,
+                'netBalance' => $netBalance,
+            ],
         ];
     }
+
 }
