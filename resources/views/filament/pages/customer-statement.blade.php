@@ -449,6 +449,10 @@
 
     <script>
         window.__AI_PAGE_CONTEXT__ = @json($aiContext);
+
+        window.addEventListener('context-updated', (e) => {
+            window.__AI_PAGE_CONTEXT__ = e.detail.context;
+        });
     </script>
     <div x-data="chatBot()" class="chatbot-container">
         <button @click="open = !open" class="chatbot-toggle-btn">
@@ -466,7 +470,7 @@
                         class="chatbot-msg-wrapper">
                         <div class="chatbot-msg"
                             :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'">
-                            <div class="chatbot-msg" 
+                            <div class="chatbot-msg"
                                 :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'"
                                 x-html="marked.parse(message.text)">
                             </div>
@@ -494,17 +498,99 @@
                 messages: [],
                 loading: false,
 
+                getTransactionData() {
+                    const rows = document.querySelectorAll('table tbody tr');
+                    return Array.from(rows).map(row => {
+                        const cells = row.querySelectorAll('td');
+
+                        if (cells.length < 6) return null;
+
+                        const date = cells[0]?.innerText.trim() || '';
+                        const entryId = cells[1]?.innerText.trim() || '';
+                        const type = cells[2]?.innerText.trim() || '';
+                        const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
+                        const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
+                        const balance = cells[5]?.innerText.replace(/,/g, '').trim() || '';
+
+                        const voucher = cells.length >= 7 ? cells[6]?.innerText.trim() : '';
+                        const remarks = cells.length >= 8 ? cells[7]?.innerText.trim() : '';
+
+                        // Filter out rows like "Total", "Opening Balance", etc.
+                        const skipKeywords = ['Opening Balance', 'Total', 'Balance', 'Total Sales',
+                            'Total Payments', 'Total Expenses', 'Total Sales Returns'
+                        ];
+                        if (skipKeywords.some(keyword => type.toLowerCase().includes(keyword.toLowerCase()))) {
+                            return null;
+                        }
+
+                        return {
+                            date,
+                            entryId,
+                            type,
+                            debit,
+                            credit,
+                            balance,
+                            voucher,
+                            remarks
+                        };
+                    }).filter(e => e !== null);
+                },
+
+                getTableSummary() {
+                    const rows = document.querySelectorAll('table tfoot tr');
+                    const summary = {};
+                    rows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        const label = cells[2]?.innerText.trim().toLowerCase();
+                        const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
+                        const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
+
+                        if (label.includes('opening balance')) {
+                            summary.openingBalance = {
+                                debit: Number(debit),
+                                credit: Number(credit)
+                            };
+                        } else if (label.includes('total sales')) {
+                            summary.totalSales = Number(debit);
+                        } else if (label.includes('total expenses')) {
+                            summary.totalExpenses = Number(debit);
+                        } else if (label.includes('total payments')) {
+                            summary.totalPayments = Number(credit);
+                        } else if (label.includes('total sales returns')) {
+                            summary.totalReturns = Number(credit);
+                        } else if (label === 'total') {
+                            summary.totalDebit = Number(debit);
+                            summary.totalCredit = Number(credit);
+                        } else if (label === 'balance') {
+                            summary.balance = {
+                                debit: Number(debit) || 0,
+                                credit: Number(credit) || 0
+                            };
+                        }
+                    });
+                    return summary;
+                },
+
                 async sendMessage() {
                     if (!this.input.trim()) return;
 
-                    const context = window.__AI_PAGE_CONTEXT__;
-                    const entriesSummary = context.entries.map(e =>
-                        `Date: ${e.date}\nType: ${e.type}\nDebit: ${e.debit}\nCredit: ${e.credit}\nRemarks: ${e.remarks}\nOthers: ${e.othersname}\n---`
+                    const transactions = this.getTransactionData();
+                    const summary = this.getTableSummary();
+
+                    const entriesSummary = transactions.map(e =>
+                        `Date: ${e.date}\nEntry ID: ${e.entryId}\nType: ${e.type}\nDebit: ${e.debit}\nCredit: ${e.credit}\nBalance: ${e.balance}\nVoucher: ${e.voucher}\nRemarks: ${e.remarks}\n---`
                     ).join('\n');
+
                     const contextPrompt =
-                        `Customer Name: ${context.customer.name}\nOpening Balance: ${context.openingBalance}\nTotals: ${JSON.stringify(context.totals)}\n\nTransactions:\n${entriesSummary}`;
+                        `Opening Balance: Debit ${summary.openingBalance?.debit || 0}, Credit ${summary.openingBalance?.credit || 0}\n` +
+                        `Total Sales: ${summary.totalSales || 0}\nTotal Expenses: ${summary.totalExpenses || 0}\n` +
+                        `Total Payments: ${summary.totalPayments || 0}\nTotal Sales Returns: ${summary.totalReturns || 0}\n` +
+                        `Overall Total Debit: ${summary.totalDebit || 0}, Total Credit: ${summary.totalCredit || 0}\n` +
+                        `Net Balance: Debit ${summary.balance?.debit || 0}, Credit ${summary.balance?.credit || 0}\n\n` +
+                        `Transactions:\n${entriesSummary}`;
+
                     const fullPrompt =
-                        `You are an intelligent assistant analyzing a customer financial statement(In Nepali Rupees). Use the context below to answer the user's question.\n\nContext:\n${contextPrompt}\n\nUser Question: ${this.input}`;
+                        `You are an intelligent assistant analyzing a customer financial statement (In Nepali Rupees). Use the context below to answer the user's question.\n\nContext:\n${contextPrompt}\n\nUser Question: ${this.input}`;
 
                     const userMsg = {
                         id: Date.now(),
@@ -552,7 +638,7 @@
                     } finally {
                         this.loading = false;
                         this.$nextTick(() => {
-                            const container = document.querySelector('[x-data=\"chatBot()\"] .overflow-y-auto');
+                            const container = document.querySelector('[x-data="chatBot()"] .chatbot-messages');
                             container.scrollTop = container.scrollHeight;
                         });
                     }
@@ -560,6 +646,8 @@
             };
         }
     </script>
+
+
 
 
 
