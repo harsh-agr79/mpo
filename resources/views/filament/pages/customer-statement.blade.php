@@ -283,4 +283,121 @@
             </table>
         @endif
     </div>
+
+    @php
+        $aiContext = [
+            'customer' => [
+                'name' => $this->customer->name,
+                'id' => $this->customer->id,
+            ],
+            'openingBalance' => $this->openingBalance,
+            'totals' => $this->Data['totals'],
+            'entries' => $this->entries->map(function ($entry) {
+                return [
+                    'date' => $entry['created']->toDateString(),
+                    'type' => $entry['type'],
+                    'debit' => $entry['debit'],
+                    'credit' => $entry['credit'],
+                    'remarks' => $entry['remarks'],
+                    'othersname' => $entry['othersname'],
+                ];
+            }),
+        ];
+    @endphp
+
+    <script>
+        window.__AI_PAGE_CONTEXT__ = @json($aiContext);
+    </script>
+    <div x-data="chatBot()" class="z-50 w-96" style="position: fixed; bottom: 20px; right: 20px; max-width: 300px; max-height: 600px; overflow-y:scroll;">
+    <button @click="open = !open"
+            class="bg-order-summary text-white rounded-full px-4 py-2 shadow-md hover:bg-blue-700">
+        <span x-text="open ? 'Close Chat' : 'Ask AI'"></span>
+    </button>
+
+    <div x-show="open" x-transition
+         class="mt-2 bg-white border border-gray-300 rounded-xl shadow-xl p-4 max-h-[500px] w-full overflow-y-auto flex flex-col space-y-2">
+
+        <div class="flex-1 overflow-y-auto space-y-2">
+            <template x-for="message in messages" :key="message.id">
+                <div :class="{'justify-end': message.role === 'user', 'justify-start': message.role === 'bot'}" class="flex">
+                    <div class="max-w-[80%] px-4 py-2 rounded-xl whitespace-pre-line"
+                         :class="message.role === 'user' ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-200 text-black rounded-bl-none'">
+                        <span x-text="message.text"></span>
+                    </div>
+                </div>
+            </template>
+
+            <div x-show="loading" class="text-center text-gray-500 text-sm py-2">Loading response...</div>
+        </div>
+
+        <div class="flex items-center border-t pt-2">
+            <input type="text" x-model="input"
+                   @keydown.enter="sendMessage()"
+                   placeholder="Ask something..."
+                   class="flex-1 border border-gray-300 rounded-l-md px-3 py-2 focus:outline-none focus:ring focus:border-blue-400" />
+            <button @click="sendMessage()"
+                    class="bg-blue-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+function chatBot() {
+    return {
+        open: false,
+        input: '',
+        messages: [],
+        loading: false,
+
+        async sendMessage() {
+            if (!this.input.trim()) return;
+
+            const context = window.__AI_PAGE_CONTEXT__;
+            const entriesSummary = context.entries.map(e => `Date: ${e.date}\nType: ${e.type}\nDebit: ${e.debit}\nCredit: ${e.credit}\nRemarks: ${e.remarks}\nOthers: ${e.othersname}\n---`).join('\n');
+            const contextPrompt = `Customer Name: ${context.customer.name}\nOpening Balance: ${context.openingBalance}\nTotals: ${JSON.stringify(context.totals)}\n\nTransactions:\n${entriesSummary}`;
+            const fullPrompt = `You are an intelligent assistant analyzing a customer financial statement. Use the context below to answer the user's question.\n\nContext:\n${contextPrompt}\n\nUser Question: ${this.input}`;
+
+            const userMsg = { id: Date.now(), role: 'user', text: this.input };
+            this.messages.push(userMsg);
+            this.loading = true;
+            this.input = '';
+
+            const botId = Date.now() + 1;
+            this.messages.push({ id: botId, role: 'bot', text: '...' });
+
+            try {
+                const response = await fetch('/ai-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ prompt: fullPrompt })
+                });
+
+                const data = await response.json();
+                const reply = data.reply || 'No response received.';
+
+                this.messages = this.messages.map(m =>
+                    m.id === botId ? { ...m, text: reply } : m
+                );
+            } catch (error) {
+                this.messages.push({ id: Date.now() + 2, role: 'bot', text: 'An error occurred. Please try again.' });
+            } finally {
+                this.loading = false;
+                this.$nextTick(() => {
+                    const container = document.querySelector('[x-data=\"chatBot()\"] .overflow-y-auto');
+                    container.scrollTop = container.scrollHeight;
+                });
+            }
+        }
+    };
+}
+</script>
+
+
+   
+
 </x-filament-panels::page>
