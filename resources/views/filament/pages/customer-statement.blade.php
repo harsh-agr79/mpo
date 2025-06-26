@@ -504,7 +504,7 @@
                     const contextPrompt =
                         `Customer Name: ${context.customer.name}\nOpening Balance: ${context.openingBalance}\nTotals: ${JSON.stringify(context.totals)}\n\nTransactions:\n${entriesSummary}`;
                     const fullPrompt =
-                        `You are an intelligent assistant analyzing a customer financial statement. Use the context below to answer the user's question.\n\nContext:\n${contextPrompt}\n\nUser Question: ${this.input}`;
+                        `You are an intelligent assistant analyzing a customer financial statement(In Nepali Rupees). Use the context below to answer the user's question.\n\nContext:\n${contextPrompt}\n\nUser Question: ${this.input}`;
 
                     const userMsg = {
                         id: Date.now(),
