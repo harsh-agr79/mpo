@@ -19,7 +19,7 @@ class AIChatController extends Controller {
             'messages' => [
                 [ 'role' => 'user', 'content' => $prompt ],
             ],
-            'model' => 'accounts/fireworks/models/deepseek-v3',
+            'model' => 'accounts/fireworks/models/deepseek-r1',
             'stream' => true,
         ];
 

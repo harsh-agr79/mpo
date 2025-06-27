@@ -246,12 +246,12 @@
                         <td colspan="3" class="px-2 py-1 text-right">Opening Balance</td>
                         @if ($this->openingBalance > 0)
                             <td class="border px-2 py-1 dark:border-gray-700">
-                                {{ number_format($this->openingBalance, 0) }}</td>
+                                {{ number_format($this->openingBalance, 0) }}(Debit)</td>
                             <td class="border px-2 py-1 dark:border-gray-700">0</td>
                         @else
                             <td class="border px-2 py-1 dark:border-gray-700">0</td>
                             <td class="border px-2 py-1 dark:border-gray-700">
-                                {{ number_format(-1 * $this->openingBalance, 0) }}</td>
+                                {{ number_format(-1 * $this->openingBalance, 0) }}(Credit)</td>
                         @endif
                         <td class="amount-cell {{ $this->openingBalance < 0 ? 'amount-negative' : 'amount-positive' }}">
                             {{ number_format(abs($this->openingBalance), 0) }}
@@ -528,99 +528,102 @@
                 messages: [],
                 loading: false,
 
-                getTransactionData() {
-                    const rows = document.querySelectorAll('table tbody tr');
-                    return Array.from(rows).map(row => {
-                        const cells = row.querySelectorAll('td');
+                // getTransactionData() {
+                //     const rows = document.querySelectorAll('table tbody tr');
+                //     const table = document.querySelector('table');
+                //     // console.log(table);
+                //     return Array.from(rows).map(row => {
+                //         const cells = row.querySelectorAll('td');
 
-                        if (cells.length < 6) return null;
+                //         if (cells.length < 6) return null;
 
-                        const date = cells[0]?.innerText.trim() || '';
-                        const entryId = cells[1]?.innerText.trim() || '';
-                        const type = cells[2]?.innerText.trim() || '';
-                        const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
-                        const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
-                        const balance = cells[5]?.innerText.replace(/,/g, '').trim() || '';
+                //         const date = cells[0]?.innerText.trim() || '';
+                //         const entryId = cells[1]?.innerText.trim() || '';
+                //         const type = cells[2]?.innerText.trim() || '';
+                //         const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
+                //         const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
+                //         const balance = cells[5]?.innerText.replace(/,/g, '').trim() || '';
 
-                        const voucher = cells.length >= 7 ? cells[6]?.innerText.trim() : '';
-                        const remarks = cells.length >= 8 ? cells[7]?.innerText.trim() : '';
+                //         const voucher = cells.length >= 7 ? cells[6]?.innerText.trim() : '';
+                //         const remarks = cells.length >= 8 ? cells[7]?.innerText.trim() : '';
 
-                        // Filter out rows like "Total", "Opening Balance", etc.
-                        const skipKeywords = ['Opening Balance', 'Total', 'Balance', 'Total Sales',
-                            'Total Payments', 'Total Expenses', 'Total Sales Returns'
-                        ];
-                        if (skipKeywords.some(keyword => type.toLowerCase().includes(keyword.toLowerCase()))) {
-                            return null;
-                        }
+                //         // Filter out rows like "Total", "Opening Balance", etc.
+                //         const skipKeywords = ['Opening Balance', 'Total', 'Balance', 'Total Sales',
+                //             'Total Payments', 'Total Expenses', 'Total Sales Returns'
+                //         ];
+                //         if (skipKeywords.some(keyword => type.toLowerCase().includes(keyword.toLowerCase()))) {
+                //             return null;
+                //         }
 
-                        return {
-                            date,
-                            entryId,
-                            type,
-                            debit,
-                            credit,
-                            balance,
-                            voucher,
-                            remarks
-                        };
-                    }).filter(e => e !== null);
-                },
+                //         return {
+                //             date,
+                //             entryId,
+                //             type,
+                //             debit,
+                //             credit,
+                //             balance,
+                //             voucher,
+                //             remarks
+                //         };
+                //     }).filter(e => e !== null);
+                // },
 
-                getTableSummary() {
-                    const rows = document.querySelectorAll('table tfoot tr');
-                    const summary = {};
-                    rows.forEach(row => {
-                        const cells = row.querySelectorAll('td');
-                        const label = cells[2]?.innerText.trim().toLowerCase();
-                        const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
-                        const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
+                // getTableSummary() {
+                //     const rows = document.querySelectorAll('table tfoot tr');
+                //     const summary = {};
+                //     rows.forEach(row => {
+                //         const cells = row.querySelectorAll('td');
+                //         const label = cells[2]?.innerText.trim().toLowerCase();
+                //         const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
+                //         const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
 
-                        if (label.includes('opening balance')) {
-                            summary.openingBalance = {
-                                debit: Number(debit),
-                                credit: Number(credit)
-                            };
-                        } else if (label.includes('total sales')) {
-                            summary.totalSales = Number(debit);
-                        } else if (label.includes('total expenses')) {
-                            summary.totalExpenses = Number(debit);
-                        } else if (label.includes('total payments')) {
-                            summary.totalPayments = Number(credit);
-                        } else if (label.includes('total sales returns')) {
-                            summary.totalReturns = Number(credit);
-                        } else if (label === 'total') {
-                            summary.totalDebit = Number(debit);
-                            summary.totalCredit = Number(credit);
-                        } else if (label === 'balance') {
-                            summary.balance = {
-                                debit: Number(debit) || 0,
-                                credit: Number(credit) || 0
-                            };
-                        }
-                    });
-                    return summary;
-                },
+                //         if (label.includes('opening balance')) {
+                //             summary.openingBalance = {
+                //                 debit: Number(debit),
+                //                 credit: Number(credit)
+                //             };
+                //         } else if (label.includes('total sales')) {
+                //             summary.totalSales = Number(debit);
+                //         } else if (label.includes('total expenses')) {
+                //             summary.totalExpenses = Number(debit);
+                //         } else if (label.includes('total payments')) {
+                //             summary.totalPayments = Number(credit);
+                //         } else if (label.includes('total sales returns')) {
+                //             summary.totalReturns = Number(credit);
+                //         } else if (label === 'total') {
+                //             summary.totalDebit = Number(debit);
+                //             summary.totalCredit = Number(credit);
+                //         } else if (label === 'balance') {
+                //             summary.balance = {
+                //                 debit: Number(debit) || 0,
+                //                 credit: Number(credit) || 0
+                //             };
+                //         }
+                //     });
+                //     return summary;
+                // },
 
                 async sendMessage() {
                     if (!this.input.trim()) return;
 
-                    const transactions = this.getTransactionData();
-                    const summary = this.getTableSummary();
+                    // const transactions = this.getTransactionData();
+                    // const summary = this.getTableSummary();
+                    const table = document.querySelector('table');
 
-                    const entriesSummary = transactions.map(e =>
-                        `Date: ${e.date}\nEntry ID: ${e.entryId}\nType: ${e.type}\nDebit: ${e.debit}\nCredit: ${e.credit}\nBalance: ${e.balance}\nVoucher: ${e.voucher}\nRemarks: ${e.remarks}\n---`
-                    ).join('\n');
+                    // const entriesSummary = transactions.map(e =>
+                    //     `Date: ${e.date}\nEntry ID: ${e.entryId}\nType: ${e.type}\nDebit: ${e.debit}\nCredit: ${e.credit}\nBalance: ${e.balance}\nVoucher: ${e.voucher}\nRemarks: ${e.remarks}\n---`
+                    // ).join('\n');
 
-                    const contextPrompt =
-                        `Opening Balance: Debit ${summary.openingBalance?.debit || 0}, Credit ${summary.openingBalance?.credit || 0}\n` +
-                        `Total Sales: ${summary.totalSales || 0}\nTotal Expenses: ${summary.totalExpenses || 0}\n` +
-                        `Total Payments: ${summary.totalPayments || 0}\nTotal Sales Returns: ${summary.totalReturns || 0}\n` +
-                        `Overall Total Debit: ${summary.totalDebit || 0}, Total Credit: ${summary.totalCredit || 0}\n` +
-                        `Net Balance: Debit ${summary.balance?.debit || 0}, Credit ${summary.balance?.credit || 0}\n\n` +
-                        `Transactions:\n${entriesSummary}`;
+                    // const contextPrompt =
+                    //     `Opening Balance: Debit ${summary.openingBalance?.debit || 0}, Credit ${summary.openingBalance?.credit || 0}\n` +
+                    //     `Total Sales: ${summary.totalSales || 0}\nTotal Expenses: ${summary.totalExpenses || 0}\n` +
+                    //     `Total Payments: ${summary.totalPayments || 0}\nTotal Sales Returns: ${summary.totalReturns || 0}\n` +
+                    //     `Overall Total Debit: ${summary.totalDebit || 0}, Total Credit: ${summary.totalCredit || 0}\n` +
+                    //     `Net Balance: Debit ${summary.balance?.debit || 0}, Credit ${summary.balance?.credit || 0}\n\n` +
+                    //     `Transactions:\n${entriesSummary}`;
 
                     const fullPrompt =
-                        `You are an intelligent assistant analyzing a customer financial statement (In Nepali Rupees). Use the context below to answer the user's question.\n\nContext:\n${contextPrompt}\n\nUser Question: ${this.input}`;
+                        `You are an intelligent assistant analyzing a customer financial statement given in html table format (In Nepali Rupees). Use the context below to answer the user's question.\n\nTable:\n${table.outerHTML}\n\nUser Question: ${this.input}`;
 
                     const userMsg = {
                         id: Date.now(),
