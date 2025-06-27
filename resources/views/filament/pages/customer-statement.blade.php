@@ -49,7 +49,7 @@
             padding: 10px 20px;
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .chatbot-toggle-btn:hover {
@@ -78,6 +78,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            overflow-x: hidden;
         }
 
         /* Scrollbar styling */
@@ -93,6 +94,7 @@
         /* Message wrapper alignment */
         .chatbot-msg-wrapper {
             display: flex;
+            padding-bottom: 10px;
         }
 
         .chatbot-msg-user {
@@ -106,9 +108,8 @@
         /* Message bubbles */
         .chatbot-msg {
             max-width: 80%;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 16px;
-            white-space: pre-wrap;
             word-wrap: break-word;
             line-height: 1.4;
         }
@@ -131,6 +132,19 @@
             color: gray;
             font-size: 12px;
             padding: 8px;
+            animation: fadeScale 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes fadeScale {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
         }
 
         /* Input section */
@@ -150,6 +164,7 @@
             outline: none;
             font-size: 14px;
             transition: border-color 0.2s;
+            color: black;
         }
 
         .chatbot-input:focus {
@@ -455,8 +470,17 @@
         });
     </script>
     <div x-data="chatBot()" class="chatbot-container">
-        <button @click="open = !open" class="chatbot-toggle-btn">
-            <span x-text="open ? 'Close Chat' : 'Ask AI'"></span>
+        <button @click="open = !open"
+            class="chatbot-toggle group relative chatbot-toggle-btn text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            :class="{ 'rotate-180': open }">
+            <svg x-show="!open" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 2.98.97 4.29L1 23l6.71-1.97C9.02 21.64 10.46 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+            <svg x-show="open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                </path>
+            </svg>
         </button>
 
         <div x-show="open" x-transition class="chatbot-window">
@@ -470,7 +494,7 @@
                         class="chatbot-msg-wrapper">
                         <div class="chatbot-msg"
                             :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'">
-                            <div class="chatbot-msg"
+                            <div class=""
                                 :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'"
                                 x-html="marked.parse(message.text)">
                             </div>
@@ -484,7 +508,12 @@
             <div class="chatbot-input-wrapper">
                 <input type="text" x-model="input" @keydown.enter="sendMessage()"
                     placeholder="Type your message..." class="chatbot-input" />
-                <button @click="sendMessage()" class="chatbot-send-btn">Send</button>
+                <button @click="sendMessage()" class="chatbot-send-btn">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.49-.87.99l.01 4.61c0 .71.73 1.2 1.39.91z" />
+                    </svg>
+                </button>
             </div>
         </div>
     </div>
