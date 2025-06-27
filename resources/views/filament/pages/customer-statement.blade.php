@@ -42,7 +42,7 @@
 
         /* Toggle button */
         .chatbot-toggle-btn {
-            background-color: #2563eb;
+            background-color: #cc8b00;
             color: white;
             border: none;
             border-radius: 9999px;
@@ -53,7 +53,7 @@
         }
 
         .chatbot-toggle-btn:hover {
-            background-color: #1e40af;
+            background-color: #af701e;
         }
 
         /* Chat window */
@@ -83,7 +83,7 @@
 
         /* Scrollbar styling */
         .chatbot-messages::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
 
         .chatbot-messages::-webkit-scrollbar-thumb {
@@ -115,7 +115,7 @@
         }
 
         .chatbot-msg-user-bg {
-            background-color: #2563eb;
+            background-color: #c99300;
             color: white;
             border-bottom-right-radius: 4px;
         }
@@ -168,12 +168,12 @@
         }
 
         .chatbot-input:focus {
-            border-color: #2563eb;
+            border-color: #eba625;
         }
 
         /* Send button */
         .chatbot-send-btn {
-            background-color: #2563eb;
+            background-color: #ebb625;
             color: white;
             border: none;
             border-radius: 0 8px 8px 0;
@@ -183,7 +183,7 @@
         }
 
         .chatbot-send-btn:hover {
-            background-color: #1e40af;
+            background-color: #af581e;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -473,10 +473,11 @@
         <button @click="open = !open"
             class="chatbot-toggle group relative chatbot-toggle-btn text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             :class="{ 'rotate-180': open }">
-            <svg x-show="!open" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            {{-- <svg x-show="!open" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path
                     d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 2.98.97 4.29L1 23l6.71-1.97C9.02 21.64 10.46 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-            </svg>
+            </svg> --}}
+            <span x-show="!open" style="font-weight: 600; color:rgb(255, 255, 255)">Ask AI</span>
             <svg x-show="open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                 </path>
