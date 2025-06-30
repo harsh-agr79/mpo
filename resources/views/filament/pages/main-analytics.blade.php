@@ -194,7 +194,10 @@
         class="border bg-order-summary border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm items-center">
         {{ $this->form }}
     </div>
-
+     <div
+        class="border bg-order-summary border-gray-200 dark:border-gray-700 rounded-lg p-1 bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm text-center" style="font-weight: 600; font-size: 1.4rem;">
+               Total Sales: Rs. {{ number_format($this->getDataProperty()['overall_sales']) }}
+    </div>
     <div class="overflow-x-auto rounded-b-md">
         <div class="w-full divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-900 p-3 rounded-md" id="accordion">
             @foreach ($this->getDataProperty()['categories'] as $index => $category)
