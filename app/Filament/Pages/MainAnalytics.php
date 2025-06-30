@@ -16,7 +16,9 @@ use Filament\Forms\Components\ {
     ;
 
     class MainAnalytics extends Page {
-        protected static ?string $navigationIcon = 'heroicon-o-document-text';
+        protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
+
+        protected static ?string $navigationGroup = 'Analytics';
 
         protected static string $view = 'filament.pages.main-analytics';
 

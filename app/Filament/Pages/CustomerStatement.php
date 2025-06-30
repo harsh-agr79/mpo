@@ -19,7 +19,9 @@ use Filament\Forms\Components\{Grid, Select, DatePicker};
 
 class CustomerStatement extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+
+    protected static ?string $navigationGroup = 'Analytics';
 
     protected static string $view = 'filament.pages.customer-statement';
 
