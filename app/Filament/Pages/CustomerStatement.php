@@ -23,7 +23,7 @@ class CustomerStatement extends Page
 
     protected static string $view = 'filament.pages.customer-statement';
 
-   public ?int $customerId = null;
+    public ?int $customerId = null;
     public ?string $startDate = null;
     public ?string $endDate = null;
     public $selectedCustomerId;
