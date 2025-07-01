@@ -1,0 +1,127 @@
+<x-filament-panels::page>
+    {{-- Filter Form --}}
+    <div
+        class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm text-black dark:text-white">
+        {{ $this->form }}
+    </div>
+
+    {{-- Product Checkboxes (if category is selected) --}}
+    @if ($categoryId)
+        <div class="mt-4 bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
+            <p class="font-semibold mb-2">Select Products for Line Chart:</p>
+            @php
+                $selectedCategory = \App\Models\Category::with('products')->find($categoryId);
+            @endphp
+            @if ($selectedCategory && $selectedCategory->products->count())
+                <div class="flex flex-wrap gap-4">
+                    @foreach ($selectedCategory->products as $product)
+                        <label class="inline-flex items-center space-x-2">
+                            <input type="checkbox" value="{{ $product->name }}" class="product-toggle" checked>
+                            <span>{{ $product->name }}</span>
+                        </label>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+    @endif
+
+
+
+    {{-- Data Table --}}
+    <div class="mt-6 overflow-x-auto">
+        <table class="table-auto w-full border text-sm text-gray-700 dark:text-gray-200">
+            <thead class="bg-gray-100 dark:bg-gray-800">
+                <tr>
+                    <th class="px-4 py-2 text-left">Month</th>
+                    @foreach ($this->getDataProperty()['categories'] as $category)
+                        <th class="px-4 py-2 text-center">{{ $category }}</th>
+                    @endforeach
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($this->getDataProperty()['data'] as $month => $values)
+                    <tr class="border-t border-gray-200 dark:border-gray-700">
+                        <td class="px-4 py-2">{{ $month }}</td>
+                        @foreach ($this->getDataProperty()['categories'] as $category)
+                            <td class="px-4 py-2 text-center">
+                                {{ $values[$category] ?? 0 }}
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
+    {{-- Chart Container --}}
+    <div class="mt-6">
+        <div id="linechart_material" style="width: 100%; height: 500px;"></div>
+    </div>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        google.charts.load('current', {
+            packages: ['line']
+        });
+
+        let chartData = @json($this->getDataProperty());
+        let chart;
+
+        function drawChart(selectedItems = null) {
+            const container = document.getElementById('linechart_material');
+            if (!container) return; // DOM not ready
+
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Month');
+
+            const labels = selectedItems ?? chartData.categories;
+            labels.forEach(label => data.addColumn('number', label));
+
+            Object.entries(chartData.data).forEach(([month, values]) => {
+                const row = [month];
+                labels.forEach(label => row.push(values[label] ?? 0));
+                data.addRow(row);
+            });
+
+            const options = {
+                chart: {
+                    title: 'Approved Quantity Trend',
+                    subtitle: 'Nepali Month-wise'
+                },
+                width: container.offsetWidth,
+                height: 500
+            };
+
+            chart = new google.charts.Line(container);
+            chart.draw(data, google.charts.Line.convertOptions(options));
+        }
+
+        function setupCheckboxListener() {
+            document.querySelectorAll('.product-toggle').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    const selected = Array.from(document.querySelectorAll('.product-toggle:checked')).map(
+                        cb => cb.value);
+                    drawChart(selected.length > 0 ? selected : null);
+                });
+            });
+        }
+
+        document.addEventListener('livewire:load', () => {
+            google.charts.setOnLoadCallback(() => {
+                drawChart();
+                setupCheckboxListener();
+            });
+        });
+
+        document.addEventListener('livewire:message.processed', () => {
+            chartData = @json($this->getDataProperty());
+            drawChart();
+            setupCheckboxListener();
+        });
+
+        window.addEventListener('resize', () => {
+            drawChart();
+        });
+    </script>
+
+
+</x-filament-panels::page>

@@ -212,11 +212,12 @@
             </label>
         </div>
 
-        @if (!empty($this->Data))
-            <table class="table-auto w-full border mt-4 text-xs text-black dark:text-white">
-                <thead class="bg-gray-100 dark:bg-gray-800">
-                    <tr>
-                        <th class="border px-2 py-1 dark:border-gray-700 cursor-pointer"
+        <div style="overflow-x: scroll;">
+            @if (!empty($this->Data))
+                <table class="table-auto w-full border mt-4 text-xs text-black dark:text-white">
+                    <thead class="bg-gray-100 dark:bg-gray-800">
+                        <tr>
+                            <th class="border px-2 py-1 dark:border-gray-700 cursor-pointer"
                             @click="$wire.call('sortBy', 'created')">
                             Date
                             @if ($sortField === 'created')

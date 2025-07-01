@@ -1126,3 +1126,41 @@ function getEndOfFiscalYear($date = null)
 
     return $endDate->format('Y-m-d');
 }
+
+function getMonthName($month)
+{
+    $months = [
+        1 => 'Baishak',
+        2 => 'Jestha',
+        3 => 'Ashad',
+        4 => 'Shrawn',
+        5 => 'Bhadra',
+        6 => 'Ashwin',
+        7 => 'Kartik',
+        8 => 'Mangshir',
+        9 => 'Poush',
+        10 => 'Magh',
+        11 => 'Falgun',
+        12 => 'Chaitra'
+    ];
+
+    return $months[$month] ?? '';
+}
+
+function getNepaliMonthRange($startYear, $startMonth, $endYear, $endMonth): array {
+    $range = [];
+    $year = $startYear;
+    $month = $startMonth;
+
+    while ($year < $endYear || ($year === $endYear && $month <= $endMonth)) {
+        $range[] = ['year' => $year, 'month' => $month];
+        $month++;
+        if ($month > 12) {
+            $month = 1;
+            $year++;
+        }
+    }
+
+    return $range;
+}
+
