@@ -27,6 +27,11 @@ class CustomerSheet extends Page implements HasTable
 
     protected static ?string $navigationGroup = 'Analytics';
 
+    public function getTitle(): string
+    {
+        return '';
+    }
+
     public function table(Table $table): Table
     {
         return $table
