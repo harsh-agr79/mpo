@@ -76,7 +76,8 @@ class CustomerSheet extends Page implements HasTable
                     ->toggleable()
                     ->formatStateUsing(function ($state, $record) {
                         $color = $record->current_balance_type === 'debit' ? 'text-red-600' : 'text-green-600';
-                        return "<span class='{$color}'>{$state}</span>";
+                        $val = number_format($state);
+                        return "<span class='{$color}'>NPR {$val}</span>";
                     })
                     ->html(),
 
