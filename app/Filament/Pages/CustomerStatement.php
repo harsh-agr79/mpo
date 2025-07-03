@@ -118,12 +118,12 @@ class CustomerStatement extends Page
         })->toArray();
     }
 
-   public function getDataProperty()
+    public function getDataProperty()
     {
         $start = Carbon::parse($this->startDate);
         $end = Carbon::parse($this->endDate)->addDay();
 
-        // Opening balance before start date
+        // Transactions before start date
         $ordersBefore = $this->customer->orders()
             ->where('mainstatus', 'approved')
             ->whereNull('deleted_at')
@@ -143,12 +143,20 @@ class CustomerStatement extends Page
             ->whereDate('expense_date', '<', $start)
             ->get();
 
+        // Sum opening debit/credit from transactions
         $openingDebit = $ordersBefore->sum('net_total') + $expensesBefore->sum('amount');
         $openingCredit = $paymentsBefore->sum('amount') + $returnsBefore->sum('net_total');
 
-        $this->openingBalance = $openingDebit - $openingCredit;
+        // Include customer open_balance & open_balance_type
+        $customerOpening = $this->customer->open_balance ?? 0;
+        $customerOpeningType = $this->customer->open_balance_type ?? 'debit';
 
-        // Entries during selected date range
+        $adjustedCustomerOpening = $customerOpeningType === 'debit' ? $customerOpening : -$customerOpening;
+
+        // Final opening balance
+        $this->openingBalance = $adjustedCustomerOpening + ($openingDebit - $openingCredit);
+
+        // Transactions within the selected date range
         $orders = $this->customer->orders()
             ->where('mainstatus', 'approved')
             ->whereNull('deleted_at')
@@ -170,7 +178,6 @@ class CustomerStatement extends Page
             ->get();
 
         $entries = collect();
-
         $totalSales = 0;
         $totalPayments = 0;
         $totalReturns = 0;
@@ -258,5 +265,6 @@ class CustomerStatement extends Page
             ],
         ];
     }
+
 
 }

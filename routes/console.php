@@ -10,3 +10,4 @@ Artisan::command('inspire', function () {
 
 
 Schedule::command('stock:update')->everyMinute();
+Schedule::command('customers:update-balances')->everyMinute();
