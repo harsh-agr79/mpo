@@ -19,7 +19,7 @@ use Filament\Forms\Components\ {
     // use Carbon\Carbon;
 
     class ProductStatement extends Page {
-        protected static ?string $navigationIcon = 'heroicon-o-credit-card';
+        protected static ?string $navigationIcon = 'heroicon-o-arrows-up-down';
 
         protected static ?string $navigationGroup = 'Analytics';
 

@@ -13,7 +13,7 @@ use Filament\Forms\Components\{Grid, Select};
 
 class ProductReport extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chart-pie';
+    protected static ?string $navigationIcon = 'heroicon-o-presentation-chart-line';
     protected static ?string $navigationGroup = 'Analytics';
     protected static string $view = 'filament.pages.product-report';
 
