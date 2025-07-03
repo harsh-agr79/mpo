@@ -12,11 +12,12 @@
             margin: 0;
             padding: 0;
         }
-
+        
         .container {
             padding: 20px;
             margin: 0 auto;
-            max-width: 1000px;
+            max-width: 800px;
+            min-height: 1200px;
         }
 
         .logo {
