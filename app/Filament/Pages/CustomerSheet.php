@@ -16,6 +16,8 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TextInputFilter;
 
 
 class CustomerSheet extends Page implements HasTable
@@ -151,6 +153,30 @@ class CustomerSheet extends Page implements HasTable
                     ->sortable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                SelectFilter::make('area')
+                    ->options(
+                        Customer::query()->distinct()->pluck('area', 'area')->filter()->toArray()
+                    )
+                    ->searchable(),
+
+                SelectFilter::make('district')
+                    ->options(
+                        Customer::query()->distinct()->pluck('district', 'district')->filter()->toArray()
+                    )
+                    ->searchable(),
+
+                SelectFilter::make('state')
+                    ->options(
+                        Customer::query()->distinct()->pluck('state', 'state')->filter()->toArray()
+                    )
+                    ->searchable(),
+
+                TextInputFilter::make('address')
+                    ->label('Address Contains')
+                    ->placeholder('Enter address fragment')
+                    ->query(fn ($query, $value) => $query->where('address', 'like', "%{$value}%")),
             ])
             ->actions([
                 ActionGroup::make([
