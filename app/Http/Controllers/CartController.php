@@ -234,6 +234,7 @@ class CartController extends Controller
 
         return response()->json([
             'order' => $order,
+            'miti' => getNepaliDate($order->date),
             'items' => $orderItems,
             'materials' => $orderMaterials,
             'categoryCounts' => $categoryCounts,
