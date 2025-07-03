@@ -17,7 +17,8 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TextInputFilter;
+use Illuminate\Support\Facades\DB;
+// use Filament\Tables\Filters\TextInputFilter;
 
 
 class CustomerSheet extends Page implements HasTable
@@ -162,21 +163,23 @@ class CustomerSheet extends Page implements HasTable
                     ->searchable(),
 
                 SelectFilter::make('district')
+                    ->label('District')
                     ->options(
-                        User::query()->distinct()->pluck('district', 'district')->filter()->toArray()
+                        DB::table('districts')->pluck('name', 'id')->toArray()
                     )
                     ->searchable(),
 
                 SelectFilter::make('state')
+                    ->label('State')
                     ->options(
-                        User::query()->distinct()->pluck('state', 'state')->filter()->toArray()
+                        DB::table('provinces')->pluck('name', 'id')->toArray()
                     )
                     ->searchable(),
 
-                TextInputFilter::make('address')
-                    ->label('Address Contains')
-                    ->placeholder('Enter address fragment')
-                    ->query(fn ($query, $value) => $query->where('address', 'like', "%{$value}%")),
+                // TextInputFilter::make('address')
+                //     ->label('Address Contains')
+                //     ->placeholder('Enter address fragment')
+                //     ->query(fn ($query, $value) => $query->where('address', 'like', "%{$value}%")),
             ])
             ->actions([
                 ActionGroup::make([
