@@ -157,19 +157,19 @@ class CustomerSheet extends Page implements HasTable
             ->filters([
                 SelectFilter::make('area')
                     ->options(
-                        Customer::query()->distinct()->pluck('area', 'area')->filter()->toArray()
+                        User::query()->distinct()->pluck('area', 'area')->filter()->toArray()
                     )
                     ->searchable(),
 
                 SelectFilter::make('district')
                     ->options(
-                        Customer::query()->distinct()->pluck('district', 'district')->filter()->toArray()
+                        User::query()->distinct()->pluck('district', 'district')->filter()->toArray()
                     )
                     ->searchable(),
 
                 SelectFilter::make('state')
                     ->options(
-                        Customer::query()->distinct()->pluck('state', 'state')->filter()->toArray()
+                        User::query()->distinct()->pluck('state', 'state')->filter()->toArray()
                     )
                     ->searchable(),
 
