@@ -18,6 +18,7 @@ use Filament\Tables\Columns\TagsColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\DB;
+use Filament\Tables\Columns\SelectColumn;
 // use Filament\Tables\Filters\TextInputFilter;
 
 
@@ -121,7 +122,14 @@ class CustomerSheet extends Page implements HasTable
                         return "<span class='{$color}'>{$state}</span>";
                     })
                     ->html(),
-
+                SelectColumn::make('invoice_permission')
+                    ->label('Invoice Permission')
+                    // ->required()
+                    ->options([
+                        'Allowed' => 'Allowed',
+                        'Payment Alert' => 'Payment Alert',
+                        'Block Invoice' => 'Block Invoice',
+                    ]),
               
 
                 // Contact Info
