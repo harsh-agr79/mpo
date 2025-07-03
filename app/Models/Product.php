@@ -161,4 +161,123 @@ class Product extends BaseModel
             ->sum('quantity'); // ✅ sum instead of count
     }
 
+    public function approvedQuantityBetween($startDate, $endDate)
+    {
+        return $this->orderItems()
+            ->where('status', 'approved')
+            ->whereHas('order', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate])
+                    ->whereNull('deleted_at');
+            })
+            ->sum('approvedquantity');
+    }
+
+    public function approvedItemsBetween($startDate, $endDate)
+    {
+        return $this->orderItems()
+            ->where('status', 'approved')
+            ->whereHas('order', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate])
+                    ->whereNull('deleted_at');
+            })
+            ->get();
+    }
+
+    public function totalSalesReturnQuantityBetween($startDate, $endDate)
+    {
+        return $this->salesReturnItems()
+            ->whereHas('salesReturn', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate])
+                    ->whereNull('deleted_at');
+            })
+            ->sum('quantity');
+    }
+
+    public function salesReturnItemsBetween($startDate, $endDate)
+    {
+        return $this->salesReturnItems()
+            ->whereHas('salesReturn', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate])
+                    ->whereNull('deleted_at');
+            })
+            ->get();
+    }
+
+    public function totalPurchasedQuantityBetween($startDate, $endDate)
+    {
+        return $this->productsPurchaseItems()
+            ->whereHas('purchase', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->sum('quantity');
+    }
+
+    public function purchaseItemsBetween($startDate, $endDate)
+    {
+        return $this->productsPurchaseItems()
+            ->whereHas('purchase', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->get();
+    }
+
+    public function totalIncreasedQuantityBetween($startDate, $endDate)
+    {
+        return $this->productsAdjustmentItems()
+            ->where('type', 'increase')
+            ->whereHas('purchase', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->sum('quantity');
+    }
+
+    public function increasedAdjustmentItemsBetween($startDate, $endDate)
+    {
+        return $this->productsAdjustmentItems()
+            ->where('type', 'increase')
+            ->whereHas('purchase', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->get();
+    }
+
+    public function totalDecreasedQuantityBetween($startDate, $endDate)
+    {
+        return $this->productsAdjustmentItems()
+            ->where('type', 'decrease')
+            ->whereHas('purchase', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->sum('quantity');
+    }
+
+    public function decreasedAdjustmentItemsBetween($startDate, $endDate)
+    {
+        return $this->productsAdjustmentItems()
+            ->where('type', 'decrease')
+            ->whereHas('purchase', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->get();
+    }
+
+    public function totalDamageReplacedWithOtherBetween($startDate, $endDate)
+    {
+        return $this->damageReplacedItems()
+            ->where('solution', 'Replaced with new other item')
+            ->whereHas('damageItem.damage', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->sum('quantity');
+    }
+
+    public function damageReplacedWithOtherItemsBetween($startDate, $endDate)
+    {
+        return $this->damageReplacedItems()
+            ->where('solution', 'Replaced with new other item')
+            ->whereHas('damageItem.damage', function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+            })
+            ->get();
+    }
 }

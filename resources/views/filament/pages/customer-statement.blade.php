@@ -218,468 +218,476 @@
                     <thead class="bg-gray-100 dark:bg-gray-800">
                         <tr>
                             <th class="border px-2 py-1 dark:border-gray-700 cursor-pointer"
-                            @click="$wire.call('sortBy', 'created')">
-                            Date
-                            @if ($sortField === 'created')
-                                @if ($sortDirection === 'asc')
-                                    ▲
-                                @else
-                                    ▼
+                                @click="$wire.call('sortBy', 'created')">
+                                Date
+                                @if ($sortField === 'created')
+                                    @if ($sortDirection === 'asc')
+                                        ▲
+                                    @else
+                                        ▼
+                                    @endif
                                 @endif
-                            @endif
-                        </th>
-                        <th class="border px-2 py-1 dark:border-gray-700">Entry ID</th>
-                        <th class="border px-2 py-1 dark:border-gray-700">Type</th>
-                        <th class="border px-2 py-1 dark:border-gray-700">Debit</th>
-                        <th class="border px-2 py-1 dark:border-gray-700">Credit</th>
-                        <th class="border px-2 py-1 dark:border-gray-700">Running Balance</th>
-                        <template x-if="showVoucher">
-                            <th class="border px-2 py-1 dark:border-gray-700">Voucher</th>
-                        </template>
-                        <template x-if="showRemarks">
-                            <th class="border px-2 py-1 dark:border-gray-700">Remarks</th>
-                        </template>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $amt = $this->openingBalance; @endphp
-                    <tr class="bg-gray-50 dark:bg-gray-800 font-bold">
-                        <td colspan="3" class="px-2 py-1 text-right">Opening Balance</td>
-                        @if ($this->openingBalance > 0)
-                            <td class="border px-2 py-1 dark:border-gray-700">
-                                {{ number_format($this->openingBalance, 0) }}(Debit)</td>
-                            <td class="border px-2 py-1 dark:border-gray-700">0</td>
-                        @else
-                            <td class="border px-2 py-1 dark:border-gray-700">0</td>
-                            <td class="border px-2 py-1 dark:border-gray-700">
-                                {{ number_format(-1 * $this->openingBalance, 0) }}(Credit)</td>
-                        @endif
-                        <td class="amount-cell {{ $this->openingBalance < 0 ? 'amount-negative' : 'amount-positive' }}">
-                            {{ number_format(abs($this->openingBalance), 0) }}
-                        </td>
-                        <template x-if="showVoucher">
-                            <td class="border px-2 py-1 dark:border-gray-700">-</td>
-                        </template>
-                        <template x-if="showRemarks">
-                            <td class="border px-2 py-1 dark:border-gray-700">-</td>
-                        </template>
-                    </tr>
-
-                    @foreach ($this->entries as $entry)
-                        @php
-                            $amt = $amt + $entry['debit'] - $entry['credit'];
-                            $isNegative = $amt < 0;
-                            $nepDate = getNepaliDate(\Carbon\Carbon::parse($entry['created'])->toDateString());
-                            $engDate = \Carbon\Carbon::parse($entry['created'])->format('Y-m-d');
-                        @endphp
-                        <tr class="bg-white dark:bg-gray-900">
-                            <td class="border px-2 py-1 dark:border-gray-700">
-                                <span x-text="useNepaliDate ? '{{ $nepDate }}' : '{{ $engDate }}'"></span>
-                            </td>
-                            <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['ent_id'] }}</td>
-                            <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['type'] }}</td>
-                            <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($entry['debit'], 0) }}
-                            </td>
-                            <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($entry['credit'], 0) }}
-                            </td>
-                            <td class="amount-cell {{ $isNegative ? 'amount-negative' : 'amount-positive' }}">
-                                {{ number_format(abs($amt), 0) }}
-                            </td>
+                            </th>
+                            <th class="border px-2 py-1 dark:border-gray-700">Entry ID</th>
+                            <th class="border px-2 py-1 dark:border-gray-700">Type</th>
+                            <th class="border px-2 py-1 dark:border-gray-700">Debit</th>
+                            <th class="border px-2 py-1 dark:border-gray-700">Credit</th>
+                            <th class="border px-2 py-1 dark:border-gray-700">Running Balance</th>
                             <template x-if="showVoucher">
-                                <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['voucher'] ?? '-' }}</td>
+                                <th class="border px-2 py-1 dark:border-gray-700">Voucher</th>
                             </template>
                             <template x-if="showRemarks">
-                                <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['remarks'] ?? '-' }}</td>
+                                <th class="border px-2 py-1 dark:border-gray-700">Remarks</th>
                             </template>
                         </tr>
-                    @endforeach
-                </tbody>
-                <tfoot class="font-bold text-sm bg-gray-100 dark:bg-gray-800">
-                    @php
-                        $totals = $this->Data['totals'];
-                        $opening = $this->openingBalance;
+                    </thead>
+                    <tbody>
+                        @php $amt = $this->openingBalance; @endphp
+                        <tr class="bg-gray-50 dark:bg-gray-800 font-bold">
+                            <td colspan="3" class="px-2 py-1 text-right">Opening Balance</td>
+                            @if ($this->openingBalance > 0)
+                                <td class="border px-2 py-1 dark:border-gray-700">
+                                    {{ number_format($this->openingBalance, 0) }}(Debit)</td>
+                                <td class="border px-2 py-1 dark:border-gray-700">0</td>
+                            @else
+                                <td class="border px-2 py-1 dark:border-gray-700">0</td>
+                                <td class="border px-2 py-1 dark:border-gray-700">
+                                    {{ number_format(-1 * $this->openingBalance, 0) }}(Credit)</td>
+                            @endif
+                            <td
+                                class="amount-cell {{ $this->openingBalance < 0 ? 'amount-negative' : 'amount-positive' }}">
+                                {{ number_format(abs($this->openingBalance), 0) }}
+                            </td>
+                            <template x-if="showVoucher">
+                                <td class="border px-2 py-1 dark:border-gray-700">-</td>
+                            </template>
+                            <template x-if="showRemarks">
+                                <td class="border px-2 py-1 dark:border-gray-700">-</td>
+                            </template>
+                        </tr>
 
-                        $debit = $totals['sales'] + $totals['expenses'];
-                        $credit = $totals['payments'] + $totals['returns'];
+                        @foreach ($this->entries as $entry)
+                            @php
+                                $amt = $amt + $entry['debit'] - $entry['credit'];
+                                $isNegative = $amt < 0;
+                                $nepDate = getNepaliDate(\Carbon\Carbon::parse($entry['created'])->toDateString());
+                                $engDate = \Carbon\Carbon::parse($entry['created'])->format('Y-m-d');
+                            @endphp
+                            <tr class="bg-white dark:bg-gray-900">
+                                <td class="border px-2 py-1 dark:border-gray-700">
+                                    <span x-text="useNepaliDate ? '{{ $nepDate }}' : '{{ $engDate }}'"></span>
+                                </td>
+                                <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['ent_id'] }}</td>
+                                <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['type'] }}</td>
+                                <td class="border px-2 py-1 dark:border-gray-700">
+                                    {{ number_format($entry['debit'], 0) }}
+                                </td>
+                                <td class="border px-2 py-1 dark:border-gray-700">
+                                    {{ number_format($entry['credit'], 0) }}
+                                </td>
+                                <td class="amount-cell {{ $isNegative ? 'amount-negative' : 'amount-positive' }}">
+                                    {{ number_format(abs($amt), 0) }}
+                                </td>
+                                <template x-if="showVoucher">
+                                    <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['voucher'] ?? '-' }}
+                                    </td>
+                                </template>
+                                <template x-if="showRemarks">
+                                    <td class="border px-2 py-1 dark:border-gray-700">{{ $entry['remarks'] ?? '-' }}
+                                    </td>
+                                </template>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot class="font-bold text-sm bg-gray-100 dark:bg-gray-800">
+                        @php
+                            $totals = $this->Data['totals'];
+                            $opening = $this->openingBalance;
 
-                        $net = $totals['netBalance'] + $opening;
+                            $debit = $totals['sales'] + $totals['expenses'];
+                            $credit = $totals['payments'] + $totals['returns'];
 
-                        $openingDebit = $opening > 0 ? $opening : 0;
-                        $openingCredit = $opening < 0 ? abs($opening) : 0;
+                            $net = $totals['netBalance'] + $opening;
 
-                        $debit += $openingDebit;
-                        $credit += $openingCredit;
-                    @endphp
+                            $openingDebit = $opening > 0 ? $opening : 0;
+                            $openingCredit = $opening < 0 ? abs($opening) : 0;
 
-                    @php
-                        $colspan = 3;
-                        if ($showVoucher) {
-                            $colspan++;
-                        }
-                        if ($showRemarks) {
-                            $colspan++;
-                        }
-                    @endphp
+                            $debit += $openingDebit;
+                            $credit += $openingCredit;
+                        @endphp
 
-                    <tr>
-                        <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">Opening Balance</td>
-                        <td class="border px-2 py-1 dark:border-gray-700">
-                            {{ $opening > 0 ? number_format($opening, 0) : '0' }}
-                        </td>
-                        <td class="border px-2 py-1 dark:border-gray-700">
-                            {{ $opening < 0 ? number_format(abs($opening), 0) : '0' }}
-                        </td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @if ($showVoucher)
+                        @php
+                            $colspan = 3;
+                            if ($showVoucher) {
+                                $colspan++;
+                            }
+                            if ($showRemarks) {
+                                $colspan++;
+                            }
+                        @endphp
+
+                        <tr>
+                            <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
+                            <td class="border px-2 py-1 dark:border-gray-700">Opening Balance</td>
+                            <td class="border px-2 py-1 dark:border-gray-700">
+                                {{ $opening > 0 ? number_format($opening, 0) : '0' }}
+                            </td>
+                            <td class="border px-2 py-1 dark:border-gray-700">
+                                {{ $opening < 0 ? number_format(abs($opening), 0) : '0' }}
+                            </td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                        @if ($showRemarks)
-                            <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                    </tr>
+                            @if ($showVoucher)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                            @if ($showRemarks)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                        </tr>
 
-                    <tr>
-                        <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">Total Sales</td>
-                        <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($totals['sales'], 0) }}</td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @if ($showVoucher)
+                        <tr>
+                            <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
+                            <td class="border px-2 py-1 dark:border-gray-700">Total Sales</td>
+                            <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($totals['sales'], 0) }}
+                            </td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                        @if ($showRemarks)
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                    </tr>
+                            @if ($showVoucher)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                            @if ($showRemarks)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                        </tr>
 
-                    <tr>
-                        <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">Total Expenses</td>
-                        <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($totals['expenses'], 0) }}
-                        </td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @if ($showVoucher)
+                        <tr>
+                            <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
+                            <td class="border px-2 py-1 dark:border-gray-700">Total Expenses</td>
+                            <td class="border px-2 py-1 dark:border-gray-700">
+                                {{ number_format($totals['expenses'], 0) }}
+                            </td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                        @if ($showRemarks)
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                    </tr>
+                            @if ($showVoucher)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                            @if ($showRemarks)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                        </tr>
 
-                    <tr>
-                        <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">Total Payments</td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($totals['payments'], 0) }}
-                        </td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @if ($showVoucher)
+                        <tr>
+                            <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
+                            <td class="border px-2 py-1 dark:border-gray-700">Total Payments</td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                        @if ($showRemarks)
+                            <td class="border px-2 py-1 dark:border-gray-700">
+                                {{ number_format($totals['payments'], 0) }}
+                            </td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                    </tr>
+                            @if ($showVoucher)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                            @if ($showRemarks)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                        </tr>
 
-                    <tr>
-                        <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">Total Sales Returns</td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($totals['returns'], 0) }}
-                        </td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @if ($showVoucher)
+                        <tr>
+                            <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
+                            <td class="border px-2 py-1 dark:border-gray-700">Total Sales Returns</td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                        @if ($showRemarks)
+                            <td class="border px-2 py-1 dark:border-gray-700">
+                                {{ number_format($totals['returns'], 0) }}
+                            </td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                    </tr>
+                            @if ($showVoucher)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                            @if ($showRemarks)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                        </tr>
 
-                    <tr>
-                        <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">Total</td>
-                        <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($debit, 0) }}</td>
-                        <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($credit, 0) }}</td>
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @if ($showVoucher)
+                        <tr>
+                            <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
+                            <td class="border px-2 py-1 dark:border-gray-700">Total</td>
+                            <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($debit, 0) }}</td>
+                            <td class="border px-2 py-1 dark:border-gray-700">{{ number_format($credit, 0) }}</td>
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                        @if ($showRemarks)
+                            @if ($showVoucher)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                            @if ($showRemarks)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                        </tr>
+
+                        <tr>
+                            <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
+                            <td class="border px-2 py-1 dark:border-gray-700">Balance</td>
+                            @if ($net > 0)
+                                <td class="amount-cell amount-positive border dark:border-gray-700">
+                                    {{ number_format($net, 0) }}</td>
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @elseif ($net < 0)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                                <td class="amount-cell amount-negative border dark:border-gray-700">
+                                    {{ number_format(abs($net), 0) }}</td>
+                            @else
+                                <td class="border px-2 py-1 dark:border-gray-700">0</td>
+                                <td class="border px-2 py-1 dark:border-gray-700">0</td>
+                            @endif
                             <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                    </tr>
-
-                    <tr>
-                        <td class="border px-2 py-1 dark:border-gray-700" colspan="2"></td>
-                        <td class="border px-2 py-1 dark:border-gray-700">Balance</td>
-                        @if ($net > 0)
-                            <td class="amount-cell amount-positive border dark:border-gray-700">
-                                {{ number_format($net, 0) }}</td>
-                            <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @elseif ($net < 0)
-                            <td class="border px-2 py-1 dark:border-gray-700"></td>
-                            <td class="amount-cell amount-negative border dark:border-gray-700">
-                                {{ number_format(abs($net), 0) }}</td>
-                        @else
-                            <td class="border px-2 py-1 dark:border-gray-700">0</td>
-                            <td class="border px-2 py-1 dark:border-gray-700">0</td>
-                        @endif
-                        <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @if ($showVoucher)
-                            <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                        @if ($showRemarks)
-                            <td class="border px-2 py-1 dark:border-gray-700"></td>
-                        @endif
-                    </tr>
-                </tfoot>
-
-
-            </table>
-        @endif
-    </div>
-
-    @php
-        $aiContext = [
-            'customer' => [
-                'name' => $this->customer->name,
-                'id' => $this->customer->id,
-            ],
-            'openingBalance' => $this->openingBalance,
-            'totals' => $this->Data['totals'],
-            'entries' => $this->entries->map(function ($entry) {
-                return [
-                    'date' => $entry['created']->toDateString(),
-                    'type' => $entry['type'],
-                    'debit' => $entry['debit'],
-                    'credit' => $entry['credit'],
-                    'remarks' => $entry['remarks'],
-                    'othersname' => $entry['othersname'],
-                ];
-            }),
-        ];
-    @endphp
-
-    <script>
-        window.__AI_PAGE_CONTEXT__ = @json($aiContext);
-
-        window.addEventListener('context-updated', (e) => {
-            window.__AI_PAGE_CONTEXT__ = e.detail.context;
-        });
-    </script>
-    <div x-data="chatBot()" class="chatbot-container">
-        <button @click="open = !open"
-            class="chatbot-toggle group relative chatbot-toggle-btn text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            :class="{ 'rotate-180': open }">
-            {{-- <svg x-show="!open" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                    d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 2.98.97 4.29L1 23l6.71-1.97C9.02 21.64 10.46 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
-            </svg> --}}
-            <span x-show="!open" style="font-weight: 600; color:rgb(255, 255, 255)">Ask AI</span>
-            <svg x-show="open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                </path>
-            </svg>
-        </button>
-
-        <div x-show="open" x-transition class="chatbot-window">
-            <div class="chatbot-messages">
-                <template x-for="message in messages" :key="message.id">
-                    <div :class="{
-                        'chatbot-msg-user': message.role === 'user',
-                        'chatbot-msg-bot': message
-                            .role === 'bot'
-                    }"
-                        class="chatbot-msg-wrapper">
-                        <div class="chatbot-msg"
-                            :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'">
-                            <div class=""
-                                :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'"
-                                x-html="marked.parse(message.text)">
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <div x-show="loading" class="chatbot-loading">AI is typing...</div>
-            </div>
-
-            <div class="chatbot-input-wrapper">
-                <input type="text" x-model="input" @keydown.enter="sendMessage()"
-                    placeholder="Type your message..." class="chatbot-input" />
-                <button @click="sendMessage()" class="chatbot-send-btn">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.49-.87.99l.01 4.61c0 .71.73 1.2 1.39.91z" />
-                    </svg>
-                </button>
-            </div>
+                            @if ($showVoucher)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                            @if ($showRemarks)
+                                <td class="border px-2 py-1 dark:border-gray-700"></td>
+                            @endif
+                        </tr>
+                    </tfoot>
+                </table>
+            @endif
         </div>
     </div>
 
+        @php
+            $aiContext = [
+                'customer' => [
+                    'name' => $this->customer->name,
+                    'id' => $this->customer->id,
+                ],
+                'openingBalance' => $this->openingBalance,
+                'totals' => $this->Data['totals'],
+                'entries' => $this->entries->map(function ($entry) {
+                    return [
+                        'date' => $entry['created']->toDateString(),
+                        'type' => $entry['type'],
+                        'debit' => $entry['debit'],
+                        'credit' => $entry['credit'],
+                        'remarks' => $entry['remarks'],
+                        'othersname' => $entry['othersname'],
+                    ];
+                }),
+            ];
+        @endphp
 
-    <script>
-        function chatBot() {
-            return {
-                open: false,
-                input: '',
-                messages: [],
-                loading: false,
+        <script>
+            window.__AI_PAGE_CONTEXT__ = @json($aiContext);
 
-                // getTransactionData() {
-                //     const rows = document.querySelectorAll('table tbody tr');
-                //     const table = document.querySelector('table');
-                //     // console.log(table);
-                //     return Array.from(rows).map(row => {
-                //         const cells = row.querySelectorAll('td');
+            window.addEventListener('context-updated', (e) => {
+                window.__AI_PAGE_CONTEXT__ = e.detail.context;
+            });
+        </script>
+        <div x-data="chatBot()" class="chatbot-container">
+            <button @click="open = !open"
+                class="chatbot-toggle group relative chatbot-toggle-btn text-white rounded-full p-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                :class="{ 'rotate-180': open }">
+                {{-- <svg x-show="!open" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12c0 1.54.36 2.98.97 4.29L1 23l6.71-1.97C9.02 21.64 10.46 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg> --}}
+                <span x-show="!open" style="font-weight: 600; color:rgb(255, 255, 255)">Ask AI</span>
+                <svg x-show="open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
 
-                //         if (cells.length < 6) return null;
+            <div x-show="open" x-transition class="chatbot-window">
+                <div class="chatbot-messages">
+                    <template x-for="message in messages" :key="message.id">
+                        <div :class="{
+                            'chatbot-msg-user': message.role === 'user',
+                            'chatbot-msg-bot': message
+                                .role === 'bot'
+                        }"
+                            class="chatbot-msg-wrapper">
+                            <div class="chatbot-msg"
+                                :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'">
+                                <div class=""
+                                    :class="message.role === 'user' ? 'chatbot-msg-user-bg' : 'chatbot-msg-bot-bg'"
+                                    x-html="marked.parse(message.text)">
+                                </div>
+                            </div>
+                        </div>
+                    </template>
 
-                //         const date = cells[0]?.innerText.trim() || '';
-                //         const entryId = cells[1]?.innerText.trim() || '';
-                //         const type = cells[2]?.innerText.trim() || '';
-                //         const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
-                //         const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
-                //         const balance = cells[5]?.innerText.replace(/,/g, '').trim() || '';
+                    <div x-show="loading" class="chatbot-loading">AI is typing...</div>
+                </div>
 
-                //         const voucher = cells.length >= 7 ? cells[6]?.innerText.trim() : '';
-                //         const remarks = cells.length >= 8 ? cells[7]?.innerText.trim() : '';
+                <div class="chatbot-input-wrapper">
+                    <input type="text" x-model="input" @keydown.enter="sendMessage()"
+                        placeholder="Type your message..." class="chatbot-input" />
+                    <button @click="sendMessage()" class="chatbot-send-btn">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M3.4 20.4l17.45-7.48c.81-.35.81-1.49 0-1.84L3.4 3.6c-.66-.29-1.39.2-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.49-.87.99l.01 4.61c0 .71.73 1.2 1.39.91z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                //         // Filter out rows like "Total", "Opening Balance", etc.
-                //         const skipKeywords = ['Opening Balance', 'Total', 'Balance', 'Total Sales',
-                //             'Total Payments', 'Total Expenses', 'Total Sales Returns'
-                //         ];
-                //         if (skipKeywords.some(keyword => type.toLowerCase().includes(keyword.toLowerCase()))) {
-                //             return null;
-                //         }
 
-                //         return {
-                //             date,
-                //             entryId,
-                //             type,
-                //             debit,
-                //             credit,
-                //             balance,
-                //             voucher,
-                //             remarks
-                //         };
-                //     }).filter(e => e !== null);
-                // },
+        <script>
+            function chatBot() {
+                return {
+                    open: false,
+                    input: '',
+                    messages: [],
+                    loading: false,
 
-                // getTableSummary() {
-                //     const rows = document.querySelectorAll('table tfoot tr');
-                //     const summary = {};
-                //     rows.forEach(row => {
-                //         const cells = row.querySelectorAll('td');
-                //         const label = cells[2]?.innerText.trim().toLowerCase();
-                //         const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
-                //         const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
+                    // getTransactionData() {
+                    //     const rows = document.querySelectorAll('table tbody tr');
+                    //     const table = document.querySelector('table');
+                    //     // console.log(table);
+                    //     return Array.from(rows).map(row => {
+                    //         const cells = row.querySelectorAll('td');
 
-                //         if (label.includes('opening balance')) {
-                //             summary.openingBalance = {
-                //                 debit: Number(debit),
-                //                 credit: Number(credit)
-                //             };
-                //         } else if (label.includes('total sales')) {
-                //             summary.totalSales = Number(debit);
-                //         } else if (label.includes('total expenses')) {
-                //             summary.totalExpenses = Number(debit);
-                //         } else if (label.includes('total payments')) {
-                //             summary.totalPayments = Number(credit);
-                //         } else if (label.includes('total sales returns')) {
-                //             summary.totalReturns = Number(credit);
-                //         } else if (label === 'total') {
-                //             summary.totalDebit = Number(debit);
-                //             summary.totalCredit = Number(credit);
-                //         } else if (label === 'balance') {
-                //             summary.balance = {
-                //                 debit: Number(debit) || 0,
-                //                 credit: Number(credit) || 0
-                //             };
-                //         }
-                //     });
-                //     return summary;
-                // },
+                    //         if (cells.length < 6) return null;
 
-                async sendMessage() {
-                    if (!this.input.trim()) return;
+                    //         const date = cells[0]?.innerText.trim() || '';
+                    //         const entryId = cells[1]?.innerText.trim() || '';
+                    //         const type = cells[2]?.innerText.trim() || '';
+                    //         const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
+                    //         const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
+                    //         const balance = cells[5]?.innerText.replace(/,/g, '').trim() || '';
 
-                    // const transactions = this.getTransactionData();
-                    // const summary = this.getTableSummary();
-                    const table = document.querySelector('table');
+                    //         const voucher = cells.length >= 7 ? cells[6]?.innerText.trim() : '';
+                    //         const remarks = cells.length >= 8 ? cells[7]?.innerText.trim() : '';
 
-                    // const entriesSummary = transactions.map(e =>
-                    //     `Date: ${e.date}\nEntry ID: ${e.entryId}\nType: ${e.type}\nDebit: ${e.debit}\nCredit: ${e.credit}\nBalance: ${e.balance}\nVoucher: ${e.voucher}\nRemarks: ${e.remarks}\n---`
-                    // ).join('\n');
+                    //         // Filter out rows like "Total", "Opening Balance", etc.
+                    //         const skipKeywords = ['Opening Balance', 'Total', 'Balance', 'Total Sales',
+                    //             'Total Payments', 'Total Expenses', 'Total Sales Returns'
+                    //         ];
+                    //         if (skipKeywords.some(keyword => type.toLowerCase().includes(keyword.toLowerCase()))) {
+                    //             return null;
+                    //         }
 
-                    // const contextPrompt =
-                    //     `Opening Balance: Debit ${summary.openingBalance?.debit || 0}, Credit ${summary.openingBalance?.credit || 0}\n` +
-                    //     `Total Sales: ${summary.totalSales || 0}\nTotal Expenses: ${summary.totalExpenses || 0}\n` +
-                    //     `Total Payments: ${summary.totalPayments || 0}\nTotal Sales Returns: ${summary.totalReturns || 0}\n` +
-                    //     `Overall Total Debit: ${summary.totalDebit || 0}, Total Credit: ${summary.totalCredit || 0}\n` +
-                    //     `Net Balance: Debit ${summary.balance?.debit || 0}, Credit ${summary.balance?.credit || 0}\n\n` +
-                    //     `Transactions:\n${entriesSummary}`;
+                    //         return {
+                    //             date,
+                    //             entryId,
+                    //             type,
+                    //             debit,
+                    //             credit,
+                    //             balance,
+                    //             voucher,
+                    //             remarks
+                    //         };
+                    //     }).filter(e => e !== null);
+                    // },
 
-                    const fullPrompt =
-                        `You are an intelligent assistant analyzing a customer financial statement given in html table format (In Nepali Rupees). Use the context below to answer the user's question.\n\nTable:\n${table.outerHTML}\n\nUser Question: ${this.input}`;
+                    // getTableSummary() {
+                    //     const rows = document.querySelectorAll('table tfoot tr');
+                    //     const summary = {};
+                    //     rows.forEach(row => {
+                    //         const cells = row.querySelectorAll('td');
+                    //         const label = cells[2]?.innerText.trim().toLowerCase();
+                    //         const debit = cells[3]?.innerText.replace(/,/g, '').trim() || '0';
+                    //         const credit = cells[4]?.innerText.replace(/,/g, '').trim() || '0';
 
-                    const userMsg = {
-                        id: Date.now(),
-                        role: 'user',
-                        text: this.input
-                    };
-                    this.messages.push(userMsg);
-                    this.loading = true;
-                    this.input = '';
+                    //         if (label.includes('opening balance')) {
+                    //             summary.openingBalance = {
+                    //                 debit: Number(debit),
+                    //                 credit: Number(credit)
+                    //             };
+                    //         } else if (label.includes('total sales')) {
+                    //             summary.totalSales = Number(debit);
+                    //         } else if (label.includes('total expenses')) {
+                    //             summary.totalExpenses = Number(debit);
+                    //         } else if (label.includes('total payments')) {
+                    //             summary.totalPayments = Number(credit);
+                    //         } else if (label.includes('total sales returns')) {
+                    //             summary.totalReturns = Number(credit);
+                    //         } else if (label === 'total') {
+                    //             summary.totalDebit = Number(debit);
+                    //             summary.totalCredit = Number(credit);
+                    //         } else if (label === 'balance') {
+                    //             summary.balance = {
+                    //                 debit: Number(debit) || 0,
+                    //                 credit: Number(credit) || 0
+                    //             };
+                    //         }
+                    //     });
+                    //     return summary;
+                    // },
 
-                    const botId = Date.now() + 1;
-                    this.messages.push({
-                        id: botId,
-                        role: 'bot',
-                        text: '...'
-                    });
+                    async sendMessage() {
+                        if (!this.input.trim()) return;
 
-                    try {
-                        const response = await fetch('/ai-chat', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                prompt: fullPrompt
-                            })
-                        });
+                        // const transactions = this.getTransactionData();
+                        // const summary = this.getTableSummary();
+                        const table = document.querySelector('table');
 
-                        const data = await response.json();
-                        const reply = data.reply || 'No response received.';
+                        // const entriesSummary = transactions.map(e =>
+                        //     `Date: ${e.date}\nEntry ID: ${e.entryId}\nType: ${e.type}\nDebit: ${e.debit}\nCredit: ${e.credit}\nBalance: ${e.balance}\nVoucher: ${e.voucher}\nRemarks: ${e.remarks}\n---`
+                        // ).join('\n');
 
-                        this.messages = this.messages.map(m =>
-                            m.id === botId ? {
-                                ...m,
-                                text: reply
-                            } : m
-                        );
-                    } catch (error) {
+                        // const contextPrompt =
+                        //     `Opening Balance: Debit ${summary.openingBalance?.debit || 0}, Credit ${summary.openingBalance?.credit || 0}\n` +
+                        //     `Total Sales: ${summary.totalSales || 0}\nTotal Expenses: ${summary.totalExpenses || 0}\n` +
+                        //     `Total Payments: ${summary.totalPayments || 0}\nTotal Sales Returns: ${summary.totalReturns || 0}\n` +
+                        //     `Overall Total Debit: ${summary.totalDebit || 0}, Total Credit: ${summary.totalCredit || 0}\n` +
+                        //     `Net Balance: Debit ${summary.balance?.debit || 0}, Credit ${summary.balance?.credit || 0}\n\n` +
+                        //     `Transactions:\n${entriesSummary}`;
+
+                        const fullPrompt =
+                            `You are an intelligent assistant analyzing a customer financial statement given in html table format (In Nepali Rupees). Use the context below to answer the user's question.\n\nTable:\n${table.outerHTML}\n\nUser Question: ${this.input}`;
+
+                        const userMsg = {
+                            id: Date.now(),
+                            role: 'user',
+                            text: this.input
+                        };
+                        this.messages.push(userMsg);
+                        this.loading = true;
+                        this.input = '';
+
+                        const botId = Date.now() + 1;
                         this.messages.push({
-                            id: Date.now() + 2,
+                            id: botId,
                             role: 'bot',
-                            text: 'An error occurred. Please try again.'
+                            text: '...'
                         });
-                    } finally {
-                        this.loading = false;
-                        this.$nextTick(() => {
-                            const container = document.querySelector('[x-data="chatBot()"] .chatbot-messages');
-                            container.scrollTop = container.scrollHeight;
-                        });
+
+                        try {
+                            const response = await fetch('/ai-chat', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    prompt: fullPrompt
+                                })
+                            });
+
+                            const data = await response.json();
+                            const reply = data.reply || 'No response received.';
+
+                            this.messages = this.messages.map(m =>
+                                m.id === botId ? {
+                                    ...m,
+                                    text: reply
+                                } : m
+                            );
+                        } catch (error) {
+                            this.messages.push({
+                                id: Date.now() + 2,
+                                role: 'bot',
+                                text: 'An error occurred. Please try again.'
+                            });
+                        } finally {
+                            this.loading = false;
+                            this.$nextTick(() => {
+                                const container = document.querySelector('[x-data="chatBot()"] .chatbot-messages');
+                                container.scrollTop = container.scrollHeight;
+                            });
+                        }
                     }
-                }
-            };
-        }
-    </script>
+                };
+            }
+        </script>
 
 
 
