@@ -8,6 +8,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ResourceController;
 use App\Http\Controllers\DamageController;
+use App\Http\Controllers\AnalyticsController;
 
 
 Route::middleware(api_key::class)->group(function () {
@@ -44,5 +45,7 @@ Route::middleware(api_key::class)->group(function () {
         Route::post('/createdamageticket', [DamageController::class, 'createDamage']);
         Route::get('/damagetickets', [DamageController::class, 'getDamageTickets']);
         Route::get('/damageticket/{id}', [DamageController::class, 'getDamageTicket']);
+
+        Route::get('/mainanalytics', [AnalyticsController::class, 'mainAnalytics']);
     });
 });
