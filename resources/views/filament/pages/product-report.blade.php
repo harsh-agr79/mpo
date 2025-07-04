@@ -1,4 +1,5 @@
 <x-filament-panels::page>
+    {{-- {{ dd($this->getDataProperty()) }} --}}
     {{-- Filter Form --}}
     <div
         class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm text-black dark:text-white">
@@ -6,7 +7,7 @@
     </div>
 
     {{-- Product Checkboxes (if category is selected) --}}
-    @if ($categoryId)
+    {{-- @if ($categoryId)
         <div class="mt-4 bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700">
             <p class="font-semibold mb-2">Select Products for Line Chart:</p>
             @php
@@ -23,7 +24,7 @@
                 </div>
             @endif
         </div>
-    @endif
+    @endif --}}
 
 
 
@@ -34,7 +35,14 @@
                 <tr>
                     <th class="px-4 py-2 text-left">Month</th>
                     @foreach ($this->getDataProperty()['categories'] as $category)
-                        <th class="px-4 py-2 text-center">{{ $category }}</th>
+                        <th class="px-4 py-2 text-center">
+                            @if ($categoryId)
+                                <label class="inline-flex items-center space-x-2">
+                                    <input type="checkbox" value="{{ $category }}" class="product-toggle">
+                                    <span>{{ $category }}</span>
+                                </label> @else{{ $category }}
+                            @endif
+                        </th>
                     @endforeach
                 </tr>
             </thead>
@@ -52,76 +60,91 @@
             </tbody>
         </table>
     </div>
-
-    {{-- Chart Container --}}
-    <div class="mt-6">
-        <div id="linechart_material" style="width: 100%; height: 500px;"></div>
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded-lg" wire:ignore>
+        <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-100 mb-4">Line Chart</h2>
+        <div id="lineChart" style="width:100%;"></div>
     </div>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script>
-        google.charts.load('current', {
-            packages: ['line']
-        });
-
-        let chartData = @json($this->getDataProperty());
-        let chart;
-
-        function drawChart(selectedItems = null) {
-            const container = document.getElementById('linechart_material');
-            if (!container) return; // DOM not ready
-
-            const data = new google.visualization.DataTable();
-            data.addColumn('string', 'Month');
-
-            const labels = selectedItems ?? chartData.categories;
-            labels.forEach(label => data.addColumn('number', label));
-
-            Object.entries(chartData.data).forEach(([month, values]) => {
-                const row = [month];
-                labels.forEach(label => row.push(values[label] ?? 0));
-                data.addRow(row);
+    @push('scripts')
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script>
+            google.charts.load('current', {
+                packages: ['line']
             });
 
-            const options = {
-                chart: {
-                    title: 'Approved Quantity Trend',
-                    subtitle: 'Nepali Month-wise'
-                },
-                width: container.offsetWidth,
-                height: 500
-            };
+            let chartData = @json($this->getDataProperty());
+            let hasCategorySelected = @json($categoryId !== null);
 
-            chart = new google.charts.Line(container);
-            chart.draw(data, google.charts.Line.convertOptions(options));
-        }
+            document.addEventListener('DOMContentLoaded', function() {
+                google.charts.setOnLoadCallback(() => drawChart(chartData));
 
-        function setupCheckboxListener() {
-            document.querySelectorAll('.product-toggle').forEach(cb => {
-                cb.addEventListener('change', () => {
-                    const selected = Array.from(document.querySelectorAll('.product-toggle:checked')).map(
-                        cb => cb.value);
-                    drawChart(selected.length > 0 ? selected : null);
+                // Redraw chart on Livewire message
+                Livewire.hook('message.processed', () => {
+                    chartData = @json($this->getDataProperty());
+                    drawChart(chartData);
+                });
+
+                // Redraw chart on checkbox change
+                document.addEventListener('change', function(e) {
+                    if (e.target.classList.contains('product-toggle')) {
+                        drawChart(chartData);
+                    }
+                });
+
+                // Redraw chart on analyticsDataUpdated
+                window.addEventListener('analyticsDataUpdated', event => {
+                    chartData = event.detail;
+                    drawChart(chartData);
                 });
             });
-        }
 
-        document.addEventListener('livewire:load', () => {
-            google.charts.setOnLoadCallback(() => {
-                drawChart();
-                setupCheckboxListener();
-            });
-        });
+            function getSelectedItems() {
+                if (!hasCategorySelected) {
+                    return chartData.categories;
+                }
+                return Array.from(document.querySelectorAll('.product-toggle:checked')).map(cb => cb.value);
+            }
 
-        document.addEventListener('livewire:message.processed', () => {
-            chartData = @json($this->getDataProperty());
-            drawChart();
-            setupCheckboxListener();
-        });
+            function drawChart(dataSet) {
+                if (Array.isArray(dataSet)) {
+                    dataSet = dataSet[0];
+                }
+                console.log(dataSet)
+                const container = document.getElementById('lineChart');
+                if (!container || !google.visualization) return;
 
-        window.addEventListener('resize', () => {
-            drawChart();
-        });
-    </script>
+                const data = new google.visualization.DataTable();
+                data.addColumn('string', 'Month');
+
+                var categories = getSelectedItems();
+                // console.log(categories)
+                if(dataSet.categoryId == null) {
+                    categories = dataSet.categories;
+                }
+                else{
+                    categories.forEach(cat => data.addColumn('number', cat));
+                }
+
+                const months = Object.keys(dataSet.data);
+                months.forEach(month => {
+                    const row = [month];
+                    categories.forEach(cat => row.push(dataSet.data[month][cat] ?? 0));
+                    data.addRow(row);
+                });
+
+                const options = {
+                    chart: {
+                        title: 'Approved Quantity Trend',
+                        subtitle: 'Nepali Month-wise'
+                    },
+                    width: container.offsetWidth,
+                    height: 500
+                };
+
+                const chart = new google.charts.Line(container);
+                chart.draw(data, google.charts.Line.convertOptions(options));
+            }
+        </script>
+    @endpush
 
 
 </x-filament-panels::page>

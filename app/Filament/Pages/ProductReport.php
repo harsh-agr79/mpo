@@ -252,6 +252,7 @@ class ProductReport extends Page
         }
 
         return [
+            'categoryId' => $this->categoryId,
             'categories' => array_values($columns), // becomes product names if category is selected
             'data' => $data,
         ];
