@@ -218,8 +218,8 @@
                             </th>
                             <th class="border px-2 py-1 dark:border-gray-700">Entry ID</th>
                             <th class="border px-2 py-1 dark:border-gray-700">Type</th>
-                            <th class="border px-2 py-1 dark:border-gray-700">Debit</th>
-                            <th class="border px-2 py-1 dark:border-gray-700">Credit</th>
+                            <th class="border px-2 py-1 dark:border-gray-700">Out</th>
+                            <th class="border px-2 py-1 dark:border-gray-700">In</th>
                             <th class="border px-2 py-1 dark:border-gray-700">Running Balance</th>
                         </tr>
                     </thead>
