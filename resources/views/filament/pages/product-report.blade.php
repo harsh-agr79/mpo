@@ -2,7 +2,7 @@
     {{-- {{ dd($this->getDataProperty()) }} --}}
     {{-- Filter Form --}}
     <div
-        class="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg p-4 shadow-sm text-black dark:text-white">
+       class="border bg-order-summary border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-white dark:bg-gray-900 text-black dark:text-white shadow-sm items-center">
         {{ $this->form }}
     </div>
 
