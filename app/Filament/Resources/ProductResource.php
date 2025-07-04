@@ -24,6 +24,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\BooleanColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -162,6 +163,11 @@ class ProductResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                 Action::make('Statement')
+                        ->label('Statement')
+                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->color('info')
+                        ->url(fn ($record): string => url("/admin/product-statement?productId={$record->id}")),
                 ViewAction::make()->size('xl')
                     ->label('')
                     ->modalHeading(fn($record) => 'Product: ' . ucfirst($record->prod_unique_id))
