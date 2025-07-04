@@ -60,8 +60,8 @@
             </tbody>
         </table>
     </div>
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-4 rounded-lg" wire:ignore>
-        <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-100 mb-4">Line Chart</h2>
+    <div class="bg-white border border-gray-200 dark:border-gray-700 p-4 rounded-lg" wire:ignore>
+        {{-- <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-100 mb-4">Line Chart</h2> --}}
         <div id="lineChart" style="width:100%;"></div>
     </div>
     @push('scripts')
@@ -72,34 +72,30 @@
             });
 
             let chartData = @json($this->getDataProperty());
-            let hasCategorySelected = @json($categoryId !== null);
 
             document.addEventListener('DOMContentLoaded', function() {
                 google.charts.setOnLoadCallback(() => drawChart(chartData));
 
-                // Redraw chart on Livewire message
                 Livewire.hook('message.processed', () => {
                     chartData = @json($this->getDataProperty());
                     drawChart(chartData);
                 });
 
-                // Redraw chart on checkbox change
                 document.addEventListener('change', function(e) {
                     if (e.target.classList.contains('product-toggle')) {
                         drawChart(chartData);
                     }
                 });
 
-                // Redraw chart on analyticsDataUpdated
                 window.addEventListener('analyticsDataUpdated', event => {
                     chartData = event.detail;
                     drawChart(chartData);
                 });
             });
 
-            function getSelectedItems() {
-                if (!hasCategorySelected) {
-                    return chartData.categories;
+            function getSelectedItems(dataSet) {
+                if (dataSet.categoryId === null) {
+                    return dataSet.categories;
                 }
                 return Array.from(document.querySelectorAll('.product-toggle:checked')).map(cb => cb.value);
             }
@@ -108,26 +104,33 @@
                 if (Array.isArray(dataSet)) {
                     dataSet = dataSet[0];
                 }
-                console.log(dataSet)
+
                 const container = document.getElementById('lineChart');
                 if (!container || !google.visualization) return;
+
+                // 🧹 Ensure chart resets if structure changes
+                container.innerHTML = '';
 
                 const data = new google.visualization.DataTable();
                 data.addColumn('string', 'Month');
 
-                var categories = getSelectedItems();
-                // console.log(categories)
-                if(dataSet.categoryId == null) {
-                    categories = dataSet.categories;
-                }
-                else{
-                    categories.forEach(cat => data.addColumn('number', cat));
-                }
+                const categories = getSelectedItems(dataSet);
+                if (!categories || categories.length === 0) return;
 
-                const months = Object.keys(dataSet.data);
+                categories.forEach(cat => {
+                    try {
+                        data.addColumn('number', cat);
+                    } catch (e) {
+                        console.warn('Failed to add column', cat, e);
+                    }
+                });
+
+                const months = Object.keys(dataSet.data || {});
                 months.forEach(month => {
                     const row = [month];
-                    categories.forEach(cat => row.push(dataSet.data[month][cat] ?? 0));
+                    categories.forEach(cat => {
+                        row.push(dataSet.data[month]?.[cat] ?? 0);
+                    });
                     data.addRow(row);
                 });
 
@@ -145,6 +148,7 @@
             }
         </script>
     @endpush
+
 
 
 </x-filament-panels::page>
