@@ -164,7 +164,7 @@ class ProductResource extends Resource
             ])
             ->actions([
                  Action::make('Statement')
-                        // ->label('Statement')
+                        ->label('')
                         ->icon('heroicon-o-arrow-top-right-on-square')
                         ->color('info')
                         ->url(fn ($record): string => url("/admin/product-statement?productId={$record->id}")),
