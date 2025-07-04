@@ -163,7 +163,7 @@ class ProductResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                 Action::make('Statement')
+                 Action::make('Statement')->size('xl')
                         ->label('')
                         ->icon('heroicon-o-arrow-top-right-on-square')
                         ->color('info')
